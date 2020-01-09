@@ -1,0 +1,83 @@
+@media only screen and (max-width: 400px) 
+{ 
+	  .basic_form 
+	{
+	  display: grid;
+	  grid-template-columns: auto;
+	}
+	
+	.my_label
+	 {
+		 display:block
+	 }
+	 	
+	 .help
+	 {
+		 display:none
+	 }
+	 
+	.ex_profile 
+	{
+	  display: grid;
+	  grid-template-columns: auto auto;
+	}		 
+}
+
+/* Tablet Styles */
+@media only screen and (min-width: 401px) and (max-width: 960px) 
+{
+  
+	.basic_form 
+	{
+	  display: grid;
+	  grid-template-columns: 33% 67%;
+	}
+
+	 .help
+	 {
+		 display:none
+	 }
+
+	.ex_profile 
+	{
+	  display: grid;
+	  grid-template-columns: auto auto auto auto;
+	}	   
+}
+
+@media only screen and (min-width: 961px) 
+{
+	.basic_form 
+	{
+	  display: grid;
+	  grid-template-columns: 20% 50% 30%;
+	}	
+	
+	.ex_profile 
+	{
+	  display: grid;
+	  grid-template-columns: auto auto auto auto auto auto;
+	}	  
+}
+
+@media only print 
+{
+	.basic_form 
+	{
+	  display: grid;
+	  grid-template-columns: 25% 40% 35%;
+	}	
+
+	  #main_menu, #root_menu, .data_header, .sh, .print_hide
+	 {
+		 display:none
+	 }
+	 	
+	.ex_profile 
+	{
+	  display: grid;
+	  grid-template-columns: auto auto auto auto auto auto;
+	}
+	
+	 footer {page-break-after: always;}	  
+}

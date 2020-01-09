@@ -1,0 +1,6 @@
+<?php
+//example config for main database user and password
+//its location to be defined in config.php
+	$GLOBALS['main_user']='xyz';
+	$GLOBALS['main_pass']='xyz';
+?>
