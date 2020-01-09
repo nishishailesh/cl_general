@@ -6,7 +6,7 @@ $GLOBALS['user_id']='user';
 $GLOBALS['user_pass']='password';
 $GLOBALS['expiry_period']='+ 6 months';
 $GLOBALS['expirydate_field']='expirydate';
-$GLOBALS['application_name']='Clinical Records NCHS';
+$GLOBALS['application_name']='NCHSLS';
 
 $GLOBALS['database']='cl_general';
 $GLOBALS['mrd']=1001;

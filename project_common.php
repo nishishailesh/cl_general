@@ -1019,20 +1019,19 @@ function add_new_examination_and_profile($link,$sample_id,$list_of_selected_exam
 	}
 
 	$requested=array_filter(array_unique($requested));
-	$list_of_selected_examination=$list_of_selected_examination;
-	foreach ($requested as $ex_requested)
+	foreach ($requested as $exv)
 	{
-			if($ex_requested==$GLOBALS['mrd'])
+			if($exv==$GLOBALS['mrd'])
 			{
 				//mrd inserted, do nothing
 			}
 			elseif($ex_requested<100000)
 			{
-				insert_one_examination_without_result($link,$sample_id,$ex_requested);
+				insert_one_examination_without_result($link,$sample_id,$exv);
 			}
 			else  //blob as attachment 
 			{
-				insert_one_examination_blob_without_result($link,$sample_id,$ex_requested);
+				insert_one_examination_blob_without_result($link,$sample_id,$exv);
 			}
 	}
 }
