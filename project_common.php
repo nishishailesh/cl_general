@@ -104,6 +104,83 @@ function echo_result_header()
 	echo '</div>';	
 }
 
+
+function view_sample($link,$sample_id)
+{
+	echo '<pre>';
+	$ex_list=get_result_of_sample_in_array($link,$sample_id);
+	//print_r($ex_list);
+	$rblob=get_result_blob_of_sample_in_array($link,$sample_id);
+	//print_r($rblob);
+	$result_plus_blob_requested=$ex_list+$rblob;
+	//print_r($result_plus_blob_requested);
+	$profile_wise_ex_list=ex_to_profile($link,$result_plus_blob_requested);
+
+	//print_r($profile_wise_ex_list);
+	echo '</pre>';
+	echo '<div class="basic_form">
+			<div class=my_label >Database ID:'.$sample_id.'</div>
+			<div>';
+				sample_id_edit_button($sample_id);
+				sample_id_view_button($sample_id);
+			echo '</div>
+			<div class=help>Unique Number to get this data</div>';
+	echo '</div>';	
+	
+	foreach($profile_wise_ex_list as $kp=>$vp)
+	{
+		$pinfo=get_profile_info($link,$kp);
+		$div_id=$pinfo['name'].'_'.$sample_id;
+		//echo '<h6 data-toggle="collapse" class=sh href=\'#'.$div_id.'\' >X</h6><div></div><div></div>';
+		echo '<img src="img/show_hide.png" height=32 data-toggle="collapse" class=sh href=\'#'.$div_id.'\' ><div></div><div></div>';
+		echo '<div class="collapse show" id=\''.$div_id.'\'>';
+		echo '<h3>'.$pinfo['name'].'</h3><div></div><div></div>';
+		if($pinfo['profile_id']>$GLOBALS['max_non_ex_profile'])
+		{
+			echo_result_header();
+		}
+		foreach($vp as $ex_id)
+		{
+			if($ex_id<100001)
+			{
+				view_field($link,$ex_id,$ex_list[$ex_id]);	
+			}
+			else
+			{
+				view_field_blob($link,$ex_id,$sample_id);	
+			}
+		}
+		echo '</div>';
+	}
+	
+	echo '<br><footer></footer>';	
+}
+
+function view_field_blob($link,$kblob,$sample_id)
+{
+		$sql_blob='select * from result_blob where sample_id=\''.$sample_id.'\' and examination_id=\''.$kblob.'\'';
+		$result_blob=run_query($link,$GLOBALS['database'],$sql_blob);
+		$ar_blob=get_single_row($result_blob);
+	
+		//print_r($ar);
+		$examination_blob_details=get_one_examination_details($link,$kblob);
+		
+		//print_r($examination_details);
+		echo '	<div class="basic_form ">
+	
+				<div class="my_label border border-dark ">'.$examination_blob_details['name'].'</div>
+				<div>';
+				echo_download_button_two_pk('result_blob','result',
+									'sample_id',$sample_id,
+									'examination_id',$examination_blob_details['examination_id'],
+									$sample_id.'-'.$examination_blob_details['examination_id'].'-'.$ar_blob['fname']
+									);
+				echo '</div>';
+				echo '<div  class="help border border-dark "  >Current File:'.$ar_blob['fname'].'</div>
+				</div>';
+}
+
+/*
 function view_sample($link,$sample_id)
 {
 	$ex_list=get_result_of_sample_in_array($link,$sample_id);
@@ -169,7 +246,7 @@ function view_sample($link,$sample_id)
 	}
 	echo '<br><footer></footer>';	
 }
-
+*/
 
 function view_primary_sample($link,$sample_id)
 {
@@ -282,7 +359,7 @@ function sample_id_view_button($sample_id)
 
 function echo_download_button_two_pk($table,$field,$primary_key,$primary_key_value,$primary_key2,$primary_key_value2,$postfix='')
 {
-	echo '<form method=post action=download2.php>
+	echo '<form method=post action=download2.php border border-dark >
 			<input type=hidden name=table value=\''.$table.'\'>
 			<input type=hidden name=field value=\''.$field.'\' >
 			<input type=hidden name=primary_key value=\''.$primary_key.'\'>
@@ -292,7 +369,7 @@ function echo_download_button_two_pk($table,$field,$primary_key,$primary_key_val
 			<input type=hidden name=primary_key_value2 value=\''.$primary_key_value2.'\'>
 			<input type=hidden name=session_name value=\''.$_POST['session_name'].'\'>
 			
-			<button class="btn btn-info btn-block"  
+			<button class="btn btn-info  btn-sm"  
 			formtarget=_blank
 			type=submit
 			name=action
@@ -322,7 +399,13 @@ function ex_to_profile($link,$ex_array)
 function edit_sample($link,$sample_id)
 {
 	$ex_list=get_result_of_sample_in_array($link,$sample_id);
-	$profile_wise_ex_list=ex_to_profile($link,$ex_list);
+	//print_r($ex_list);
+	$rblob=get_result_blob_of_sample_in_array($link,$sample_id);
+	//print_r($rblob);
+	$result_plus_blob_requested=$ex_list+$rblob;
+	//print_r($result_plus_blob_requested);
+	$profile_wise_ex_list=ex_to_profile($link,$result_plus_blob_requested);
+
 	//echo '<pre>';
 	//print_r($profile_wise_ex_list);
 	//echo '</pre>';
@@ -360,16 +443,18 @@ function edit_sample($link,$sample_id)
 		foreach($vp as $ex_id)
 		{
 			if($ex_id==$GLOBALS['mrd']){$readonly='readonly';}else{$readonly='';}
-			edit_field($link,$ex_id,$ex_list,$sample_id,$readonly);	
+			
+			if($ex_id<100000)
+			{
+				edit_field($link,$ex_id,$ex_list,$sample_id,$readonly);	
+			}
+			else
+			{
+				edit_blob_field($link,$ex_id,$sample_id);
+			}
 		}
 	}
-	
-	$rblob=get_result_blob_of_sample_in_array($link,$sample_id);
-	
-	foreach($rblob as $kblob=>$vblob)
-	{
-		edit_blob_field($link,$kblob,$rblob,$sample_id);	
-	}
+
     add_get_data($link,$sample_id);
    
 }
@@ -487,12 +572,18 @@ function edit_field($link,$examination_id,$result_array,$sample_id,$readonly='')
 	$element_id='r_id_'.$sample_id.'_'.$examination_id;
 	if($type=='yesno')
 	{
-		echo '<div class="basic_form  no-gutters">';
-		set_lable($_POST['session_name'],$_POST['sample_id'],$examination_details,$examination_id);
+				//////
+		echo '<div class="basic_form  m-0 p-0 no-gutters">';
+			////
+			set_lable($_POST['session_name'],$_POST['sample_id'],$examination_details,$examination_id);
+			////
+			echo '<div class="m-0 p-0 no-gutters">';
+				////
+				echo '<div class="d-inline-block  no-gutters">';
 			echo '
 					<button 
 						'.$readonly.'
-						id="'.$examination_details['name'].'" 
+					id="'.$element_id.'" 
 						name="'.$examination_id.'" 
 						data-exid="'.$examination_id.'" 
 						data-sid="'.$sample_id.'" 
@@ -500,8 +591,13 @@ function edit_field($link,$examination_id,$result_array,$sample_id,$readonly='')
 						class="form-control btn btn-info mb-1 autosave-yesno"
 						value=\''.$result.'\'
 						type=button
-						>'.$result.'</button>
-					<p class="help">'.$help.'</p>';
+						>'.$result.'</button>';
+					echo '</div>';
+				echo '<div class="d-inline  no-gutters">';
+					get_primary_result($link,$sample_id,$examination_id);
+				echo '</div>';
+			echo '</div>';
+			echo '<p class="help">'.$help.'</p>';	
 		echo '</div>';
 	}
 	else if($type=='select')
@@ -521,29 +617,49 @@ function edit_field($link,$examination_id,$result_array,$sample_id,$readonly='')
 			}
 		}
 		
-		echo '<div class="basic_form">';
-		set_lable($_POST['session_name'],$_POST['sample_id'],$examination_details,$examination_id);
+				//////
+		echo '<div class="basic_form  m-0 p-0 no-gutters">';
+			////
+			set_lable($_POST['session_name'],$_POST['sample_id'],$examination_details,$examination_id);
+			////
+			echo '<div class="m-0 p-0 no-gutters">';
+				////
+				echo '<div class="d-inline-block  no-gutters">';	
+				
 			echo '
 					<select '.$readonly.' 
-						id="'.$examination_details['name'].'" 
+					id="'.$element_id.'" 
 						name="'.$examination_id.'" 
 						data-exid="'.$examination_id.'" 
 						data-sid="'.$sample_id.'" 
 						data-user="'.$_SESSION['login'].'" 
-						class="form-control autosave-select">'.$option_html.'</select>
-					<p class="help">'.$help.'</p>';
+						class="form-control autosave-select">'.$option_html.'</select>';
+				echo '</div>';
+				echo '<div class="d-inline  no-gutters">';
+					get_primary_result($link,$sample_id,$examination_id);
+				echo '</div>';
+			echo '</div>';
+			echo '<p class="help">'.$help.'</p>';	
 		echo '</div>';
 	}
 	
 	elseif($type=='number')
 	{
 		$step=isset($edit_specification['step'])?$edit_specification['step']:1;
-		echo '<div class="basic_form">';
-		set_lable($_POST['session_name'],$_POST['sample_id'],$examination_details,$examination_id);
+		
+				//////
+		echo '<div class="basic_form  m-0 p-0 no-gutters">';
+			////
+			set_lable($_POST['session_name'],$_POST['sample_id'],$examination_details,$examination_id);
+			////
+			echo '<div class="m-0 p-0 no-gutters">';
+				////
+				echo '<div class="d-inline-block  no-gutters">';	
+				
 			echo '
 					<input 
 						'.$readonly.'
-						id="'.$examination_details['name'].'" 
+					id="'.$element_id.'" 
 						name="'.$examination_id.'" 
 						data-exid="'.$examination_id.'" 
 						data-sid="'.$sample_id.'" 
@@ -551,53 +667,83 @@ function edit_field($link,$examination_id,$result_array,$sample_id,$readonly='')
 						class="form-control autosave" 
 						type=\''.$type.'\' 
 						step=\''.$step.'\' 
-						value=\''.$result.'\'>
-					<p class="help">'.$help.'</p>';
+						value=\''.$result.'\'>';
+				echo '</div>';
+				echo '<div class="d-inline  no-gutters">';
+					get_primary_result($link,$sample_id,$examination_id);
+				echo '</div>';
+			echo '</div>';
+			echo '<p class="help">'.$help.'</p>';	
 		echo '</div>';
 	}
 	elseif($type=='date')
 	{
-		$step=isset($edit_specification['step'])?$edit_specification['step']:1;
-		echo '<div class="basic_form">';
-		set_lable($_POST['session_name'],$_POST['sample_id'],$examination_details,$examination_id);
+		//////
+		echo '<div class="basic_form  m-0 p-0 no-gutters">';
+			////
+			set_lable($_POST['session_name'],$_POST['sample_id'],$examination_details,$examination_id);
+			////
+			echo '<div class="m-0 p-0 no-gutters">';
+				////
+				echo '<div class="d-inline-block  no-gutters">';			
 			echo '
 						<input 
 						'.$readonly.'
-						id="'.$examination_details['name'].'" 
+					id="'.$element_id.'" 
 						name="'.$examination_id.'" 
 						data-exid="'.$examination_id.'" 
 						data-sid="'.$sample_id.'" 
 						data-user="'.$_SESSION['login'].'" 
 						class="form-control autosave" 
 						type=\''.$type.'\' 
-						value=\''.$result.'\'>
-					<p class="help">'.$help.'</p>';
+						value=\''.$result.'\'>';
+				echo '</div>';
+				echo '<div class="d-inline  no-gutters">';
+					get_primary_result($link,$sample_id,$examination_id);
+				echo '</div>';
+			echo '</div>';
+			echo '<p class="help">'.$help.'</p>';	
 		echo '</div>';
 	}
 	elseif($type=='datetime-local')
 	{
 		$step=isset($edit_specification['step'])?$edit_specification['step']:1;
-		echo '<div class="basic_form">';
-		set_lable($_POST['session_name'],$_POST['sample_id'],$examination_details,$examination_id);
+		//////
+		echo '<div class="basic_form  m-0 p-0 no-gutters">';
+			////
+			set_lable($_POST['session_name'],$_POST['sample_id'],$examination_details,$examination_id);
+			////
+			echo '<div class="m-0 p-0 no-gutters">';
+				////
+				echo '<div class="d-inline-block  no-gutters">';
 			echo '
 						<input 
 						'.$readonly.'
-						id="'.$examination_details['name'].'" 
+					id="'.$element_id.'" 
 						name="'.$examination_id.'" 
 						data-exid="'.$examination_id.'" 
 						data-sid="'.$sample_id.'" 
 						data-user="'.$_SESSION['login'].'" 
 						class="form-control autosave" 
 						type=\''.$type.'\' 
-						value=\''.$result.'\'>
-					<p class="help">'.$help.'</p>';
+						value=\''.$result.'\'>';
+				echo '</div>';
+				echo '<div class="d-inline  no-gutters">';
+					get_primary_result($link,$sample_id,$examination_id);
+				echo '</div>';
+			echo '</div>';
+			echo '<p class="help">'.$help.'</p>';	
 		echo '</div>';
 	}		
 	else  
 	{
+		//////
 		echo '<div class="basic_form  m-0 p-0 no-gutters">';
+			////
 			set_lable($_POST['session_name'],$_POST['sample_id'],$examination_details,$examination_id);
+			////
 			echo '<div class="m-0 p-0 no-gutters">';
+				////
 				echo '<div class="d-inline-block  no-gutters">';
 				echo '<textarea rows=1
 					'.$readonly.'
@@ -681,7 +827,7 @@ function view_field($link,$ex_id,$ex_result)
 				echo '</div>';
 }				
 
-function edit_blob_field($link,$examination_id,$result_array,$sample_id)
+function edit_blob_field($link,$examination_id,$sample_id)
 {
 	//get examination details
 	
@@ -1007,31 +1153,38 @@ function add_new_examination_and_profile($link,$sample_id,$list_of_selected_exam
 	$requested=array();
 	$ex_requested=explode(',',$list_of_selected_examination);
 	$requested=array_merge($requested,$ex_requested);
-	
+	//echo '<pre>';
+	//print_r($requested);
+
 	$profile_requested=explode(',',$list_of_selected_profile);
+	//print_r($profile_requested);
 	foreach($profile_requested as $value)
 	{
 		$psql='select * from profile where profile_id=\''.$value.'\'';
+		//echo $psql;
 		$result=run_query($link,$GLOBALS['database'],$psql);
 		$ar=get_single_row($result);
 		$profile_ex_requested=explode(',',$ar['examination_id_list']);
 		$requested=array_merge($requested,$profile_ex_requested);
 	}
+	//print_r($requested);
 
 	$requested=array_filter(array_unique($requested));
-	foreach ($requested as $exv)
+	//print_r($requested);
+	$list_of_selected_examination=$list_of_selected_examination;
+	foreach ($requested as $exr)
 	{
-			if($exv==$GLOBALS['mrd'])
+			if($exr==$GLOBALS['mrd'])
 			{
 				//mrd inserted, do nothing
 			}
-			elseif($ex_requested<100000)
+			elseif($exr<100000)
 			{
-				insert_one_examination_without_result($link,$sample_id,$exv);
+				insert_one_examination_without_result($link,$sample_id,$exr);
 			}
 			else  //blob as attachment 
 			{
-				insert_one_examination_blob_without_result($link,$sample_id,$exv);
+				insert_one_examination_blob_without_result($link,$sample_id,$exr);
 			}
 	}
 }
