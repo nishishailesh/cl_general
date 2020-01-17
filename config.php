@@ -6,10 +6,11 @@ $GLOBALS['user_id']='user';
 $GLOBALS['user_pass']='password';
 $GLOBALS['expiry_period']='+ 6 months';
 $GLOBALS['expirydate_field']='expirydate';
-$GLOBALS['application_name']='Clinical Records NCHS';
+$GLOBALS['application_name']='New Civil Hospital Surat Laboratory Services';
 
 $GLOBALS['database']='cl_general';
 $GLOBALS['mrd']=1001;
+$GLOBALS['sample_requirement']=1000;
 $GLOBALS['max_non_ex_profile']=20;
 
 $GLOBALS['advice']='

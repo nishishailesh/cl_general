@@ -101,7 +101,7 @@ function run_query($link,$db,$sql)
 	
 	if(!$result)
 	{
-		echo 'error3:'.mysqli_error($link); return false;
+		echo 'error3:'.$sql.'<br>'.mysqli_error($link); return false;
 	}
 	else
 	{

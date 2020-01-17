@@ -8,7 +8,7 @@ function main_menu()
 	<div id=main_menu class="dropdown btn-group m-0 p-0">
 			<input type=hidden name=session_name value=\''.session_name().'\'>
 			<button class="btn btn-primary border-danger m-0 p-0" formaction=new_general.php type=submit name=action value=new_general>New</button>
-			<button class="btn btn-primary border-danger m-0 p-0" formaction=view_database_id.php type=submit name=action value=get_dbid>View DbID</button>			
+			<button class="btn btn-primary border-danger m-0 p-0" formaction=view_database_id.php type=submit name=action value=get_dbid>View Sample ID</button>			
 			<button class="btn btn-primary border-danger m-0 p-0" formaction=search.php type=submit name=action value=get_search_condition>Search</button>			
 			<button class="btn btn-primary border-danger m-0 p-0" formaction=report.php type=submit name=action value=get_search_condition>Export</button>			
 			<!--
@@ -138,17 +138,33 @@ function view_sample($link,$sample_id)
 		if($pinfo['profile_id']>$GLOBALS['max_non_ex_profile'])
 		{
 			echo_result_header();
+		
+			foreach($vp as $ex_id)
+			{
+				if($ex_id<100000)
+				{
+					view_field($link,$ex_id,$ex_list[$ex_id]);	
+				}
+				else
+				{
+					view_field_blob($link,$ex_id,$sample_id);	
+				}
+			}
 		}
-		foreach($vp as $ex_id)
+		else
 		{
-			if($ex_id<100001)
+			foreach($vp as $ex_id)
 			{
-				view_field($link,$ex_id,$ex_list[$ex_id]);	
+				if($ex_id<100000)
+				{
+					view_field($link,$ex_id,$ex_list[$ex_id]);	
+				}
+				else
+				{
+					view_field_blob($link,$ex_id,$sample_id);	
+				}
 			}
-			else
-			{
-				view_field_blob($link,$ex_id,$sample_id);	
-			}
+			
 		}
 		echo '</div>';
 	}
@@ -166,7 +182,7 @@ function view_field_blob($link,$kblob,$sample_id)
 		$examination_blob_details=get_one_examination_details($link,$kblob);
 		
 		//print_r($examination_details);
-		echo '	<div class="basic_form ">
+		echo '	<div class="basic_form print_hide">
 	
 				<div class="my_label border border-dark ">'.$examination_blob_details['name'].'</div>
 				<div>';
@@ -180,6 +196,28 @@ function view_field_blob($link,$kblob,$sample_id)
 				</div>';
 }
 
+function view_field_blob_hr($link,$kblob,$sample_id)
+{
+		$sql_blob='select * from result_blob where sample_id=\''.$sample_id.'\' and examination_id=\''.$kblob.'\'';
+		$result_blob=run_query($link,$GLOBALS['database'],$sql_blob);
+		$ar_blob=get_single_row($result_blob);
+	
+		//print_r($ar);
+		$examination_blob_details=get_one_examination_details($link,$kblob);
+		
+		//print_r($examination_details);
+		echo '	<div class="my_header ">
+	
+				<div class="my_label border border-dark ">'.$examination_blob_details['name'].'</div>
+				<div>';
+				echo_download_button_two_pk('result_blob','result',
+									'sample_id',$sample_id,
+									'examination_id',$examination_blob_details['examination_id'],
+									$sample_id.'-'.$examination_blob_details['examination_id'].'-'.$ar_blob['fname']
+									);
+				echo 'Current File:'.$ar_blob['fname'].'</div>
+				</div>';
+}
 /*
 function view_sample($link,$sample_id)
 {
@@ -359,7 +397,7 @@ function sample_id_view_button($sample_id)
 
 function echo_download_button_two_pk($table,$field,$primary_key,$primary_key_value,$primary_key2,$primary_key_value2,$postfix='')
 {
-	echo '<form method=post action=download2.php border border-dark >
+	echo '<form method=post action=download2.php class="print_hide" >
 			<input type=hidden name=table value=\''.$table.'\'>
 			<input type=hidden name=field value=\''.$field.'\' >
 			<input type=hidden name=primary_key value=\''.$primary_key.'\'>
@@ -565,7 +603,7 @@ function edit_field($link,$examination_id,$result_array,$sample_id,$readonly='')
 	if(!$edit_specification){$edit_specification=array();}
 	
 	$type=isset($edit_specification['type'])?$edit_specification['type']:'text';
-	$help=isset($edit_specification['help'])?$edit_specification['help']:'No help';
+	$help=isset($edit_specification['help'])?$edit_specification['help']:'';
 	$pattern=isset($edit_specification['pattern'])?$edit_specification['pattern']:'';
 	$placeholder=isset($edit_specification['placeholder'])?$edit_specification['placeholder']:'';
 	
@@ -744,7 +782,7 @@ function edit_field($link,$examination_id,$result_array,$sample_id,$readonly='')
 			////
 			echo '<div class="m-0 p-0 no-gutters">';
 				////
-				echo '<div class="d-inline-block  no-gutters">';
+				echo '<div class="d-inline-block no-gutters">';
 				echo '<textarea rows=1
 					'.$readonly.'
 					id="'.$element_id.'" 
@@ -817,7 +855,7 @@ function view_field($link,$ex_id,$ex_result)
 {
 		$examination_details=get_one_examination_details($link,$ex_id);
 		$edit_specification=json_decode($examination_details['edit_specification'],true);
-		$help=isset($edit_specification['help'])?$edit_specification['help']:'No help';
+		$help=isset($edit_specification['help'])?$edit_specification['help']:'';
 		$interval=isset($edit_specification['interval'])?$edit_specification['interval']:'';
 		
 				echo '<div class="basic_form " id="ex_'.$ex_id.'">';
@@ -825,6 +863,20 @@ function view_field($link,$ex_id,$ex_result)
 				<div class="border border-dark"><pre class="m-0 p-0 border-0">'.htmlspecialchars($ex_result.' '.decide_alert($ex_result,$interval)).'</pre></div>
 				<div class="help border border-dark">'.$help.'</div>';
 				echo '</div>';
+}				
+
+
+function view_field_hr($link,$ex_id,$ex_result)
+{
+		$examination_details=get_one_examination_details($link,$ex_id);
+		$edit_specification=json_decode($examination_details['edit_specification'],true);
+		$help=isset($edit_specification['help'])?$edit_specification['help']:'';
+		$interval=isset($edit_specification['interval'])?$edit_specification['interval']:'';
+		
+		echo '<div class="my_header " id="ex_'.$ex_id.'">';
+		echo '	<div class="my_label border border-dark text-wrap">'.$examination_details['name'].'</div>
+				<div class="border border-dark"><pre class="m-0 p-0 border-0">'.htmlspecialchars($ex_result.' '.decide_alert($ex_result,$interval)).'</pre></div>';
+		echo '</div>';
 }				
 
 function edit_blob_field($link,$examination_id,$sample_id)
@@ -840,7 +892,7 @@ function edit_blob_field($link,$examination_id,$sample_id)
 	echo '<div class="basic_form">';
 	set_lable($_POST['session_name'],$_POST['sample_id'],$examination_details,$examination_id);
 	//echo '	<div class=my_label>'.$examination_details['name'].'</div>
-	echo'<div>';	
+	echo'<div class="border ">';	
 	echo_download_button_two_pk('result_blob','result',
 								'sample_id',$sample_id,
 								'examination_id',$examination_details['examination_id'],
@@ -1106,6 +1158,7 @@ function my_on_off_profile($label,$id)
 			>'.$label.'</button>';
 }
 
+/*
 function save_insert($link)
 {
 	//find list of examinations requested//////////////////////////////
@@ -1126,7 +1179,7 @@ function save_insert($link)
 	$requested=array_filter(array_unique($requested));
 	
 //1	//must to link samples from single patients
-	$sample_id=get_new_sample_id($link,$_POST['mrd']);
+	$sample_id=get_new_sample_id($link,$_POST['mrd'],$sample_requirement);
 
 	//echo '<pre>following is requested:<br>';print_r($requested);echo '</pre>';
 	foreach ($requested as $ex)
@@ -1147,6 +1200,102 @@ function save_insert($link)
 	
 	return $sample_id;
 }
+*/
+
+//find ex
+//find sample req for each
+//get unique 
+function save_insert($link)
+{
+			//find list of examinations requested
+			//determine sample-type required
+			//find sample_id to be given
+			//insert all examinations/non-examinations in result table
+			
+	//find list of examinations requested//////////////////////////////
+	$requested=array();
+	$ex_requested=explode(',',$_POST['list_of_selected_examination']);
+	$requested=array_merge($requested,$ex_requested);
+	
+	$profile_requested=explode(',',$_POST['list_of_selected_profile']);
+	foreach($profile_requested as $value)
+	{
+		$psql='select * from profile where profile_id=\''.$value.'\'';
+		$result=run_query($link,$GLOBALS['database'],$psql);
+		$ar=get_single_row($result);
+		$profile_ex_requested=explode(',',$ar['examination_id_list']);
+		$requested=array_merge($requested,$profile_ex_requested);
+	}
+
+	//$requested=array_filter(array_unique($requested));
+//1	
+	//echo '<pre>following is requested:<br>';print_r($requested);echo '</pre>';
+
+	//determine sample-type required for each and also distinct types////////////////////////////////////
+	$sample_required=array();
+	$stype_for_each_requested=array();
+	
+	foreach($requested as $ex)
+	{
+		$psql='select sample_requirement from examination where examination_id=\''.$ex.'\'';
+		$result=run_query($link,$GLOBALS['database'],$psql);
+		$ar=get_single_row($result);
+		$sample_required[]=$ar['sample_requirement'];
+		$stype_for_each_requested[$ex]=$ar['sample_requirement'];
+	}
+
+//2	
+	//echo '<pre>following are sample_requirements for each:<br>';print_r($stype_for_each_requested);echo '</pre>';
+	
+	$sample_required=array_unique($sample_required);
+//3	
+	//echo '<pre>following samples are required:<br>';print_r($sample_required);echo '</pre>';
+	
+	//determine sample_id to be given/////////////////////////////////
+	$sample_id_array=set_sample_id($link,$sample_required);
+//4	
+	//echo '<pre>following samples ids are alloted:<br>';print_r($sample_id_array);echo '</pre>';
+
+//insert examinations////////////////////////////////////////////
+	
+	foreach($sample_id_array as $stype=>$sid)
+	{
+		foreach($stype_for_each_requested as $ex=>$exreq)
+		{
+			//echo $ex.'<br>';
+			if($stype==$exreq)
+			{
+				if($ex<100000)
+				{
+					insert_one_examination_without_result($link,$sid,$ex);
+				}
+				else
+				{
+					insert_one_examination_blob_without_result($link,$sid,$ex);
+				}
+			}
+			if($exreq=='None')
+			{
+					if($ex==$GLOBALS['mrd'])
+					{
+						insert_one_examination_with_result($link,$sid,$ex,$_POST['mrd']);
+					}
+					elseif($ex==$GLOBALS['sample_requirement'])
+					{
+						//already inserted
+						//insert_one_examination_with_result($link,$sid,$ex,$_POST['mrd']);
+					}
+					else
+					{
+						insert_one_examination_without_result($link,$sid,$ex);
+					}
+			}
+		}
+	}
+
+	return $sample_id_array	;
+}
+
 function add_new_examination_and_profile($link,$sample_id,$list_of_selected_examination='',$list_of_selected_profile='')
 {
 	
@@ -1211,9 +1360,11 @@ function set_lable($session_name,$sample_id,$examination_details,$examination_id
 			</div>';
 	
 }
-function get_new_sample_id($link,$mrd)
+
+
+function get_new_sample_id($link,$mrd,$sample_requirement)
 {
-	$sample_id=find_next_sample_id($link);
+	$sample_id=find_next_sample_id($link,$sample_requirement);
 	$sql='insert into result (sample_id,examination_id,result,recording_time,recorded_by)
 			values (\''.$sample_id.'\', \''.$GLOBALS['mrd'].'\',\''.$mrd.'\',now(),\''.$_SESSION['login'].'\')';
 	if(!run_query($link,$GLOBALS['database'],$sql))
@@ -1224,9 +1375,26 @@ function get_new_sample_id($link,$mrd)
 	}
 }
 
+/*
 function find_next_sample_id($link)
 {
 	$sqls='select ifnull(max(sample_id)+1,1) as next_sample_id from result';
+	//echo $sqls;
+	$results=run_query($link,$GLOBALS['database'],$sqls);
+	$ars=get_single_row($results);
+	return $ars['next_sample_id'];
+}
+*/
+
+function find_next_sample_id($link,$sample_requirement)
+{
+	$sql='select * from sample_id_strategy where sample_requirement=\''.$sample_requirement.'\'';
+	$result=run_query($link,$GLOBALS['database'],$sql);
+	$ar=get_single_row($result);
+	$from=$ar['lowest_id'];
+	$to=$ar['highest_id'];	
+
+	$sqls='select ifnull(max(sample_id)+1,'.$from.') as next_sample_id from result where sample_id between '.$from.' and '.$to;
 	//echo $sqls;
 	$results=run_query($link,$GLOBALS['database'],$sqls);
 	$ars=get_single_row($results);
@@ -1246,6 +1414,18 @@ function insert_one_examination_without_result($link,$sample_id,$examination_id)
 	}	else{return true;}
 }
 
+function insert_one_examination_with_result($link,$sample_id,$examination_id,$result)
+{
+	$sql='insert into result (sample_id,examination_id,result)
+			values ("'.$sample_id.'","'.$examination_id.'","'.$result.'")';
+	//echo $sql.'(without)<br>';
+	if(!run_query($link,$GLOBALS['database'],$sql))
+	{
+		//echo $sql.'(without)<br>';
+		//echo 'Data not inserted(with)<br>'; 
+		return false;
+	}	else{return true;}
+}
 function insert_one_examination_blob_without_result($link,$sample_id,$examination_id)
 {
 	$sql='insert into result_blob (sample_id,examination_id)
@@ -1373,5 +1553,28 @@ function get_sample_with_condition($link,$exid,$ex_result,$sid_array=array(),$fi
 	}
 	return $ret;
 }
+
+
+function set_sample_id($link, $sample_required_array)
+{
+	$sample_id_array=array();
+	foreach ($sample_required_array as $stype)
+	{
+		if($stype!='None')
+		{
+			$sample_id_array[$stype]=find_next_sample_id($link,$stype);
+			//we must REALLY insert something in result to make increment possible in next cycle
+			//otherwise sample id for given stype will be returned
+			//so insert sample_requirement as first result!!!
+			//1000 is sample_requirement
+			//echo 'pp';
+			//echo $GLOBALS['sample_requirement'];
+			insert_one_examination_with_result($link,$sample_id_array[$stype],$GLOBALS['sample_requirement'],$stype);
+			//echo 'qq';
+		}
+	}
+	return $sample_id_array;
+}
+
 
 ?>

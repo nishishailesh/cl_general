@@ -16,14 +16,17 @@ if($_POST['action']=='new_general')
 }
 elseif($_POST['action']=='insert')
 {
-	$sample_id=save_insert($link);
-	view_sample($link,$sample_id);
+	$sample_id_array=save_insert($link);
+	foreach($sample_id_array as $sample_id)
+	{
+		view_sample($link,$sample_id);
+	}
 }
 
 //////////////user code ends////////////////
 tail();
 
-//echo '<pre>';print_r($_POST);echo '</pre>';
+echo '<pre>';print_r($_POST);echo '</pre>';
 
 //////////////Functions///////////////////////
 

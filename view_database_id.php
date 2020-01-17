@@ -17,11 +17,11 @@ if($_POST['action']=='get_dbid')
 {
 	get_dbid($link);
 }
-elseif($_POST['action']=='view_dbid')
-{
-	echo_class_button($link,'OGDC')	;
-	view_sample($link,$_POST['sample_id']);
-}
+//elseif($_POST['action']=='view_dbid')
+//{
+	////echo_class_button($link,'Haemogram');
+	//view_sample($link,$_POST['sample_id']);
+//}
 
 //////////////user code ends////////////////
 tail();
@@ -34,7 +34,7 @@ function get_dbid()
 {
 	$YY=strftime("%y");
 
-echo '<form method=post>';
+echo '<form method=post action=view_single.php>';
 echo '<div class="basic_form">';
 	echo '	<label class="my_label text-danger" for="mrd">Database ID</label>
 			<input type=number size=13 id=mrd name=sample_id class="form-control text-danger" required="required" \>
@@ -45,17 +45,5 @@ echo '<input type=hidden name=session_name value=\''.session_name().'\'>';
 echo '</form>';
 }
 
-function view_mrd($link,$mrd)
-{
-	$sql='select sample_id from result where examination_id=1 and result=\''.$mrd.'\'';
-	$result=run_query($link,$GLOBALS['database'],$sql);
-	while($ar=get_single_row($result))
-	{
-		//print_r($ar);
-		view_sample($link,$ar['sample_id']);
-		//edit_sample($link,$ar['sample_id']);
-	}
-	
-}
 
 ?>
