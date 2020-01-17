@@ -53,10 +53,10 @@
 	  grid-template-columns: 20% 50% 30%;
 	}	
 
-	.my_header 
+	.horiz
 	{
 	  display: grid;
-	  grid-template-columns: 50% 50%;
+	  grid-template-columns: 34% 33% 33%;
 	}	
 	
 		
@@ -79,7 +79,13 @@
 	 {
 		 display:none
 	 }
-	 	
+
+	.horiz
+	{
+	  display: grid;
+	  grid-template-columns: 34% 33% 33%;
+	}	
+		 	
 	.ex_profile 
 	{
 	  display: grid;
