@@ -2,6 +2,7 @@
 session_start();
 require_once 'config.php';
 require_once 'base/common.php';
+require_once 'project_common.php';
 require_once $GLOBALS['main_user_location'];
 //echo '<br>Sending POST from server<br><pre>';
 //print_r($_SESSION);
@@ -19,12 +20,20 @@ require_once $GLOBALS['main_user_location'];
 //}
 
 //echo $_POST['session_name'];
-save_result();
+$link=get_link($GLOBALS['main_user'],$GLOBALS['main_pass']);
+$released_by=get_one_ex_result($link,$_POST['sample_id'],$GLOBALS['released_by']);
+if(strlen($released_by)==0)
+{
+	save_result($link);
+}
+else
+{
+	echo '<h3>Released samples can not be edited, refresh/view to get previous data</h3>';	
+}
 
-function save_result()
+function save_result($link)
 {
 	
-	$link=get_link($GLOBALS['main_user'],$GLOBALS['main_pass']);
 	$sql='update result
 			set 
 				result=\''.my_safe_string($link,$_POST['result']).'\',	

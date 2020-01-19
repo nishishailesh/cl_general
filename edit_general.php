@@ -3,7 +3,7 @@
 require_once 'project_common.php';
 require_once 'base/verify_login.php';
 	////////User code below/////////////////////
-echo '		  <link rel="stylesheet" href="project_common.css">
+echo '	<link rel="stylesheet" href="project_common.css">
 		  <script src="project_common.js"></script>';	
 $link=get_link($GLOBALS['main_user'],$GLOBALS['main_pass']);
 
@@ -24,6 +24,7 @@ if($_POST['action']=='upload')
 if($_POST['action']=='delete')
 {
 	delete_examination($link,$_POST['sample_id'],$_POST['examination_id']);
+	edit_sample($link,$_POST['sample_id']);
 }
 if($_POST['action']=='insert')
 {

@@ -36,9 +36,9 @@ elseif($_POST['action']=='search')
 	{
 		
 
-		$sample_id_csv = implode(',', $temp);
+		//$sample_id_csv = implode(',', $temp);
 		//echo_export_button($sample_id_csv);
-		echo_class_button($link,'OGDC')	;
+		//echo_class_button($link,'OGDC')	;
 		foreach ($temp as $sid)
 		{
 			view_sample($link,$sid);
@@ -47,7 +47,7 @@ elseif($_POST['action']=='search')
 	}
 	else
 	{
-		echo '<h3>Nothing meaningful provided!!</h3>';
+		echo '<h3>No Sample matching // Nothing meaningful provided!!</h3>';
 	}
 }
 

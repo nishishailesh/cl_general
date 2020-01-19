@@ -7,11 +7,12 @@ function main_menu()
 	
 	<div id=main_menu class="dropdown btn-group m-0 p-0">
 			<input type=hidden name=session_name value=\''.session_name().'\'>
-			<button class="btn btn-primary border-danger m-0 p-0" formaction=new_general.php type=submit name=action value=new_general>New</button>
-			<button class="btn btn-primary border-danger m-0 p-0" formaction=view_database_id.php type=submit name=action value=get_dbid>View Sample ID</button>			
-			<button class="btn btn-primary border-danger m-0 p-0" formaction=search.php type=submit name=action value=get_search_condition>Search</button>			
-			<button class="btn btn-primary border-danger m-0 p-0" formaction=report.php type=submit name=action value=get_search_condition>Export</button>			
+			<button class="btn btn-outline-primary m-0 p-0" formaction=new_general.php type=submit name=action value=new_general>New</button>
+			<button class="btn btn-outline-primary m-0 p-0" formaction=view_database_id.php type=submit name=action value=get_dbid>View Sample ID</button>			
+			<button class="btn btn-outline-primary m-0 p-0" formaction=search.php type=submit name=action value=get_search_condition>Search</button>			
 			<!--
+			<button class="btn btn-primary border-danger m-0 p-0" formaction=report.php type=submit name=action value=get_search_condition>Export</button>			
+			
 			<button class="btn btn-primary dropdown-toggle m-0 p-0" type="button" data-toggle="dropdown">New</button>
 			<div class="dropdown-menu m-0 p-0">		
 					<button class="btn btn-secondary btn-block m-0 p-0" formaction=new_general.php type=submit name=action value=new_general>New (General)</button>
@@ -100,10 +101,32 @@ function echo_result_header()
 	echo '<div class="basic_form">
 			<div class=my_label >Examination</div>
 			<div>Result</div>
-			<div class=help>Ref. Intervals , Units (Method)</div>';
+			<div class=help>Unit, Ref. Intervals ,(Method)</div>';
 	echo '</div>';	
 }
 
+function show_all_buttons_for_sample($link,$sample_id)
+{
+	$released_by=get_one_ex_result($link,$sample_id,$GLOBALS['released_by']);
+	if(strlen($released_by)==0)
+	{
+		sample_id_prev_button($sample_id);
+		sample_id_view_button($sample_id);
+		sample_id_next_button($sample_id);
+		sample_id_release_button($sample_id);	
+		sample_id_edit_button($sample_id);
+		sample_id_delete_button($sample_id);
+	}
+	else
+	{
+		//sample_id_edit_button($sample_id);
+		sample_id_prev_button($sample_id);
+		sample_id_view_button($sample_id);
+		sample_id_next_button($sample_id);
+		//sample_id_delete_button($sample_id);
+		sample_id_unrelease_button($sample_id);			
+	}
+}
 
 function view_sample($link,$sample_id)
 {
@@ -114,15 +137,19 @@ function view_sample($link,$sample_id)
 	//print_r($rblob);
 	$result_plus_blob_requested=$ex_list+$rblob;
 	//print_r($result_plus_blob_requested);
+	if(count($result_plus_blob_requested)==0)
+	{
+		echo '<h3>No such sample with sample_id='.$sample_id.'</h3>';
+		return;
+	}
 	$profile_wise_ex_list=ex_to_profile($link,$result_plus_blob_requested);
 
 	//print_r($profile_wise_ex_list);
 	echo '</pre>';
 	echo '<div class="basic_form">
-			<div class=my_label >Sample ID:'.$sample_id.'</div>
-			<div>';
-				sample_id_edit_button($sample_id);
-				sample_id_view_button($sample_id);
+			<div class=my_label ><span class="badge badge-primary ">Sample ID</span>
+			<span class="badge badge-info"><h5>'.$sample_id.'</h5></span></div>			<div>';
+			show_all_buttons_for_sample($link,$sample_id);
 			echo '</div>
 			<div class="help print_hide">Unique Number to get this data</div>';
 	echo '</div>';	
@@ -340,7 +367,7 @@ function view_sample_no_profile($link,$sample_id)
 function sample_id_edit_button($sample_id)
 {
 	echo '<div class="d-inline-block" ><form method=post action=edit_general.php class=print_hide>
-	<button class="btn btn-success btn-sm" name=sample_id value=\''.$sample_id.'\' >'.$sample_id.'(Edit)</button>
+	<button class="btn btn-outline-primary btn-sm" name=sample_id value=\''.$sample_id.'\' >Edit</button>
 	<input type=hidden name=session_name value=\''.$_POST['session_name'].'\'>
 	<input type=hidden name=action value=edit_general>
 	</form></div>';
@@ -349,9 +376,57 @@ function sample_id_edit_button($sample_id)
 function sample_id_view_button($sample_id)
 {
 	echo '<div class="d-inline-block" ><form method=post action=view_single.php class=print_hide>
-	<button class="btn btn-success btn-sm" name=sample_id value=\''.$sample_id.'\' >'.$sample_id.'(View)</button>
+	<button class="btn btn-outline-success btn-sm" name=sample_id value=\''.$sample_id.'\' >View</button>
 	<input type=hidden name=session_name value=\''.$_POST['session_name'].'\'>
 	<input type=hidden name=action value=view_single>
+	</form></div>';
+}
+
+
+function sample_id_next_button($sample_id)
+{
+	echo '<div class="d-inline-block" ><form method=post action=view_single.php class=print_hide>
+	<button class="btn btn-outline-danger btn-sm" name=sample_id value=\''.($sample_id+1).'\' >Next</button>
+	<input type=hidden name=session_name value=\''.$_POST['session_name'].'\'>
+	<input type=hidden name=action value=view_single>
+	</form></div>';
+}
+
+
+function sample_id_prev_button($sample_id)
+{
+	echo '<div class="d-inline-block" ><form method=post action=view_single.php class=print_hide>
+	<button class="btn btn-outline-danger btn-sm" name=sample_id value=\''.($sample_id-1).'\' >Previous</button>
+	<input type=hidden name=session_name value=\''.$_POST['session_name'].'\'>
+	<input type=hidden name=action value=view_single>
+	</form></div>';
+}
+
+function sample_id_delete_button($sample_id)
+{
+	echo '<div class="d-inline-block" ><form method=post action=delete_sample.php class=print_hide>
+	<button onclick="return confirm(\'delete really?\')" class="btn btn-outline-dark btn-sm" name=sample_id value=\''.$sample_id.'\' >Delete</button>
+	<input type=hidden name=session_name value=\''.$_POST['session_name'].'\'>
+	<input type=hidden name=action value=delete_sample>
+	</form></div>';
+}
+
+
+function sample_id_release_button($sample_id)
+{
+	echo '<div class="d-inline-block" ><form method=post action=release_sample.php class=print_hide>
+	<button class="btn btn-outline-secondary btn-sm" name=sample_id value=\''.$sample_id.'\' >Release</button>
+	<input type=hidden name=session_name value=\''.$_POST['session_name'].'\'>
+	<input type=hidden name=action value=release_sample>
+	</form></div>';
+}
+
+function sample_id_unrelease_button($sample_id)
+{
+	echo '<div class="d-inline-block" ><form method=post action=unrelease_sample.php class=print_hide>
+	<button class="btn btn-outline-secondary btn-sm" name=sample_id value=\''.$sample_id.'\' >Un-Release</button>
+	<input type=hidden name=session_name value=\''.$_POST['session_name'].'\'>
+	<input type=hidden name=action value=unrelease_sample>
 	</form></div>';
 }
 
@@ -425,7 +500,8 @@ function edit_sample($link,$sample_id)
 			//<div class=help>Unique Number to get this data</div>';	
 	//echo '</div>';
 	echo '<div class="basic_form">
-			<div class=my_label >Sample ID:'.$sample_id.'</div>
+			<div class=my_label ><span class="badge badge-primary ">Sample ID</span>
+			<span class="badge badge-info"><h5>'.$sample_id.'</h5></span></div>
 			<div>';
 				sample_id_edit_button($sample_id);
 				sample_id_view_button($sample_id);
@@ -528,10 +604,9 @@ function delete_examination($link,$sample_id,$examination_id)
 			}
 			else
 			{
-					echo '<h3 style="color:green;"> 1 record  Deleted</h3>';
+					echo '<h3 style="color:green;"> '.rows_affected($link).' records  deleted</h3>';
 			}
 		
-     edit_sample($link,$sample_id);     
 }
 
 function get_primary_result($link,$sample_id,$examination_id)
@@ -563,6 +638,7 @@ function edit_field($link,$examination_id,$result_array,$sample_id,$readonly='')
 	if(!$edit_specification){$edit_specification=array();}
 	
 	$type=isset($edit_specification['type'])?$edit_specification['type']:'text';
+	$readonly=isset($edit_specification['readonly'])?$edit_specification['readonly']:'';
 	$help=isset($edit_specification['help'])?$edit_specification['help']:'';
 	$pattern=isset($edit_specification['pattern'])?$edit_specification['pattern']:'';
 	$placeholder=isset($edit_specification['placeholder'])?$edit_specification['placeholder']:'';
@@ -722,6 +798,7 @@ function edit_field($link,$examination_id,$result_array,$sample_id,$readonly='')
 						data-exid="'.$examination_id.'" 
 						data-sid="'.$sample_id.'" 
 						data-user="'.$_SESSION['login'].'" 
+					pattern="'.$pattern.'" 
 						class="form-control autosave" 
 						type=\''.$type.'\' 
 						value=\''.$result.'\'>';
@@ -750,7 +827,7 @@ function edit_field($link,$examination_id,$result_array,$sample_id,$readonly='')
 					data-exid="'.$examination_id.'" 
 					data-sid="'.$sample_id.'" 
 					data-user="'.$_SESSION['login'].'" 
-					pattern=\'"'.$pattern.'\'" 
+					pattern="'.$pattern.'" 
 					class="form-control autosave p-0 m-0 no-gutters" 
 					type=\''.$type.'\' >'.
 					htmlspecialchars($result,ENT_QUOTES).'</textarea>';
@@ -770,11 +847,11 @@ function decide_alert($result,$interval)
 	if(strlen($result)==0){return '';}
 	$is=explode('-',$interval);
 	//100-1000-4000-11000-20000-200000
-	if($result<$is[2])
+	if($result<$is[2]) //below ref
 	{
-		if($result<$is[1])
+		if($result<$is[1])	//below critical
 		{
-			if($result<$is[0])
+			if($result<$is[0])	//below absurd
 			{
 				return '<<<Absurd Low>>>';
 			}
@@ -822,8 +899,10 @@ function view_field($link,$ex_id,$ex_result)
 				echo '<div class="basic_form " id="ex_'.$ex_id.'">';
 		echo '	<div class="my_label border border-dark text-wrap">'.$examination_details['name'].'</div>
 				<div class="border border-dark"><pre class="m-0 p-0 border-0">'.htmlspecialchars($ex_result.' '.decide_alert($ex_result,$interval)).'</pre></div>
-				<div class="help border border-dark">'.$help.'</div>';
+				<div class="help border border-dark"><pre style="border-color:white">'.$help.'</div></pre>';
 				echo '</div>';
+				//<div class="help border border-dark"><pre>'.$help.'</pre></div>';
+
 }				
 
 
@@ -906,7 +985,7 @@ function save_result_blob($link)
 					sample_id=\''.$_POST['sample_id'].'\' 
 					and
 					examination_id=\''.$_POST['examination_id'].'\'';
-		
+		//echo $sql;
 			if(!$result=run_query($link,$GLOBALS['database'],$sql))
 			{
 				echo '<br>Data not updated';
@@ -1078,6 +1157,7 @@ function get_profile_info($link,$profile_id)
 	return get_single_row($result);
 }
 
+
 function get_examination_blob_data($link)
 {
 	$sql='select * from examination where examination_id>10000';
@@ -1189,7 +1269,7 @@ function save_insert($link)
 		$requested=array_merge($requested,$profile_ex_requested);
 	}
 
-	//$requested=array_filter(array_unique($requested));
+	$requested=array_filter(array_unique($requested));
 //1	
 	//echo '<pre>following is requested:<br>';print_r($requested);echo '</pre>';
 
@@ -1248,12 +1328,18 @@ function save_insert($link)
 					}
 					elseif($ex==$GLOBALS['sample_requirement'])
 					{
-						//already inserted
-						//insert_one_examination_with_result($link,$sid,$ex,$_POST['mrd']);
+						//already inserted during set_sample_id()
 					}
 					else
 					{
-						insert_one_examination_without_result($link,$sid,$ex);
+						if($ex<100000)
+						{
+							insert_one_examination_without_result($link,$sid,$ex);
+						}
+						else
+						{
+							insert_one_examination_blob_without_result($link,$sid,$ex);
+						}
 					}
 			}
 		}
@@ -1312,6 +1398,11 @@ function add_new_examination_and_profile($link,$sample_id,$list_of_selected_exam
 			{
 				//mrd inserted, do nothing
 			}
+			elseif($exr==$GLOBALS['sample_requirement'])
+			{
+				//already inserted
+				//insert_one_examination_with_result($link,$sid,$ex,$_POST['mrd']);
+			}
 			elseif($exr<100000)
 			{
 				insert_one_examination_without_result($link,$sample_id,$exr);
@@ -1334,7 +1425,7 @@ function set_lable($session_name,$sample_id,$examination_details,$examination_id
 		echo '
 			<div class="my_lable">';
 			
-		if($examination_details['examination_id']!=$GLOBALS['mrd'])
+		if($examination_details['examination_id']!=$GLOBALS['mrd'] && $examination_details['examination_id']!=$GLOBALS['sample_requirement'])
 		{
 		echo '
 				<form method=post class="d-inline">
@@ -1349,7 +1440,6 @@ function set_lable($session_name,$sample_id,$examination_details,$examination_id
 				
 		echo '<label for="'.$examination_details['name'].'">'.$examination_details['name'].'</label>
 			</div>';
-	
 }
 
 
@@ -1408,8 +1498,10 @@ function insert_one_examination_without_result($link,$sample_id,$examination_id)
 
 function insert_one_examination_with_result($link,$sample_id,$examination_id,$result)
 {
-	$sql='insert into result (sample_id,examination_id,result)
-			values ("'.$sample_id.'","'.$examination_id.'","'.$result.'")';
+	//recording_time=now(),recorded_by=\''.$_POST['user'].'\'
+				
+	$sql='insert into result (sample_id,examination_id,result,recording_time,recorded_by)
+			values ("'.$sample_id.'","'.$examination_id.'","'.my_safe_string($link,$result).'",now(),"'.$_SESSION['login'].'")';
 	//echo $sql.'(without)<br>';
 	if(!run_query($link,$GLOBALS['database'],$sql))
 	{

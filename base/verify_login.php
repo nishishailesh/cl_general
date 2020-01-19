@@ -104,10 +104,14 @@ if($verification_code==100 && !isset($GLOBALS['nojunk']))
 {
 	//echo 'user verified';
 	head($GLOBALS['application_name']);
+	$link=get_link($GLOBALS['main_user'],$GLOBALS['main_pass']);
+	$user=get_user_info($link,$_SESSION['login']);
+	$name=isset($user['name'])?$user['name']:'';
+	
 	echo '<form id=root_menu method=post class="form-group">
 			<input type=hidden name=session_name value=\''.session_name().'\'>
 			<button class="btn btn-primary" type=submit name=action value=change_password>Change Password</button>
-			<button class="btn btn-primary" type=submit name=action value=logout>Logout</button>
+			<button class="btn btn-primary" type=submit name=action value=logout>Logout ('.$name.')</button>
 		</form>';		
 }
 
@@ -179,4 +183,11 @@ function read_new_passoword()
 	';
 }
 
+
+function get_user_info($link,$user)
+{
+	$sql='select * from user where user=\''.$user.'\'';
+	$result=run_query($link,$GLOBALS['database'],$sql);
+	return get_single_row($result);
+}
 ?>

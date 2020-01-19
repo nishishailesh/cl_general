@@ -139,4 +139,8 @@ function get_row_count($result)
 }
 ////////////////////////////////////////
 
+function rows_affected($link)
+{
+	return mysqli_affected_rows($link);
+}
 ?>
