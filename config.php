@@ -13,6 +13,7 @@ $GLOBALS['mrd']=1001;
 $GLOBALS['sample_requirement']=1000;
 $GLOBALS['max_non_ex_profile']=20;
 $GLOBALS['released_by']=1014;
+$GLOBALS['pid_profile']=1;
 
 $GLOBALS['advice']='
 		<ul>
@@ -23,4 +24,17 @@ $GLOBALS['advice']='
                 <li>Microcytic</li>
         </ul>
 ';
+
+$GLOBALS['HI']=array('name'=>'New Civil Hospital Surat Laboratory Services',
+						'section'=>'Hematology and Immunology Section',
+						'address'=>'OPD-10, NCHS, Surat',
+						'phone'=>'0261 2244456 Ext. 424,425,426'
+						);
+
+
+$GLOBALS['BI']=array('name'=>'New Civil Hospital Surat Laboratory Services',
+						'section'=>'Biochemistry Section',
+						'address'=>'Beside Blood Bank, 2nd Floor, NCHS, Surat',
+						'phone'=>'0261 2244456 Ext. 317,366'
+						);
 ?>

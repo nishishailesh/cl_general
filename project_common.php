@@ -125,12 +125,13 @@ function show_all_buttons_for_sample($link,$sample_id)
 		sample_id_next_button($sample_id);
 		//sample_id_delete_button($sample_id);
 		sample_id_unrelease_button($sample_id);			
+		sample_id_print_button($sample_id);			
 	}
 }
 
 function view_sample($link,$sample_id)
 {
-	echo '<pre>';
+
 	$ex_list=get_result_of_sample_in_array($link,$sample_id);
 	//print_r($ex_list);
 	$rblob=get_result_blob_of_sample_in_array($link,$sample_id);
@@ -144,8 +145,18 @@ function view_sample($link,$sample_id)
 	}
 	$profile_wise_ex_list=ex_to_profile($link,$result_plus_blob_requested);
 
-	//print_r($profile_wise_ex_list);
-	echo '</pre>';
+	$sr=get_one_ex_result($link,$sample_id,$GLOBALS['sample_requirement']);
+	//echo $sr;
+	$sr_array=explode('-',$sr);
+	//print_r($sr_array);
+	$header=$GLOBALS[$sr_array[2]];
+	echo '<H2 class="text-center only_print">'.$header['name'].'</H2>
+	<H3 class="text-center only_print">'.$header['section'].'</H3>
+	<H4 class="text-center only_print">'.$header['address'].'</H4>
+	<H5 class="text-center only_print">'.$header['phone'].'</H5>
+	<hr>
+	';
+
 	echo '<div class="basic_form">
 			<div class=my_label ><span class="badge badge-primary ">Sample ID</span>
 			<span class="badge badge-info"><h5>'.$sample_id.'</h5></span></div>			<div>';
@@ -382,10 +393,19 @@ function sample_id_view_button($sample_id)
 	</form></div>';
 }
 
+function sample_id_print_button($sample_id)
+{
+	echo '<div class="d-inline-block" ><form method=post action=print_single.php target=_blank class=print_hide>
+	<button class="btn btn-outline-success btn-sm" name=sample_id value=\''.$sample_id.'\' >Print</button>
+	<input type=hidden name=session_name value=\''.$_POST['session_name'].'\'>
+	<input type=hidden name=action value=print_single>
+	</form></div>';
+}
+
 
 function sample_id_next_button($sample_id)
 {
-	echo '<div class="d-inline-block" ><form method=post action=view_single.php class=print_hide>
+	echo '<div class="d-inline-block" ><form method=post action=view_single.php  class=print_hide>
 	<button class="btn btn-outline-danger btn-sm" name=sample_id value=\''.($sample_id+1).'\' >Next</button>
 	<input type=hidden name=session_name value=\''.$_POST['session_name'].'\'>
 	<input type=hidden name=action value=view_single>
@@ -899,7 +919,7 @@ function view_field($link,$ex_id,$ex_result)
 				echo '<div class="basic_form " id="ex_'.$ex_id.'">';
 		echo '	<div class="my_label border border-dark text-wrap">'.$examination_details['name'].'</div>
 				<div class="border border-dark"><pre class="m-0 p-0 border-0">'.htmlspecialchars($ex_result.' '.decide_alert($ex_result,$interval)).'</pre></div>
-				<div class="help border border-dark"><pre style="border-color:white">'.$help.'</div></pre>';
+				<div class="help border border-dark"><pre style="border-color:white">'.$help.'</pre></div>';
 				echo '</div>';
 				//<div class="help border border-dark"><pre>'.$help.'</pre></div>';
 

@@ -20,7 +20,12 @@
 	{
 	  display: grid;
 	  grid-template-columns: auto auto;
-	}		 
+	}	
+	
+	.only_print
+	{
+		display:none
+	}	 
 }
 
 /* Tablet Styles */
@@ -43,6 +48,12 @@
 	  display: grid;
 	  grid-template-columns: auto auto auto auto;
 	}	   
+
+	.only_print
+	{
+		display:none
+	}	 
+
 }
 
 @media only screen and (min-width: 961px) 
@@ -64,7 +75,13 @@
 	{
 	  display: grid;
 	  grid-template-columns: auto auto auto auto auto auto;
-	}	  
+	}	
+
+	.only_print
+	{
+		display:none
+	}	 
+	  
 }
 
 @media only print 
