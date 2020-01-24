@@ -1,0 +1,7 @@
+systemctl daemon-reload
+systemctl enable microswrite0
+systemctl enable microswrite1
+systemctl enable microswrite2
+systemctl enable microsread0
+systemctl enable microsread1
+systemctl enable microsread2

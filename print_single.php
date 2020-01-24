@@ -9,17 +9,12 @@ require_once('tcpdf/tcpdf.php');
 class ACCOUNT1 extends TCPDF {
 	public $sample_id;
 	public $link;
+	public $current_y;
+	public $profile_wise_ex_list;
 	public function Header() 
 	{
 		ob_start();	
 	$sr=get_one_ex_result($this->link,$this->sample_id,$GLOBALS['sample_requirement']);
-	//$mrd=get_one_ex_result($this->link,$this->sample_id,$GLOBALS['mrd']);
-	$pid=get_profile_info($this->link,$GLOBALS['pid_profile']);
-	//echo 'xxxx';
-	//print_r($pid);
-	//echo '0000';
-	$ex_of_pid=explode(',',$pid['examination_id_list']);
-	//echo $sr;
 	$sr_array=explode('-',$sr);
 	$header=$GLOBALS[$sr_array[2]];
 	
@@ -31,7 +26,7 @@ class ACCOUNT1 extends TCPDF {
 
 	
 			$count=1;
-			foreach($ex_of_pid as $v)
+			foreach($this->profile_wise_ex_list[$GLOBALS['pid_profile']] as $v)
 			{
 				if($count%3==1)
 				{
@@ -69,90 +64,73 @@ class ACCOUNT1 extends TCPDF {
 	 ob_end_clean();
 	$this->SetY(10);
 	$this->writeHTML($myStr, true, false, true, false, '');
+	$this->current_y=$this->GetY();
 	}
 	
 	public function Footer() 
 	{
-	    $this->SetY(-10);
+	    $this->SetY(-20);
 		$this->Cell(0, 10, 'Page '.$this->getAliasNumPage().'/'.$this->getAliasNbPages(), 0, false, 'C', 0, '', 0, false, 'T', 'M');
 	}	
 }
 
 
-//echo '		  <link rel="stylesheet" href="project_common.css">
-//		  <script src="project_common.js"></script>';	
 $link=get_link($GLOBALS['main_user'],$GLOBALS['main_pass']);
 
-//main_menu();
-//echo '<div id=response></div>';
-	//echo_class_button($link,'Haemogram')	;
 
 	print_sample($link,$_POST['sample_id']);
 
 //////////////user code ends////////////////
 //tail();
 
-//echo '<pre>';print_r($_POST);echo '</pre>';
+echo '<pre>';print_r($_POST);echo '</pre>';
 
 //////////////Functions///////////////////////
 
 function print_sample($link,$sample_id)
 {
-	ob_start();
-	view_sample_p($link,$sample_id);
-	  $myStr = ob_get_contents();
-	ob_end_clean();
+
 	//echo $myStr;
 	//exit(0);
 
 	     $pdf = new ACCOUNT1('P', 'mm', 'A4', true, 'UTF-8', false);
 	     $pdf->sample_id=$sample_id;
 	     $pdf->link=$link;
+	     $pdf->profile_wise_ex_list=get_profile_wise_ex_list($link,$sample_id);
+	     if($pdf->profile_wise_ex_list===false){return;}
 	     
+	ob_start();
+	view_sample_p($link,$sample_id,$pdf->profile_wise_ex_list);
+	  $myStr = ob_get_contents();
+	ob_end_clean();
+	
+		     
 	     //left,top,right
-	     $pdf->SetMargins(10, 50, 10);
-	     $pdf->SetAutoPageBreak(TRUE, PDF_MARGIN_BOTTOM-15);
+	     $pdf->SetMargins(10, 40, 10);
+
+	     $pdf->SetAutoPageBreak(TRUE, PDF_MARGIN_BOTTOM-10);
+
+	     
 	     $pdf->SetFont('courier', '', 9);
-	     $pdf->AddPage();
+		 $pdf->AddPage();
+		 $pdf->SetY($pdf->current_y);
 	     $pdf->writeHTML($myStr, true, false, true, false, '');
+	     //$pdf->writeHTML($pdf->current_y, true, false, true, false, '');	     
 	     $pdf->Output('print_dc.pdf', 'I');
 }
 
 
-function view_sample_p($link,$sample_id)
+function view_sample_p($link,$sample_id,$profile_wise_ex_list)
 {
 	$ex_list=get_result_of_sample_in_array($link,$sample_id);
-	//print_r($ex_list);
-	$rblob=get_result_blob_of_sample_in_array($link,$sample_id);
-	//print_r($rblob);
-	$result_plus_blob_requested=$ex_list+$rblob;
-	//print_r($result_plus_blob_requested);
-	if(count($result_plus_blob_requested)==0)
-	{
-		echo '<h3>No such sample with sample_id='.$sample_id.'</h3>';
-		return;
-	}
-	$profile_wise_ex_list=ex_to_profile($link,$result_plus_blob_requested);
-
-	//$sr=get_one_ex_result($link,$sample_id,$GLOBALS['sample_requirement']);
-	//echo $sr;
-	//$sr_array=explode('-',$sr);
-	//print_r($sr_array);
-	//$header=$GLOBALS[$sr_array[2]];
 	echo '<table border="0">';
-	
-	//<tr><td style="text-align:center" colspan="3"><h2>'.$header['name'].'</h2></td></tr>
-	//<tr><td style="text-align:center" colspan="3"><h3>'.$header['section'].'</h3></td></tr>
-	//<tr><td style="text-align:center" colspan="3"><h5>'.$header['address'].'</h5></td></tr>
-	//<tr><td style="text-align:center" colspan="3"><h5>'.$header['phone'].'</h5></td></tr>
-	//';
 
 	foreach($profile_wise_ex_list as $kp=>$vp)
 	{
 		if($kp==$GLOBALS['pid_profile']){continue;}
 		$pinfo=get_profile_info($link,$kp);
 
-		echo '<tr><th colspan="3"><h2><u>'.$pinfo['name'].'</u></h2></th></tr>';
+		echo '<tr><th colspan="3"><br><h2><u>'.$pinfo['name'].'</u></h2></th></tr>';
 		if($pinfo['profile_id']>$GLOBALS['max_non_ex_profile'])
 		{
 			echo_result_header_p();
@@ -237,4 +215,20 @@ function echo_result_header_p()
 	echo '<tr><td width="25%">Examination</td><td width="30%">Result</td><td width="45%">Unit, Ref. Intervals ,(Method)</td></tr>';
 }
 
+function get_profile_wise_ex_list($link,$sample_id)
+{
+	$ex_list=get_result_of_sample_in_array($link,$sample_id);
+	//print_r($ex_list);
+	$rblob=get_result_blob_of_sample_in_array($link,$sample_id);
+	//print_r($rblob);
+	$result_plus_blob_requested=$ex_list+$rblob;
+	//print_r($result_plus_blob_requested);
+	if(count($result_plus_blob_requested)==0)
+	{
+		echo '<h3>No such sample with sample_id='.$sample_id.'</h3>';
+		return false;
+	}
+	
+	return $profile_wise_ex_list=ex_to_profile($link,$result_plus_blob_requested);
+}
 ?>
