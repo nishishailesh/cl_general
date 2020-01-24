@@ -861,6 +861,7 @@ function edit_field($link,$examination_id,$result_array,$sample_id,$readonly='')
 	} 
 }
 
+/*
 function decide_alert($result,$interval)
 {
 	if(strlen($interval)==0){return '';}
@@ -890,6 +891,57 @@ function decide_alert($result,$interval)
 		if($result>$is[4])
 		{
 			if($result>$is[5])
+			{
+				return '('.$result.'>'.$is[5].')<<<Absurd High>>>';
+			}
+			else
+			{
+				return '<<<Critical High>>>';
+			}
+		}
+		else
+		{
+			return '<<<Abnormal High>>>';
+		}
+	}
+	else
+	{
+		return '';
+	}	
+}
+*/
+
+function decide_alert($result,$interval)
+{
+	if(strlen($interval)==0){return '';}
+	if(strlen($result)==0){return '';}
+	$is=explode('-',$interval);
+	//100-1000-4000-11000-20000-200000
+	
+	
+	if($result<$is[2]) //below ref
+	{
+		if($result<$is[1] && $is[1]<$is[2])	//below critical
+		{
+			if($result<$is[0] && $is[0]<$is[1])	//below absurd
+			{
+				return '<<<Absurd Low>>>';
+			}
+			else
+			{
+				return '<<<Critical Low>>>';
+			}
+		}
+		else
+		{
+			return '<<<Abnormal Low>>>';
+		}
+	}
+	elseif($result>$is[3])
+	{
+		if($result>$is[4] && $is[4]>$is[3])
+		{
+			if($result>$is[5] && $is[5]>$is[4])
 			{
 				return '<<<Absurd High>>>';
 			}
