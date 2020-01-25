@@ -169,7 +169,6 @@ function view_sample($link,$sample_id)
 	{
 		$pinfo=get_profile_info($link,$kp);
 		$div_id=$pinfo['name'].'_'.$sample_id;
-		//echo '<h6 data-toggle="collapse" class=sh href=\'#'.$div_id.'\' >X</h6><div></div><div></div>';
 		echo '<img src="img/show_hide.png" height=32 data-toggle="collapse" class=sh href=\'#'.$div_id.'\' ><div></div><div></div>';
 		echo '<div class="collapse show" id=\''.$div_id.'\'>';
 		echo '<h3>'.$pinfo['name'].'</h3><div></div><div></div>';
@@ -829,7 +828,39 @@ function edit_field($link,$examination_id,$result_array,$sample_id,$readonly='')
 			echo '</div>';
 			echo '<p class="help">'.$help.'</p>';	
 		echo '</div>';
-	}		
+	}
+	elseif($type=='dw')
+	{
+		//////
+		echo '<div class="basic_form  m-0 p-0 no-gutters">';
+			////
+			set_lable($_POST['session_name'],$_POST['sample_id'],$examination_details,$examination_id);
+			////
+			echo '<div class="m-0 p-0 no-gutters">';
+				////
+				echo '<div class="d-inline-block no-gutters">';
+				
+					echo '<textarea rows=1
+					'.$readonly.'
+					id="'.$element_id.'" 
+					name="'.$examination_id.'" 
+					data-exid="'.$examination_id.'" 
+					data-sid="'.$sample_id.'" 
+					data-user="'.$_SESSION['login'].'" 
+					pattern="'.$pattern.'" 
+					class="form-control autosave p-0 m-0 no-gutters" 
+					type=\''.$type.'\' >'.
+					htmlspecialchars($result,ENT_QUOTES).'</textarea>';
+					
+					display_dw($result);
+				echo '</div>';
+				echo '<div class="d-inline  no-gutters">';
+					get_primary_result($link,$sample_id,$examination_id);
+				echo '</div>';
+			echo '</div>';
+			echo '<p class="help">'.$help.'</p>';	
+		echo '</div>';
+	} 		
 	else  
 	{
 		//////
@@ -911,70 +942,122 @@ function decide_alert($result,$interval)
 }
 */
 
-function decide_alert($result,$interval)
+function decide_alert($result,$interval_l,$cinterval_l,$ainterval_l,$interval_h,$cinterval_h,$ainterval_h)
 {
-	if(strlen($interval)==0){return '';}
+	if(strlen($interval_l)==0 && strlen($cinterval_l)==0 && strlen($ainterval_l)==0 &&
+	strlen($interval_h)==0 && strlen($cinterval_h)==0 && strlen($ainterval_h)==0){return '';}
 	if(strlen($result)==0){return '';}
-	$is=explode('-',$interval);
-	//100-1000-4000-11000-20000-200000
-	
-	
-	if($result<$is[2]) //below ref
+		
+	if(is_numeric($ainterval_l))
 	{
-		if($result<$is[1] && $is[1]<$is[2])	//below critical
+		if($result<$ainterval_l)
 		{
-			if($result<$is[0] && $is[0]<$is[1])	//below absurd
-			{
-				return '<<<Absurd Low>>>';
-			}
-			else
-			{
-				return '<<<Critical Low>>>';
-			}
-		}
-		else
-		{
-			return '<<<Abnormal Low>>>';
+			return $alert='(((Absurd Low)))';
+			//return $alert='((('.$result.'<'.$ainterval_l.' Absurd Low)))';
 		}
 	}
-	elseif($result>$is[3])
+
+	if(is_numeric($ainterval_h))
 	{
-		if($result>$is[4] && $is[4]>$is[3])
+		if($result>$ainterval_h)
 		{
-			if($result>$is[5] && $is[5]>$is[4])
-			{
-				return '<<<Absurd High>>>';
-			}
-			else
-			{
-				return '<<<Critical High>>>';
-			}
+			return $alert='(((Absurd High)))';
+			//return $alert='((('.$result.'>'.$ainterval_h.' Absurd high)))';
 		}
-		else
+		
+	}
+
+	if(is_numeric($cinterval_l))
+	{
+		if($result<$cinterval_l)
 		{
-			return '<<<Abnormal High>>>';
+			return $alert='(((Critical Low)))';
+			//return $alert='((('.$result.'<'.$cinterval_l.' Critical Low)))';
+
 		}
 	}
-	else
+
+	if(is_numeric($cinterval_h))
 	{
-		return '';
-	}	
+		if($result>$cinterval_h)
+		{
+			//return $alert='((('.$result.'>'.$cinterval_h.' Critical High)))';
+			return $alert='(((Critical High)))';
+		}
+	}
+
+
+	if(is_numeric($interval_l))
+	{
+		if($result<$interval_l)
+		{
+			//return $alert='((('.$result.'<'.$interval_l.' Abnormal Low)))';
+			return $alert='(((Abnormal Low)))';
+		}
+	}
+
+	if(is_numeric($interval_h))
+	{
+		if($result>$interval_h)
+		{
+			//return $alert='((('.$result.'>'.$interval_h.' Abnormal high)))';
+			return $alert='(((Abnormal High)))';
+		}
+	}
+
+	return '';			
 }
 
+function display_dw($ex_result)
+{
+	$ar=str_split($ex_result);
+	echo '<div style="font-size:2px; transform: rotate(270deg);">';
+	foreach ($ar as $v)
+	{
+		//echo ord($v).',';
+		for($i=32;$i<ord($v);$i++)
+		{
+			echo '<span style="background-color: coral;"> </span>';
+		}
+		echo '<br>';
+	}
+	echo '</div>';
+	
+}
 function view_field($link,$ex_id,$ex_result)
 {
 		$examination_details=get_one_examination_details($link,$ex_id);
 		$edit_specification=json_decode($examination_details['edit_specification'],true);
 		$help=isset($edit_specification['help'])?$edit_specification['help']:'';
-		$interval=isset($edit_specification['interval'])?$edit_specification['interval']:'';
+		$interval_l=isset($edit_specification['interval_l'])?$edit_specification['interval_l']:'';
+		$cinterval_l=isset($edit_specification['cinterval_l'])?$edit_specification['cinterval_l']:'';
+		$ainterval_l=isset($edit_specification['ainterval_l'])?$edit_specification['ainterval_l']:'';
+		$interval_h=isset($edit_specification['interval_h'])?$edit_specification['interval_h']:'';
+		$cinterval_h=isset($edit_specification['cinterval_h'])?$edit_specification['cinterval_h']:'';
+		$ainterval_h=isset($edit_specification['ainterval_h'])?$edit_specification['ainterval_h']:'';
+		$img=isset($edit_specification['img'])?$edit_specification['img']:'';
 		
-				echo '<div class="basic_form " id="ex_'.$ex_id.'">';
-		echo '	<div class="my_label border border-dark text-wrap">'.$examination_details['name'].'</div>
-				<div class="border border-dark"><pre class="m-0 p-0 border-0">'.htmlspecialchars($ex_result.' '.decide_alert($ex_result,$interval)).'</pre></div>
+		if($img=='dw')
+		{
+			echo '<div class="basic_form " id="ex_'.$ex_id.'">';
+			echo '	<div class="my_label border border-dark text-wrap">'.$examination_details['name'].'</div>
+				<div class="border border-dark"><pre class="m-0 p-0 border-0">';
+			display_dw($ex_result);
+			echo '</pre></div>';							
+			echo '<div class="help border border-dark"><pre style="border-color:white">'.$help.'</pre></div>';
+			echo '</div>';			
+		}
+		else
+		{
+			echo '<div class="basic_form " id="ex_'.$ex_id.'">';
+			echo '	<div class="my_label border border-dark text-wrap">'.$examination_details['name'].'</div>
+				<div class="border border-dark"><pre class="m-0 p-0 border-0">'.
+					htmlspecialchars($ex_result.' '.
+					decide_alert($ex_result,$interval_l,$cinterval_l,$ainterval_l,$interval_h,$cinterval_h,$ainterval_h)).'</pre></div>
 				<div class="help border border-dark"><pre style="border-color:white">'.$help.'</pre></div>';
-				echo '</div>';
-				//<div class="help border border-dark"><pre>'.$help.'</pre></div>';
-
+			echo '</div>';
+		}
+		
 }				
 
 
@@ -983,11 +1066,16 @@ function view_field_hr($link,$ex_id,$ex_result)
 		$examination_details=get_one_examination_details($link,$ex_id);
 		$edit_specification=json_decode($examination_details['edit_specification'],true);
 		$help=isset($edit_specification['help'])?$edit_specification['help']:'';
-		$interval=isset($edit_specification['interval'])?$edit_specification['interval']:'';
-		
+		$interval_l=isset($edit_specification['interval_l'])?$edit_specification['interval_l']:'';
+		$cinterval_l=isset($edit_specification['cinterval_l'])?$edit_specification['cinterval_l']:'';
+		$ainterval_l=isset($edit_specification['ainterval_l'])?$edit_specification['ainterval_l']:'';
+		$interval_h=isset($edit_specification['interval_h'])?$edit_specification['interval_h']:'';
+		$cinterval_h=isset($edit_specification['cinterval_h'])?$edit_specification['cinterval_h']:'';
+		$ainterval_h=isset($edit_specification['ainterval_h'])?$edit_specification['ainterval_h']:'';
+						
 		echo '<div id="ex_'.$ex_id.'">';
-		echo '	<div class="my_label text-wrap d-inline">'.$examination_details['name'].'
-				:'.htmlspecialchars($ex_result.' '.decide_alert($ex_result,$interval)).'</div>';
+					htmlspecialchars($ex_result.' '.
+					decide_alert($ex_result,$interval_l,$cinterval_l,$ainterval_l,$interval_h,$cinterval_h,$ainterval_h)).'</pre></div>';
 		echo '</div>';
 }				
 
@@ -1191,7 +1279,7 @@ function add_get_data($link,$sample_id)
 	echo '</form>';			
 }
 
-
+/*
 function get_examination_data($link)
 {
 	$sql='select * from examination';
@@ -1204,6 +1292,37 @@ function get_examination_data($link)
 	}
 	echo '<input type=text name=list_of_selected_examination id=list_of_selected_examination>';
 	echo '</div>';
+	echo '</div>';
+}
+*/
+
+function get_examination_data($link)
+{
+	$sql='select * from profile';
+	$result=run_query($link,$GLOBALS['database'],$sql);
+
+	echo '<div id=examination class="tab-pane">';
+
+	while($ar=get_single_row($result))
+	{
+		$pinfo=get_profile_info($link,$ar['profile_id']);
+
+		$div_id=$pinfo['name'];
+		echo '<img src="img/show_hide.png" height=32 data-toggle="collapse" class=sh href=\'#'.$div_id.'\' ><div></div><div></div>';
+		echo '<div class="collapse show " id=\''.$div_id.'\'>';
+			echo '<h3>'.$pinfo['name'].'</h3>';
+			echo '<div class="ex_profile">';
+				$ex_list=explode(',',$ar['examination_id_list']);
+				foreach($ex_list as $v)
+				{
+					$ex_data=get_one_examination_details($link,$v);
+					$sr=$ex_data['sample_requirement']!='None'?$ex_data['sample_requirement']:'';
+					my_on_off_ex($ex_data['name'].'<br>'.$sr,$ex_data['examination_id']);
+				}
+			echo '</div>';
+		echo '</div>';
+	}
+	echo '<input type=text name=list_of_selected_examination id=list_of_selected_examination>';
 	echo '</div>';
 }
 
