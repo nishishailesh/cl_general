@@ -24,7 +24,6 @@ function main_menu()
 	';		
 }
 
-
 function mk_select_from_array($name, $select_array,$disabled='',$default='')
 {	
 	echo '<select  '.$disabled.' name=\''.$name.'\'>';
@@ -202,8 +201,7 @@ function view_sample($link,$sample_id)
 					view_field_blob_hr($link,$ex_id,$sample_id);	
 				}
 			}
-			echo '</div>';
-			
+			echo '</div>';			
 		}
 		echo '</div>';
 	}
@@ -1073,9 +1071,9 @@ function view_field_hr($link,$ex_id,$ex_result)
 		$cinterval_h=isset($edit_specification['cinterval_h'])?$edit_specification['cinterval_h']:'';
 		$ainterval_h=isset($edit_specification['ainterval_h'])?$edit_specification['ainterval_h']:'';
 						
-		echo '<div id="ex_'.$ex_id.'">';
-					htmlspecialchars($ex_result.' '.
-					decide_alert($ex_result,$interval_l,$cinterval_l,$ainterval_l,$interval_h,$cinterval_h,$ainterval_h)).'</pre></div>';
+		echo '<div id="ex_'.$ex_id.'">'.
+					htmlspecialchars($ex_result).' '.				
+					decide_alert($ex_result,$interval_l,$cinterval_l,$ainterval_l,$interval_h,$cinterval_h,$ainterval_h).'</pre></div>';
 		echo '</div>';
 }				
 

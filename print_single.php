@@ -193,7 +193,7 @@ function view_field_p($link,$ex_id,$ex_result)
 		
 				echo '<tr>';
 		echo '	<td style="border: 0.3px solid black;">'.$examination_details['name'].'</td>
-				<td style="border: 0.3px solid black;"><pre>'.htmlspecialchars($ex_result.' '.decide_alert($ex_result,$interval)).'</pre></td>
+				<td style="border: 0.3px solid black;"><pre>'.htmlspecialchars($ex_result.' '.decide_alert($ex_result,$interval,'','','','','')).'</pre></td>
 				<td style="border: 0.3px solid black;">'.nl2br(htmlspecialchars($help)).'</td>';
 				echo '</tr>';
 		//echo '	<pre><table border="1"><tr><td>sadda</td><td>sadda</td></tr><tr><td>sadda</td><td>sadda</td></tr></table>'.htmlspecialchars($help).'</pre>';
@@ -207,7 +207,7 @@ function view_field_hr_p($link,$ex_id,$ex_result)
 		$help=isset($edit_specification['help'])?$edit_specification['help']:'';
 		$interval=isset($edit_specification['interval'])?$edit_specification['interval']:'';
 		
-		echo '<b>'.$examination_details['name'].':</b> '.htmlspecialchars($ex_result.' '.decide_alert($ex_result,$interval));
+		echo '<b>'.$examination_details['name'].':</b> '.htmlspecialchars($ex_result.' '.decide_alert($ex_result,$interval,'','','','',''));
 }	
 
 function echo_result_header_p()
