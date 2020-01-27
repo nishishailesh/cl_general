@@ -6,6 +6,8 @@ require_once 'base/verify_login.php';
 	////////User code below/////////////////////
 require_once('tcpdf/tcpdf.php');
 
+$GLOBALS['img_res']='';
+
 class ACCOUNT1 extends TCPDF {
 	public $sample_id;
 	public $link;
@@ -18,7 +20,7 @@ class ACCOUNT1 extends TCPDF {
 	$sr_array=explode('-',$sr);
 	$header=$GLOBALS[$sr_array[2]];
 	
-	echo '<table>
+	echo '<table  cellpadding="2">
 	<tr><td style="text-align:center" colspan="3"><h2>'.$header['name'].'</h2></td></tr>
 	<tr><td style="text-align:center" colspan="3"><h3>'.$header['section'].'<b> (Sample ID:</b> '.$this->sample_id.')</h3></td></tr>
 	<tr><td style="text-align:center" colspan="3"><h5>'.$header['address'].'</h5></td></tr>
@@ -36,7 +38,7 @@ class ACCOUNT1 extends TCPDF {
 				if($v<100000)
 				{
 					$r=get_one_ex_result($this->link,$this->sample_id,$v);
-					echo '<td>';
+					echo '<td style="border-right:0.1px solid black;">';
 					view_field_hr_p($this->link,$v,$r);	
 					echo '</td>';
 				}
@@ -98,32 +100,69 @@ function print_sample($link,$sample_id)
 	     $pdf->link=$link;
 	     $pdf->profile_wise_ex_list=get_profile_wise_ex_list($link,$sample_id);
 	     if($pdf->profile_wise_ex_list===false){return;}
-	     
+	     $GLOBALS['pdf']=$pdf;
 	ob_start();
-	view_sample_p($link,$sample_id,$pdf->profile_wise_ex_list);
-	  $myStr = ob_get_contents();
+		view_sample_p($link,$sample_id,$pdf->profile_wise_ex_list);
+		$myStr = ob_get_contents();
 	ob_end_clean();
-	
-		     
+
 	     //left,top,right
 	     $pdf->SetMargins(10, 40, 10);
 
-	     $pdf->SetAutoPageBreak(TRUE, PDF_MARGIN_BOTTOM-10);
+	     $pdf->SetAutoPageBreak(TRUE, 30);
 
 	     
 	     $pdf->SetFont('courier', '', 9);
+	     //$pdf->SetMargins(10, $pdf->current_y, 10); //no effect, page not added
+	     //$pdf->SetY($pdf->current_y); //no effect, page not added
 		 $pdf->AddPage();
-		 $pdf->SetY($pdf->current_y);
+		 $pdf->SetY($pdf->current_y); //required , setMargin after add page have no effect
+		 $pdf->SetMargins(10, $pdf->current_y, 10); //will take effect from next page onwards
+
 	     $pdf->writeHTML($myStr, true, false, true, false, '');
-	     //$pdf->writeHTML($pdf->current_y, true, false, true, false, '');	     
-	     $pdf->Output('print_dc.pdf', 'I');
+	     
+	     
+	     //$str=get_one_ex_result($link,$sample_id,20);
+	     //$x=display_dw_png($str);
+	     //$pdf->Image('@'.$x);	
+				     
+	     $pdf->Output('report-'.$sample_id.'.pdf', 'I');
 }
 
+function display_dw_png($ex_result)
+{
+	$ar=str_split($ex_result);
+	
+	$width=256; //128 X 2
+    $height=128; //256;//223+32=255 make is half to save space
+    $im = imagecreatetruecolor($width,$height);
+    $white = imagecolorallocate($im, 255, 255, 225);
+    $black = imagecolorallocate($im, 0,0,0);
+	imagefill($im,0,0,$white);
+	$px=0;
+	$py=256;
+	foreach ($ar as $k=>$v)
+	{
+		$y=(256-ord($v))/2 +16; //make half add 16 to get baseline
+		$x=$k*2;	//every two pixel
+		imageline ( $im , $px , $py , $x , $y , $black ) ;
+		$py=$y;
+		$px=$x;
+	}
+	
+	ob_start();	
+	imagepng($im);
+	$myStr = ob_get_contents();
+	ob_end_clean();
+	imagedestroy($im);	
+	return $myStr;
+
+}
 
 function view_sample_p($link,$sample_id,$profile_wise_ex_list)
 {
 	$ex_list=get_result_of_sample_in_array($link,$sample_id);
-	echo '<table border="0">';
+	echo '<table border="0"  cellpadding="2">';
 
 	foreach($profile_wise_ex_list as $kp=>$vp)
 	{
@@ -156,7 +195,7 @@ function view_sample_p($link,$sample_id,$profile_wise_ex_list)
 
 				if($ex_id<100000)
 				{
-					echo '<td>';
+					echo '<td style="border-right:0.1px solid black;">';
 					view_field_hr_p($link,$ex_id,$ex_list[$ex_id]);	
 					echo '</td>';
 				}
@@ -188,17 +227,68 @@ function view_field_p($link,$ex_id,$ex_result)
 		$examination_details=get_one_examination_details($link,$ex_id);
 		$edit_specification=json_decode($examination_details['edit_specification'],true);
 		$help=isset($edit_specification['help'])?$edit_specification['help']:'';
-		//$help=str_replace('\n','<br>',$help);
-		$interval=isset($edit_specification['interval'])?$edit_specification['interval']:'';
-		
+
+		$interval_l=isset($edit_specification['interval_l'])?$edit_specification['interval_l']:'';
+		$cinterval_l=isset($edit_specification['cinterval_l'])?$edit_specification['cinterval_l']:'';
+		$ainterval_l=isset($edit_specification['ainterval_l'])?$edit_specification['ainterval_l']:'';
+		$interval_h=isset($edit_specification['interval_h'])?$edit_specification['interval_h']:'';
+		$cinterval_h=isset($edit_specification['cinterval_h'])?$edit_specification['cinterval_h']:'';
+		$ainterval_h=isset($edit_specification['ainterval_h'])?$edit_specification['ainterval_h']:'';
+		$img=isset($edit_specification['img'])?$edit_specification['img']:'';
+
+
+		if($img=='dw')
+		{
+			echo '<tr>';
+			echo '<td style="border: 0.3px solid black;">'.$examination_details['name'].'</td>';
+			echo '<td style="border: 0.3px solid black;">';
+			display_dw_p($ex_result);
+			echo '</td>';
+			echo '<td style="border: 0.3px solid black;"></td></tr>';			
+		}
+		else
+		{		
 				echo '<tr>';
 		echo '	<td style="border: 0.3px solid black;">'.$examination_details['name'].'</td>
-				<td style="border: 0.3px solid black;"><pre>'.htmlspecialchars($ex_result.' '.decide_alert($ex_result,$interval,'','','','','')).'</pre></td>
+				<td style="border: 0.3px solid black;"><pre>'.htmlspecialchars($ex_result.' '.
+				decide_alert($ex_result,$interval_l,$cinterval_l,$ainterval_l,$interval_h,$cinterval_h,$ainterval_h)).'</pre></td>
 				<td style="border: 0.3px solid black;">'.nl2br(htmlspecialchars($help)).'</td>';
 				echo '</tr>';
 		//echo '	<pre><table border="1"><tr><td>sadda</td><td>sadda</td></tr><tr><td>sadda</td><td>sadda</td></tr></table>'.htmlspecialchars($help).'</pre>';
+		}
 
 }		
+
+function display_dw_p($ex_result)
+{
+	$ar=str_split($ex_result);
+
+	$width=256; //128 X 2
+    $height=128; //256;//223+32=255 make is half to save space
+    $im = imagecreatetruecolor($width,$height);
+    $white = imagecolorallocate($im, 255, 255, 225);
+    $black = imagecolorallocate($im, 0,0,0);
+	imagefill($im,0,0,$white);
+	$px=0;
+	$py=256;
+	foreach ($ar as $k=>$v)
+	{
+		$y=(256-ord($v))/2 +16; //make half add 16 to get baseline
+		$x=$k*2;	//every two pixel
+		imageline ( $im , $px , $py , $x , $y , $black ) ;
+		$py=$y;
+		$px=$x;
+	}
+	
+	//ob_start();	
+	imagepng($im,'img/img.png');
+	//$myStr = ob_get_contents();
+	//ob_end_clean();
+
+	//echo "<img src='data:image/png;base64,".base64_encode($myStr)."'/>";
+	echo "x<img src='img/img.png'>y";
+	imagedestroy($im);	
+}
 
 function view_field_hr_p($link,$ex_id,$ex_result)
 {

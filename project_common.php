@@ -767,7 +767,7 @@ function edit_field($link,$examination_id,$result_array,$sample_id,$readonly='')
 			echo '<p class="help">'.$help.'</p>';	
 		echo '</div>';
 	}
-	elseif($type=='date')
+	elseif($type=='date' || $type=='time')
 	{
 		//////
 		echo '<div class="basic_form  m-0 p-0 no-gutters">';
@@ -950,8 +950,8 @@ function decide_alert($result,$interval_l,$cinterval_l,$ainterval_l,$interval_h,
 	{
 		if($result<$ainterval_l)
 		{
-			return $alert='(((Absurd Low)))';
-			//return $alert='((('.$result.'<'.$ainterval_l.' Absurd Low)))';
+			return $alert='<--Absurd Low';
+			//return $alert='<--'.$result.'<'.$ainterval_l.' Absurd Low';
 		}
 	}
 
@@ -959,8 +959,8 @@ function decide_alert($result,$interval_l,$cinterval_l,$ainterval_l,$interval_h,
 	{
 		if($result>$ainterval_h)
 		{
-			return $alert='(((Absurd High)))';
-			//return $alert='((('.$result.'>'.$ainterval_h.' Absurd high)))';
+			return $alert='<--Absurd High';
+			//return $alert='<--'.$result.'>'.$ainterval_h.' Absurd high';
 		}
 		
 	}
@@ -969,8 +969,8 @@ function decide_alert($result,$interval_l,$cinterval_l,$ainterval_l,$interval_h,
 	{
 		if($result<$cinterval_l)
 		{
-			return $alert='(((Critical Low)))';
-			//return $alert='((('.$result.'<'.$cinterval_l.' Critical Low)))';
+			return $alert='<--Critical Low';
+			//return $alert='<--'.$result.'<'.$cinterval_l.' Critical Low';
 
 		}
 	}
@@ -979,8 +979,8 @@ function decide_alert($result,$interval_l,$cinterval_l,$ainterval_l,$interval_h,
 	{
 		if($result>$cinterval_h)
 		{
-			//return $alert='((('.$result.'>'.$cinterval_h.' Critical High)))';
-			return $alert='(((Critical High)))';
+			//return $alert='<--'.$result.'>'.$cinterval_h.' Critical High';
+			return $alert='<--Critical High';
 		}
 	}
 
@@ -989,8 +989,8 @@ function decide_alert($result,$interval_l,$cinterval_l,$ainterval_l,$interval_h,
 	{
 		if($result<$interval_l)
 		{
-			//return $alert='((('.$result.'<'.$interval_l.' Abnormal Low)))';
-			return $alert='(((Abnormal Low)))';
+			//return $alert='<--'.$result.'<'.$interval_l.' Abnormal Low';
+			return $alert='<--Abnormal Low';
 		}
 	}
 
@@ -998,8 +998,8 @@ function decide_alert($result,$interval_l,$cinterval_l,$ainterval_l,$interval_h,
 	{
 		if($result>$interval_h)
 		{
-			//return $alert='((('.$result.'>'.$interval_h.' Abnormal high)))';
-			return $alert='(((Abnormal High)))';
+			//return $alert='<--'.$result.'>'.$interval_h.' Abnormal high';
+			return $alert='<--Abnormal High';
 		}
 	}
 
@@ -1009,19 +1009,55 @@ function decide_alert($result,$interval_l,$cinterval_l,$ainterval_l,$interval_h,
 function display_dw($ex_result)
 {
 	$ar=str_split($ex_result);
-	echo '<div style="font-size:2px; transform: rotate(270deg);">';
-	foreach ($ar as $v)
-	{
-		//echo ord($v).',';
-		for($i=32;$i<ord($v);$i++)
-		{
-			echo '<span style="background-color: coral;"> </span>';
-		}
-		echo '<br>';
-	}
-	echo '</div>';
+	//echo '<div style="font-size:2px; transform: rotate(270deg);">';
+	//foreach ($ar as $v)
+	//{
+		////echo ord($v).',';
+		//for($i=32;$i<ord($v);$i++)
+		//{
+			//echo '<span style="background-color: coral;"> </span>';
+		//}
+		////echo '<br>';
+	//}
+
+	//echo '</div>';
 	
+	$width=256; //128 X 2
+    $height=128; //256;//223+32=255 make is half to save space
+    $im = imagecreatetruecolor($width,$height);
+    $white = imagecolorallocate($im, 255, 255, 225);
+    $black = imagecolorallocate($im, 0,0,0);
+	imagefill($im,0,0,$white);
+	$px=0;
+	$py=256;
+	foreach ($ar as $k=>$v)
+	{
+		//Micros-60
+		//base line=space=0x20=32
+		//max amplitude=223 (223+32=255)
+		$y=(256-ord($v))/2 +16; //make half add 16 to get baseline
+		$x=$k*2;	//every two pixel
+		//imagesetpixel ( resource $image , int $x , int $y , int $color ) 
+		//imagesetpixel ( $im , $k , $y , $black );
+		imageline ( $im , $px , $py , $x , $y , $black ) ;
+		$py=$y;
+		$px=$x;
+	}
+	
+	ob_start();	
+	imagepng($im);
+	$myStr = ob_get_contents();
+	ob_end_clean();
+	
+	echo "<img src='data:image/png;base64,".base64_encode($myStr)."'/>";
+	imagedestroy($im);	
+
 }
+
+//<img src="data:image/png;base64,(YOUR BASE 64 STRING HERE)" />
+
+
+
 function view_field($link,$ex_id,$ex_result)
 {
 		$examination_details=get_one_examination_details($link,$ex_id);
@@ -1071,9 +1107,9 @@ function view_field_hr($link,$ex_id,$ex_result)
 		$cinterval_h=isset($edit_specification['cinterval_h'])?$edit_specification['cinterval_h']:'';
 		$ainterval_h=isset($edit_specification['ainterval_h'])?$edit_specification['ainterval_h']:'';
 						
-		echo '<div id="ex_'.$ex_id.'">'.
+		echo '<div id="ex_'.$ex_id.'"><pre><b>'.$examination_details['name'].':</b>'.
 					htmlspecialchars($ex_result).' '.				
-					decide_alert($ex_result,$interval_l,$cinterval_l,$ainterval_l,$interval_h,$cinterval_h,$ainterval_h).'</pre></div>';
+					decide_alert($ex_result,$interval_l,$cinterval_l,$ainterval_l,$interval_h,$cinterval_h,$ainterval_h).'</pre>';
 		echo '</div>';
 }				
 
