@@ -8,8 +8,6 @@ require_once('tcpdf/tcpdf.php');
 
 $GLOBALS['img_res']='';
 
-$GLOBALS['img_list']=array();
-
 class ACCOUNT1 extends TCPDF {
 	public $sample_id;
 	public $link;
@@ -119,22 +117,15 @@ function print_sample($link,$sample_id)
 		 $pdf->SetY($pdf->current_y); //required , setMargin after add page have no effect
 		 $pdf->SetMargins(10, $pdf->current_y, 10); //will take effect from next page onwards
 
-	     $pdf->writeHTML($myStr, true, false, true, false, '');
-	     
-	     //$pdf->writeHTML(count($GLOBALS['img_list']), true, false, true, false, '');
-	     
-	     foreach($GLOBALS['img_list'] as $k=>$v)
-	     {
-			//$pdf->writeHTML($pdf->GetX().'-'.$pdf->GetY(),true, false, true, false, ''); 
-			$pdf->Image('@'.$v,'','',40,20,$type='', $link='', $align='', $resize=true);
-			$pdf->SetY($pdf->GetY());
-			$pdf->SetX(($pdf->GetX())+40);
-		 }
+	     $pdf->writeHTML($myStr, true, false, true, false, '');	     
+	     $str=get_one_ex_result($link,$sample_id,20);
+	     $x=display_dw_png($str);
+	     $pdf->Image('@'.$x);	
 				     
 	     $pdf->Output('report-'.$sample_id.'.pdf', 'I');
 }
 
-function display_dw_png($ex_result,$label)
+function display_dw_png($ex_result)
 {
 	$ar=str_split($ex_result);
 	
@@ -144,8 +135,6 @@ function display_dw_png($ex_result,$label)
     $white = imagecolorallocate($im, 255, 255, 225);
     $black = imagecolorallocate($im, 0,0,0);
 	imagefill($im,0,0,$white);
-	imagestring($im, 5, 0, 0, $label, $black);
-
 	$px=0;
 	$py=256;
 	foreach ($ar as $k=>$v)
@@ -245,12 +234,12 @@ function view_field_p($link,$ex_id,$ex_result)
 
 		if($img=='dw')
 		{
-			//echo '<tr>';
-			//echo '<td style="border: 0.3px solid black;">'.$examination_details['name'].'</td>';
-			//echo '<td style="border: 0.3px solid black;">';
-			$GLOBALS['img_list'][$examination_details['name']]=display_dw_png($ex_result,$examination_details['name']);
-			//echo '</td>';
-			//echo '<td style="border: 0.3px solid black;"></td></tr>';			
+			echo '<tr>';
+			echo '<td style="border: 0.3px solid black;">'.$examination_details['name'].'</td>';
+			echo '<td style="border: 0.3px solid black;">';
+			display_dw_p($ex_result);
+			echo '</td>';
+			echo '<td style="border: 0.3px solid black;"></td></tr>';			
 		}
 		else
 		{		
