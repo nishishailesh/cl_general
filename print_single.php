@@ -122,13 +122,21 @@ function print_sample($link,$sample_id)
 	     $pdf->writeHTML($myStr, true, false, true, false, '');
 	     
 	     //$pdf->writeHTML(count($GLOBALS['img_list']), true, false, true, false, '');
+	 
 	     
+	    $y=$pdf->GetY();
+		$x=$pdf->GetX();
+		$i=0;
+			
 	     foreach($GLOBALS['img_list'] as $k=>$v)
 	     {
-			//$pdf->writeHTML($pdf->GetX().'-'.$pdf->GetY(),true, false, true, false, ''); 
-			$pdf->Image('@'.$v,'','',40,20,$type='', $link='', $align='', $resize=true);
-			$pdf->SetY($pdf->GetY());
-			$pdf->SetX(($pdf->GetX())+40);
+			//somehow manual calculation of X and Y is required
+			//public function Image($file, $x='', $y='', $w=0, $h=0, $type='', $link='', $align='', $resize=false, 
+			//$dpi=300, $palign='', $ismask=false, $imgmask=false, $border=0, $fitbox=false, $hidden=false, $fitonpage=false, $alt=false, $altimgs=array()) {
+			
+			$pdf->Image('@'.$v,$x+$i*40,$y+$i*0,40,20,$type='', $link='', $align='', $resize=true,
+						$dpi=300, $palign='', $ismask=false, $imgmask=false, $border=1);
+			$i++;
 		 }
 				     
 	     $pdf->Output('report-'.$sample_id.'.pdf', 'I');
@@ -144,7 +152,7 @@ function display_dw_png($ex_result,$label)
     $white = imagecolorallocate($im, 255, 255, 225);
     $black = imagecolorallocate($im, 0,0,0);
 	imagefill($im,0,0,$white);
-	imagestring($im, 5, 0, 0, $label, $black);
+	imagestring($im, 5, 3, 1, $label, $black);
 
 	$px=0;
 	$py=256;
@@ -172,13 +180,28 @@ function view_sample_p($link,$sample_id,$profile_wise_ex_list)
 
 	foreach($profile_wise_ex_list as $kp=>$vp)
 	{
-		if($kp==$GLOBALS['pid_profile']){continue;}
-		$pinfo=get_profile_info($link,$kp);
+		if($kp==$GLOBALS['pid_profile']){continue;}	//pid is displyed on each page//not needed here
 
-		echo '<tr><th colspan="3"><br><h2><u>'.$pinfo['name'].'</u></h2></th></tr>';
+		$pinfo=get_profile_info($link,$kp);
+		$profile_edit_specification=json_decode($pinfo['edit_specification'],true);
+		$print_hide=isset($profile_edit_specification['print_hide'])?$profile_edit_specification['print_hide']:'';
+		if($print_hide=='yes'){continue;}	//not to be printed
+		
+		$display_name=isset($profile_edit_specification['display_name'])?$profile_edit_specification['display_name']:'';
+
+		if($display_name!='no')
+		{		
+			echo '<tr><th colspan="3"><br><h2><u>'.$pinfo['name'].'</u></h2></th></tr>';
+		}
+		
 		if($pinfo['profile_id']>$GLOBALS['max_non_ex_profile'])
 		{
-			echo_result_header_p();
+		
+			$header=isset($profile_edit_specification['header'])?$profile_edit_specification['header']:'';
+			if($header!='no')
+			{
+				echo_result_header_p();
+			}
 		
 			foreach($vp as $ex_id)
 			{
@@ -248,6 +271,8 @@ function view_field_p($link,$ex_id,$ex_result)
 			//echo '<tr>';
 			//echo '<td style="border: 0.3px solid black;">'.$examination_details['name'].'</td>';
 			//echo '<td style="border: 0.3px solid black;">';
+			
+			//just save graphics in global array, for display leter on
 			$GLOBALS['img_list'][$examination_details['name']]=display_dw_png($ex_result,$examination_details['name']);
 			//echo '</td>';
 			//echo '<td style="border: 0.3px solid black;"></td></tr>';			
