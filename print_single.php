@@ -28,7 +28,6 @@ class ACCOUNT1 extends TCPDF {
 	<tr><td style="text-align:center" colspan="3"><h5>'.$header['address'].'</h5></td></tr>
 	<tr><td style="text-align:center" colspan="3"><h5>'.$header['phone'].'</h5></td></tr>';
 
-	
 			$count=1;
 			foreach($this->profile_wise_ex_list[$GLOBALS['pid_profile']] as $v)
 			{
@@ -155,11 +154,13 @@ function display_dw_png($ex_result,$label)
 
 	$px=0;
 	$py=256;
+	$y=2;
 	foreach ($ar as $k=>$v)
 	{
 		$y=(256-ord($v))/2 +16; //make half add 16 to get baseline
 		$x=$k*2;	//every two pixel
 		imageline ( $im , $px , $py , $x , $y , $black ) ;
+		
 		$py=$y;
 		$px=$x;
 	}

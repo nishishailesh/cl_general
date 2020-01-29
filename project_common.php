@@ -10,15 +10,11 @@ function main_menu()
 			<button class="btn btn-outline-primary m-0 p-0" formaction=new_general.php type=submit name=action value=new_general>New</button>
 			<button class="btn btn-outline-primary m-0 p-0" formaction=view_database_id.php type=submit name=action value=get_dbid>View Sample ID</button>			
 			<button class="btn btn-outline-primary m-0 p-0" formaction=search.php type=submit name=action value=get_search_condition>Search</button>			
-			<!--
-			<button class="btn btn-primary border-danger m-0 p-0" formaction=report.php type=submit name=action value=get_search_condition>Export</button>			
-			
-			<button class="btn btn-primary dropdown-toggle m-0 p-0" type="button" data-toggle="dropdown">New</button>
+			<button class="btn btn-outline-primary dropdown-toggle m-0 p-0" type="button" data-toggle="dropdown">New(Specific)</button>
 			<div class="dropdown-menu m-0 p-0">		
-					<button class="btn btn-secondary btn-block m-0 p-0" formaction=new_general.php type=submit name=action value=new_general>New (General)</button>
-					<button class="btn btn-secondary btn-block m-0 p-0" formaction=new_opd.php type=submit name=action value=new_opd>New (OPD)</button>
+					<button class="btn btn-outline-secondary btn-block m-0 p-0" formaction=new_s1.php type=submit name=action value=new_s1>New S1</button>
+					<button class="btn btn-outline-secondary btn-block m-0 p-0" formaction=new_s2.php type=submit name=action value=new_s2>New S2</button>
 			</div>
-			-->
 	</div>
 		</form>
 	';		
@@ -474,7 +470,10 @@ function ex_to_profile($link,$ex_array)
 	$ret=array();
 	while($ar=get_single_row($result))
 	{
-		$ex_of_profile=explode(',',$ar['examination_id_list']);
+		$ex_of_profile=array_merge(
+									explode(',',$ar['examination_id_list']),
+									explode(',',$ar['extra'])
+									);
 		foreach($ex_of_profile as $v)
 		{
 			if(array_key_exists($v,$ex_array))
@@ -583,7 +582,8 @@ function get_result_blob_of_sample_in_array($link,$sample_id)
 	//print_r($result_array);
 	return $result_array;
 }
-function edit_basic($link,$result_array)
+
+function edit_basic($link,$result_array)//not used
 {
 	if(array_key_exists('1',$result_array)){$mrd=$result_array['1'];}else{$mrd='';}
 	
@@ -852,7 +852,44 @@ function edit_field($link,$examination_id,$result_array,$sample_id,$readonly='')
 			echo '</div>';
 			echo '<p class="help">'.$help.'</p>';	
 		echo '</div>';
-	} 		
+	} 
+
+	elseif($type=='json')
+	{
+		//////
+		
+		$json=isset($edit_specification['json'])?$edit_specification['json']:'';
+		//$json_array=json_decode($json,true);
+		//$type=isset($edit_specification['type'])?$edit_specification['type']:'text';
+				
+		echo '<div class="basic_form  m-0 p-0 no-gutters">';
+			////
+			set_lable($_POST['session_name'],$_POST['sample_id'],$examination_details,$examination_id);
+			////
+			echo '<div class="m-0 p-0 no-gutters">';
+				////
+				echo '<div class="d-inline-block no-gutters">';
+					//print_r($json_array);
+					echo '<pre>';print_r($edit_specification['json']);echo '</pre>';
+					echo '<textarea rows=1
+					'.$readonly.'
+					id="'.$element_id.'" 
+					name="'.$examination_id.'" 
+					data-exid="'.$examination_id.'" 
+					data-sid="'.$sample_id.'" 
+					data-user="'.$_SESSION['login'].'" 
+					pattern="'.$pattern.'" 
+					class="form-control autosave p-0 m-0 no-gutters" 
+					type=\''.$type.'\' >'.
+					htmlspecialchars($result,ENT_QUOTES).'</textarea>';
+				echo '</div>';
+				echo '<div class="d-inline  no-gutters">';
+					get_primary_result($link,$sample_id,$examination_id);
+				echo '</div>';
+			echo '</div>';
+			echo '<p class="help">'.$help.'</p>';	
+		echo '</div>';
+	} 			
 	else  
 	{
 		//////
@@ -1021,7 +1058,7 @@ function display_dw($ex_result,$label='')
 		$y=(256-ord($v))/2 +16; //make half add 16 to get baseline
 		$x=$k*2;	//every two pixel
 		//imagesetpixel ( resource $image , int $x , int $y , int $color ) 
-		//imagesetpixel ( $im , $k , $y , $black );
+		//imagesetpixel ( $im , $x , $y , $black );
 		imageline ( $im , $px , $py , $x , $y , $black ) ;
 		$py=$y;
 		$px=$x;
@@ -1327,7 +1364,10 @@ function get_examination_data($link)
 		echo '<div class="collapse show " id=\''.$div_id.'\'>';
 			echo '<h3>'.$pinfo['name'].'</h3>';
 			echo '<div class="ex_profile">';
-				$ex_list=explode(',',$ar['examination_id_list']);
+				$ex_list=array_merge(explode(',',$ar['examination_id_list']),explode(',',$ar['extra']));
+				//print_r(explode(',',$ar['examination_id_list']));
+				//print_r(explode(',',$ar['extra']));
+				//print_r($ex_list);
 				foreach($ex_list as $v)
 				{
 					$ex_data=get_one_examination_details($link,$v);
@@ -1471,7 +1511,9 @@ function save_insert($link)
 		$psql='select * from profile where profile_id=\''.$value.'\'';
 		$result=run_query($link,$GLOBALS['database'],$psql);
 		$ar=get_single_row($result);
-		$profile_ex_requested=explode(',',$ar['examination_id_list']);
+		$profile_ex_requested_main=explode(',',$ar['examination_id_list']);
+		
+		$profile_ex_requested=$profile_ex_requested_main;
 		$requested=array_merge($requested,$profile_ex_requested);
 	}
 
