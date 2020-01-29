@@ -133,7 +133,7 @@ function print_sample($link,$sample_id)
 			//public function Image($file, $x='', $y='', $w=0, $h=0, $type='', $link='', $align='', $resize=false, 
 			//$dpi=300, $palign='', $ismask=false, $imgmask=false, $border=0, $fitbox=false, $hidden=false, $fitonpage=false, $alt=false, $altimgs=array()) {
 			
-			$pdf->Image('@'.$v,$x+$i*40,$y+$i*0,40,20,$type='', $link='', $align='', $resize=true,
+			$pdf->Image('@'.$v,$x+$i*40,$y+$i*100,40,20,$type='', $link='', $align='', $resize=true,
 						$dpi=300, $palign='', $ismask=false, $imgmask=false, $border=1);
 			$i++;
 		 }
