@@ -889,7 +889,36 @@ function edit_field($link,$examination_id,$result_array,$sample_id,$readonly='')
 			echo '</div>';
 			echo '<p class="help">'.$help.'</p>';	
 		echo '</div>';
-	} 			
+	}
+	 else  if($type=='subsection')
+	{
+		//////
+		echo '<div class="basic_form  m-0 p-0 no-gutters">';
+			////
+			set_lable_subsection($_POST['session_name'],$_POST['sample_id'],$examination_details,$examination_id);
+			////
+			echo '<div class="m-0 p-0 no-gutters">';
+				////
+				echo '<div class="d-inline-block no-gutters">';
+				echo '<textarea rows=1
+					'.$readonly.'
+					id="'.$element_id.'" 
+					name="'.$examination_id.'" 
+					data-exid="'.$examination_id.'" 
+					data-sid="'.$sample_id.'" 
+					data-user="'.$_SESSION['login'].'" 
+					pattern="'.$pattern.'" 
+					class="form-control autosave p-0 m-0 no-gutters" 
+					type=\''.$type.'\' >'.
+					htmlspecialchars($result,ENT_QUOTES).'</textarea>';
+				echo '</div>';
+				echo '<div class="d-inline  no-gutters">';
+					get_primary_result($link,$sample_id,$examination_id);
+				echo '</div>';
+			echo '</div>';
+			echo '<p class="help">'.$help.'</p>';	
+		echo '</div>';
+	} 
 	else  
 	{
 		//////
@@ -1081,6 +1110,7 @@ function view_field($link,$ex_id,$ex_result)
 		$examination_details=get_one_examination_details($link,$ex_id);
 		$edit_specification=json_decode($examination_details['edit_specification'],true);
 		$help=isset($edit_specification['help'])?$edit_specification['help']:'';
+		$type=isset($edit_specification['type'])?$edit_specification['type']:'';
 		$interval_l=isset($edit_specification['interval_l'])?$edit_specification['interval_l']:'';
 		$cinterval_l=isset($edit_specification['cinterval_l'])?$edit_specification['cinterval_l']:'';
 		$ainterval_l=isset($edit_specification['ainterval_l'])?$edit_specification['ainterval_l']:'';
@@ -1099,6 +1129,17 @@ function view_field($link,$ex_id,$ex_result)
 			echo '<div class="help border border-dark"><pre style="border-color:white">'.$help.'</pre></div>';
 			echo '</div>';			
 		}
+		elseif($type=='subsection')
+		{
+			echo '<div class="basic_form " id="ex_'.$ex_id.'">';
+			echo '	<div class="my_label border border-dark text-wrap"></h3></div>
+				<div class="border border-dark">
+				<h3 class="text-center">'.$examination_details['name'].'</h3>
+				</div>
+				<div class="help border border-dark"><pre style="border-color:white">'.$help.'</pre></div>';
+			echo '</div>';
+		}
+
 		else
 		{
 			echo '<div class="basic_form " id="ex_'.$ex_id.'">';
@@ -1684,12 +1725,31 @@ function set_lable($session_name,$sample_id,$examination_details,$examination_id
 					<button type=submit  class="btn btn-danger btn-sm d-inline m-0 p-0" name=action value=delete title=Delete>X</button>	
 				</form>
 				';
-		}
-				
+		}		
 		echo '<label for="'.$examination_details['name'].'">'.$examination_details['name'].'</label>
 			</div>';
 }
 
+function set_lable_subsection($session_name,$sample_id,$examination_details,$examination_id)
+{
+		echo '
+			<div class="my_lable">';
+			
+		if($examination_details['examination_id']!=$GLOBALS['mrd'] && $examination_details['examination_id']!=$GLOBALS['sample_requirement'])
+		{
+		echo '
+				<form method=post class="d-inline">
+					<input type=hidden name=session_name value=\''.$session_name.'\'>
+					<input type=hidden name=sample_id value=\''.$sample_id.'\'>
+					<input type=hidden name=examination_id value=\''.$examination_id.'\'>
+					
+					<button type=submit  class="btn btn-danger btn-sm d-inline m-0 p-0" name=action value=delete title=Delete>X</button>	
+				</form>
+				';
+		}		
+		echo '<label class="bg-warning" for="'.$examination_details['name'].'"><h3>'.$examination_details['name'].'</h3></label>
+			</div>';
+}
 
 function get_new_sample_id($link,$mrd,$sample_requirement)
 {

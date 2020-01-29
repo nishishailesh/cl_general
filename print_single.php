@@ -191,7 +191,7 @@ function view_sample_p($link,$sample_id,$profile_wise_ex_list)
 
 		if($display_name!='no')
 		{		
-			echo '<tr><th colspan="3"><br><h2><u>'.$pinfo['name'].'</u></h2></th></tr>';
+			echo '<tr><th colspan="3"><h2><u>'.$pinfo['name'].'</u></h2></th></tr>';
 		}
 		
 		if($pinfo['profile_id']>$GLOBALS['max_non_ex_profile'])
@@ -244,7 +244,6 @@ function view_sample_p($link,$sample_id,$profile_wise_ex_list)
 			
 			if($count%3==1){echo '<td></td><td></td></tr>';}
 			if($count%3==2){echo '<td></td></tr>';}
-			
 		}
 	}
 	
@@ -256,6 +255,7 @@ function view_field_p($link,$ex_id,$ex_result)
 		$examination_details=get_one_examination_details($link,$ex_id);
 		$edit_specification=json_decode($examination_details['edit_specification'],true);
 		$help=isset($edit_specification['help'])?$edit_specification['help']:'';
+		$type=isset($edit_specification['type'])?$edit_specification['type']:'';
 
 		$interval_l=isset($edit_specification['interval_l'])?$edit_specification['interval_l']:'';
 		$cinterval_l=isset($edit_specification['cinterval_l'])?$edit_specification['cinterval_l']:'';
@@ -276,6 +276,15 @@ function view_field_p($link,$ex_id,$ex_result)
 			$GLOBALS['img_list'][$examination_details['name']]=display_dw_png($ex_result,$examination_details['name']);
 			//echo '</td>';
 			//echo '<td style="border: 0.3px solid black;"></td></tr>';			
+		}
+		elseif($type=='subsection')
+		{		
+				echo '<tr>';
+				echo '	<td style="border: 0.3px solid black;"></td>
+				<td style="border: 0.3px solid black;"><h3 align="center">'.$examination_details['name'].'</h3></td>
+				<td style="border: 0.3px solid black;"></td>';
+				echo '</tr>';
+		//echo '	<pre><table border="1"><tr><td>sadda</td><td>sadda</td></tr><tr><td>sadda</td><td>sadda</td></tr></table>'.htmlspecialchars($help).'</pre>';
 		}
 		else
 		{		
