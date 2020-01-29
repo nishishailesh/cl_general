@@ -511,11 +511,6 @@ function edit_sample($link,$sample_id)
 		echo '</div>
 	</div>';
 		
-	//echo '<div class="basic_form">
-			//<div class=my_label >Edit ID</div>
-			//<div>'.$sample_id.'</div>
-			//<div class=help>Unique Number to get this data</div>';	
-	//echo '</div>';
 	echo '<div class="basic_form">
 			<div class=my_label ><span class="badge badge-primary ">Sample ID</span>
 			<span class="badge badge-info"><h5>'.$sample_id.'</h5></span></div>
@@ -849,8 +844,7 @@ function edit_field($link,$examination_id,$result_array,$sample_id,$readonly='')
 					class="form-control autosave p-0 m-0 no-gutters" 
 					type=\''.$type.'\' >'.
 					htmlspecialchars($result,ENT_QUOTES).'</textarea>';
-					
-					display_dw($result);
+					display_dw($result,$examination_details['name']);
 				echo '</div>';
 				echo '<div class="d-inline  no-gutters">';
 					get_primary_result($link,$sample_id,$examination_id);
@@ -1006,21 +1000,9 @@ function decide_alert($result,$interval_l,$cinterval_l,$ainterval_l,$interval_h,
 	return '';			
 }
 
-function display_dw($ex_result)
+function display_dw($ex_result,$label='')
 {
 	$ar=str_split($ex_result);
-	//echo '<div style="font-size:2px; transform: rotate(270deg);">';
-	//foreach ($ar as $v)
-	//{
-		////echo ord($v).',';
-		//for($i=32;$i<ord($v);$i++)
-		//{
-			//echo '<span style="background-color: coral;"> </span>';
-		//}
-		////echo '<br>';
-	//}
-
-	//echo '</div>';
 	
 	$width=256; //128 X 2
     $height=128; //256;//223+32=255 make is half to save space
@@ -1028,6 +1010,7 @@ function display_dw($ex_result)
     $white = imagecolorallocate($im, 255, 255, 225);
     $black = imagecolorallocate($im, 0,0,0);
 	imagefill($im,0,0,$white);
+	imagestring($im, 5, 3, 1, $label, $black);
 	$px=0;
 	$py=256;
 	foreach ($ar as $k=>$v)
@@ -1053,8 +1036,6 @@ function display_dw($ex_result)
 	imagedestroy($im);	
 
 }
-
-//<img src="data:image/png;base64,(YOUR BASE 64 STRING HERE)" />
 
 
 
