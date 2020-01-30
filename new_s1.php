@@ -39,7 +39,8 @@ function get_data_specific($link,$specific)
 	echo '<div class="tab-content">';
 	
 		echo '<div id=basic class="tab-pane active">';
-			get_one_field_for_insert($link,1001);
+			get_basic_specific();
+			//get_one_field_for_insert($link,1001);
 			get_one_field_for_insert($link,1002);
 			get_one_field_for_insert($link,1004);
 			get_one_field_for_insert($link,1005);
@@ -54,6 +55,16 @@ function get_data_specific($link,$specific)
 }
 
 
+function get_basic_specific()
+{
+	$YY=strftime("%y");
+
+echo '<div class="basic_form">';
+	echo '	<label class="my_label text-danger" for="mrd">MRD</label>
+			<input size=13 id=mrd name=\'__ex__'.$GLOBALS['mrd'].'\' class="form-control text-danger" required="required" type=text pattern="SUR/[0-9][0-9]/[0-9]{8}" placeholder="MRD" value="SUR/'.$YY.'/"\>
+			<p class="help"><span class=text-danger>Must have</span> 8 digit after SUR/YY/</p>';			
+echo '</div>';
+}
 
 function get_one_field_for_insert($link,$examination_id)
 {
@@ -356,7 +367,7 @@ function save_insert_specific($link)
 		if(isset($tok[1])=='ex')
 		{
 			$with_result_id=$tok[2];
-			echo $tok[2].'<br>';
+			//echo $tok[2].'<br>';
 			$with_result[]=$tok[2];
 		}
 	}
@@ -405,7 +416,15 @@ function save_insert_specific($link)
 			{
 				if($ex<100000)
 				{
-					insert_one_examination_without_result($link,$sid,$ex);
+					if(array_key_exists('__ex__'.$ex,$_POST))
+					{
+						//echo $_POST['__ex__'.$ex].'<br>';
+						insert_one_examination_with_result($link,$sid,$ex,$_POST['__ex__'.$ex]);
+					}
+					else
+					{					
+						insert_one_examination_without_result($link,$sid,$ex);
+					}
 				}
 				else
 				{
@@ -414,13 +433,13 @@ function save_insert_specific($link)
 			}
 			if($exreq=='None')
 			{
-				//echo '__ex__'.$ex.'<br>';
-					if($ex==$GLOBALS['mrd'])
-					{
-						insert_one_examination_with_result($link,$sid,$ex,$_POST['mrd']);
-					}
+				////echo '__ex__'.$ex.'<br>';
+					//if($ex==$GLOBALS['mrd'])
+					//{
+						//insert_one_examination_with_result($link,$sid,$ex,$_POST['mrd']);
+					//}
 
-					elseif(array_key_exists('__ex__'.$ex,$_POST))
+					if(array_key_exists('__ex__'.$ex,$_POST))
 					{
 						//echo $_POST['__ex__'.$ex].'<br>';
 						insert_one_examination_with_result($link,$sid,$ex,$_POST['__ex__'.$ex]);
@@ -450,7 +469,7 @@ function save_insert_specific($link)
 //////////////user code ends////////////////
 tail();
 
-echo '<pre>';print_r($_POST);echo '</pre>';
+//echo '<pre>';print_r($_POST);echo '</pre>';
 
 //////////////Functions///////////////////////
 

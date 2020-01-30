@@ -1542,8 +1542,10 @@ function save_insert($link)
 			
 	//find list of examinations requested//////////////////////////////
 	$requested=array();
+	if(isset($_POST['mrd'])){$requested[]=$GLOBALS['mrd'];} //makesure it is always available
+	
 	$ex_requested=array_filter(explode(',',$_POST['list_of_selected_examination']));
-	$requested=$requested+$ex_requested;
+	$requested=array_merge($requested,$ex_requested);
 	//echo '<pre>following is requested:<br>';print_r($requested);echo '</pre>';
 	
 	$profile_requested=explode(',',$_POST['list_of_selected_profile']);
