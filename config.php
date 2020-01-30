@@ -31,7 +31,12 @@ $GLOBALS['HI']=array('name'=>'New Civil Hospital Surat Laboratory Services',
 						'phone'=>'0261 2244456 Ext. 424,425,426'
 						);
 
-
+$GLOBALS['CP']=array('name'=>'New Civil Hospital Surat Laboratory Services',
+						'section'=>'Clinical Pathology Section',
+						'address'=>'OPD-10, NCHS, Surat',
+						'phone'=>'0261 2244456 Ext. 424,425,426'
+						);
+						
 $GLOBALS['BI']=array('name'=>'New Civil Hospital Surat Laboratory Services',
 						'section'=>'Biochemistry Section',
 						'address'=>'Beside Blood Bank, 2nd Floor, NCHS, Surat',
