@@ -2107,23 +2107,23 @@ function print_sample($link,$sample_id,$pdf)
 
 	     $pdf->writeHTML($myStr, true, false, true, false, '');
 	     
-	     $pdf->writeHTML(count($GLOBALS['img_list']), true, false, true, false, '');
+	     //$pdf->writeHTML(count($GLOBALS['img_list']), true, false, true, false, '');
 	 
 	     //prepare for graphics
-	    $y=$pdf->GetY(); //Y first?
-		$x=$pdf->GetX();
+	    //$y=$pdf->GetY(); //Y first?
+		//$x=$pdf->GetX();
 		
-		$i=0;
+		//$i=0;
 			
-	     foreach($GLOBALS['img_list'] as $k=>$v)
-	     {
-			//somehow manual calculation of X and Y is required
-			//public function Image($file, $x='', $y='', $w=0, $h=0, $type='', $link='', $align='', $resize=false, 
-			//$dpi=300, $palign='', $ismask=false, $imgmask=false, $border=0, $fitbox=false, $hidden=false, $fitonpage=false, $alt=false, $altimgs=array()) {
-			$pdf->Image('@'.$v,$x+$i*40,$y+$i*0,40,20,$type='', $link='', $align='', $resize=true,
-						$dpi=300, $palign='', $ismask=false, $imgmask=false, $border=1);
-			$i++;
-		 }
+	     //foreach($GLOBALS['img_list'] as $k=>$v)
+	     //{
+			////somehow manual calculation of X and Y is required
+			////public function Image($file, $x='', $y='', $w=0, $h=0, $type='', $link='', $align='', $resize=false, 
+			////$dpi=300, $palign='', $ismask=false, $imgmask=false, $border=0, $fitbox=false, $hidden=false, $fitonpage=false, $alt=false, $altimgs=array()) {
+			//$pdf->Image('@'.$v,$x+$i*40,$y+$i*0,40,20,$type='', $link='', $align='', $resize=true,
+						//$dpi=300, $palign='', $ismask=false, $imgmask=false, $border=1);
+			//$i++;
+		 //}
 				     
 	     //$pdf->Output('report-'.$sample_id.'.pdf', 'I');
 }

@@ -91,7 +91,8 @@ $result=run_query($link,$GLOBALS['database'],$sql);
 while($ar=get_single_row($result))
 {
 	$ex_result=get_one_ex_result_blob($link,$_POST['sample_id'],$ar['examination_id']);
-	$png[]=display_dw_png($ex_result,$ar['examination_id']);
+	$ex_details=get_one_examination_details($link,$ar['examination_id']);
+	$png[]=display_dw_png($ex_result,$ex_details['name']);
 }
 
 $i=0;

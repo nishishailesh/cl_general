@@ -91,6 +91,32 @@ for ($i=$_POST['from'];$i<=$_POST['to'];$i++)
 	{
 		$pdf->startPageGroup();
 		print_sample($link,$i,$pdf);
+		
+		
+		/////////////DW
+		//$sql='select * from result_blob where sample_id=\''.$i.'\'';
+		//$result=run_query($link,$GLOBALS['database'],$sql);
+
+
+		//while($ar=get_single_row($result))
+		//{
+			//$ex_result=get_one_ex_result_blob($link,$i,$ar['examination_id']);
+			//$png[]=display_dw_png($ex_result,$ar['examination_id']);
+		//}
+
+		
+		//$x=$pdf->GetX();
+		//$y=$pdf->GetY();
+
+		//foreach($png as $v)
+		//{
+			//$pdf->Image('@'.$v,$x,$y,40,20,$type='', $link='', $align='', $resize=true,
+					//$dpi=300, $palign='', $ismask=false, $imgmask=false, $border=1);	
+			//$x=$x+40;
+		//}
+		
+		
+		///////////////
 	}
 	else
 	{
