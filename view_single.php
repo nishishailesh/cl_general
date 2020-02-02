@@ -16,6 +16,7 @@ echo '<div id=response></div>';
 //////////////user code ends////////////////
 tail();
 
+
 //echo '<pre>';print_r($_POST);echo '</pre>';
 
 //////////////Functions///////////////////////

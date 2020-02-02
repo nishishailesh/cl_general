@@ -35,9 +35,19 @@ function select_profile_js(me,ex_id,list_id)
 
 function sync_result(me)
 {
-	//alert(me.getAttribute('data-exid'));
+	//alert(me.getAttribute('data-type'));
 	target=document.getElementById('r_id_'+me.getAttribute('data-sid')+'_'+me.getAttribute('data-exid'))
 	target.value=me.value
+	var event = new Event('change');
+	target.dispatchEvent(event);
+}
+
+function sync_result_blob(me)
+{
+	//alert(me.getAttribute('data-uniq'));
+	target=document.getElementById('r_id_'+me.getAttribute('data-sid')+'_'+me.getAttribute('data-exid'))
+	target.value=me.value
+	target.setAttribute('data-uniq',me.getAttribute('data-uniq'))
 	var event = new Event('change');
 	target.dispatchEvent(event);
 }
@@ -48,6 +58,7 @@ function sync_all()
 	function()
 	{
 		target=document.getElementById('r_id_'+$(this).attr('data-sid')+'_'+$(this).attr('data-exid'))
+		target.setAttribute('data-uniq',$(this).attr('data-uniq'))
 		target.value=$(this).val()
 		var event = new Event('change');
 		target.dispatchEvent(event);		
@@ -97,7 +108,31 @@ $(document).ready
 								}
 							);
 							
+
+			$(".autosave-blob").change(
+								function()
+								{
+									
+									$.post(
+											"save_record_blob.php",
+											{
+												examination_id: $(this).attr('data-exid'),
+												sample_id: $(this).attr('data-sid'),
+												result: $(this).val(),
+												type: $(this).attr('data-type'),
+												uniq: $(this).attr('data-uniq'),
+												user: $(this).attr('data-user')
+											 },
+											function(data,status)
+											{
+												//alert("Data: " + data + "\nStatus: " + status);
+												$("#response").html(data)
+											}
+										);
+								}
+							);
 							
+														
 					$(".autosave-yesno").click(
 								function()
 								{

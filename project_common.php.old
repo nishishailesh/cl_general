@@ -8,16 +8,14 @@ function main_menu()
 	<div id=main_menu class="dropdown btn-group m-0 p-0">
 			<input type=hidden name=session_name value=\''.session_name().'\'>
 			<button class="btn btn-outline-primary m-0 p-0" formaction=new_general.php type=submit name=action value=new_general>New</button>
-			<button class="btn btn-outline-primary btn-block m-0 p-0" formaction=new_s1.php type=submit name=action value=direct>New Direct</button>
 			<button class="btn btn-outline-primary m-0 p-0" formaction=view_database_id.php type=submit name=action value=get_dbid>View Sample ID</button>			
 			<button class="btn btn-outline-primary m-0 p-0" formaction=search.php type=submit name=action value=get_search_condition>Search</button>			
-			<button class="btn btn-outline-primary m-0 p-0" formaction=view_database_id_from_to_for_print.php type=submit name=action value=get_from_to>Print</button>			
-			<!--<button class="btn btn-outline-primary dropdown-toggle m-0 p-0" type="button" data-toggle="dropdown">New Specific</button>
+			<button class="btn btn-outline-primary dropdown-toggle m-0 p-0" type="button" data-toggle="dropdown">New Specific</button>
 			<div class="dropdown-menu m-0 p-0">		
 					<button class="btn btn-outline-secondary btn-block m-0 p-0" formaction=new_s1.php type=submit name=action value=direct>Direct</button>
-					 <button class="btn btn-outline-secondary btn-block m-0 p-0" 
-					formaction=new_s2.php type=submit name=action value=new_s2>New S2</button> 
-			</div>-->
+					<!-- <button class="btn btn-outline-secondary btn-block m-0 p-0" 
+					formaction=new_s2.php type=submit name=action value=new_s2>New S2</button> -->
+			</div>
 	</div>
 		</form>
 	';		
@@ -176,50 +174,28 @@ function view_sample($link,$sample_id)
 		
 			foreach($vp as $ex_id)
 			{
-				
-				$examination_details=get_one_examination_details($link,$ex_id);
-				$edit_specification=json_decode($examination_details['edit_specification'],true);
-				$img=isset($edit_specification['img'])?$edit_specification['img']:'';
-				$type=isset($edit_specification['type'])?$edit_specification['type']:'';
-						
-				if($type!='blob')
+				if($ex_id<100000)
 				{
 					view_field($link,$ex_id,$ex_list[$ex_id]);	
 				}
 				else
 				{
-					view_field_blob($link,$ex_id,$sample_id);
-					if($img=='dw')
-					{
-						$ex_result=get_one_ex_result_blob($link,$sample_id,$ex_id);
-						display_dw($ex_result,$examination_details['name']);
-					}
+					view_field_blob($link,$ex_id,$sample_id);	
 				}
 			}
 		}
-		
 		else
 		{
 			echo '<div class=horiz>';
 			foreach($vp as $ex_id)
 			{
-				$examination_details=get_one_examination_details($link,$ex_id);
-				$edit_specification=json_decode($examination_details['edit_specification'],true);
-				$img=isset($edit_specification['img'])?$edit_specification['img']:'';
-				$type=isset($edit_specification['type'])?$edit_specification['type']:'';
-				
-				if($type!='blob')
+				if($ex_id<100000)
 				{
 					view_field_hr($link,$ex_id,$ex_list[$ex_id]);	
 				}
 				else
 				{
-					view_field_blob_hr($link,$ex_id,$sample_id);
-					if($img=='dw')
-					{
-						$ex_result=get_one_ex_result_blob($link,$sample_id,$ex_id);
-						display_dw($ex_result,$examination_details['name']);
-					}	
+					view_field_blob_hr($link,$ex_id,$sample_id);	
 				}
 			}
 			echo '</div>';			
@@ -239,7 +215,7 @@ function view_field_blob($link,$kblob,$sample_id)
 		//print_r($ar);
 		$examination_blob_details=get_one_examination_details($link,$kblob);
 		
-		//print_r($examination_blob_details);
+		//print_r($examination_details);
 		echo '	<div class="basic_form print_hide">
 	
 				<div class="my_label border border-dark ">'.$examination_blob_details['name'].'</div>
@@ -402,9 +378,9 @@ function sample_id_edit_button($sample_id)
 	</form></div>';
 }
 
-function sample_id_view_button($sample_id,$target='')
+function sample_id_view_button($sample_id)
 {
-	echo '<div class="d-inline-block" ><form method=post action=view_single.php class=print_hide target=\''.$target.'\'>
+	echo '<div class="d-inline-block" ><form method=post action=view_single.php class=print_hide>
 	<button class="btn btn-outline-success btn-sm" name=sample_id value=\''.$sample_id.'\' >View</button>
 	<input type=hidden name=session_name value=\''.$_POST['session_name'].'\'>
 	<input type=hidden name=action value=view_single>
@@ -624,23 +600,15 @@ function edit_basic($link,$result_array)//not used
 }
 function delete_examination($link,$sample_id,$examination_id)
 {
-
-	$examination_details=get_one_examination_details($link,$examination_id);
-	$edit_specification=json_decode($examination_details['edit_specification'],true);
-	if(!$edit_specification){$edit_specification=array();}
-	
-	$type=isset($edit_specification['type'])?$edit_specification['type']:'text';
-	
-	if($type=='blob')
+	if($examination_id>=100001)
 	{
 		$sql='DELETE FROM `result_blob`
           WHERE `sample_id` = \''.$sample_id.'\' AND `examination_id` = \''.$examination_id.'\'';
 	}
-	else
-	{
+	else{
 		$sql='DELETE FROM `result`
           WHERE `sample_id` = \''.$sample_id.'\' AND `examination_id` = \''.$examination_id.'\'';
-	}
+	    }
 		$result=run_query($link,$GLOBALS['database'],$sql);
 		//echo $sql;
 		if($result==false)
@@ -675,29 +643,6 @@ function get_primary_result($link,$sample_id,$examination_id)
 	//return $values;
 }
 
-function get_primary_result_blob($link,$sample_id,$examination_id)
-{
-	$sql='select * from primary_result_blob where sample_id=\''.$sample_id.'\' and examination_id=\''.$examination_id.'\'';
-	//echo $sql;
-	$result=run_query($link,$GLOBALS['database'],$sql);
-	$result_array=array();
-	
-	$values='';
-	while($ar=get_single_row($result))
-	{
-		//$values=$values.$ar['result'].',';
-		$element_id='pr_id_'.$sample_id.'_'.$examination_id;
-		echo '<button onclick="sync_result_blob(this)"
-					class="btn btn-sm btn-outline-dark  no-gutters align-top"
-					id=\''.$element_id.'\' 
-					data-sid=\''.$sample_id.'\' 
-					data-type=\'blob\' 
-					data-exid=\''.$examination_id.'\' 
-					data-uniq=\''.$ar['uniq'].'\' 
-					value=\''.$ar['uniq'].'\' >'.$ar['uniq'].'</button>';
-	}
-	//return $values;
-}
 function edit_field($link,$examination_id,$result_array,$sample_id,$readonly='')
 {
 	if(array_key_exists($examination_id,$result_array)){$result=$result_array[$examination_id];}else{$result='';}
@@ -878,9 +823,36 @@ function edit_field($link,$examination_id,$result_array,$sample_id,$readonly='')
 			echo '<p class="help">'.$help.'</p>';	
 		echo '</div>';
 	}
-	elseif($type=='blob')
+	elseif($type=='dw')
 	{
-		edit_blob_field($link,$examination_id,$sample_id);
+		//////
+		echo '<div class="basic_form  m-0 p-0 no-gutters">';
+			////
+			set_lable($_POST['session_name'],$_POST['sample_id'],$examination_details,$examination_id);
+			////
+			echo '<div class="m-0 p-0 no-gutters">';
+				////
+				echo '<div class="d-inline-block no-gutters">';
+				
+					echo '<textarea rows=1
+					'.$readonly.'
+					id="'.$element_id.'" 
+					name="'.$examination_id.'" 
+					data-exid="'.$examination_id.'" 
+					data-sid="'.$sample_id.'" 
+					data-user="'.$_SESSION['login'].'" 
+					pattern="'.$pattern.'" 
+					class="form-control autosave p-0 m-0 no-gutters" 
+					type=\''.$type.'\' >'.
+					htmlspecialchars($result,ENT_QUOTES).'</textarea>';
+					display_dw($result,$examination_details['name']);
+				echo '</div>';
+				echo '<div class="d-inline  no-gutters">';
+					get_primary_result($link,$sample_id,$examination_id);
+				echo '</div>';
+			echo '</div>';
+			echo '<p class="help">'.$help.'</p>';	
+		echo '</div>';
 	} 
 
 	elseif($type=='json')
@@ -1097,28 +1069,8 @@ function decide_alert($result,$interval_l,$cinterval_l,$ainterval_l,$interval_h,
 
 function display_dw($ex_result,$label='')
 {
-	$ar=unpack('C*', $ex_result);
-
-	//$arr=str_split($ex_result);
-	//$an=array();
-	//$counter=0;
-	//$max=count($arr);
+	$ar=str_split($ex_result);
 	
-	//echo '<table border=1>';
-	//foreach($arr as $kk=>$vv)
-	//{
-		
-		//echo '<tr><td>'.$kk.'</td><td>'.$vv.'</td><td>'.ord($vv).'</td>
-		//<td style="font-size:4px">';
-		//for($i=0;$i<(int)(ord($vv))-32;$i++)
-		//{
-			//echo 'o';
-		//}
-		//echo '</td>
-		//</tr>';
-	//}
-	//echo '</table>';
-//echo '<pre>';print_r($an);print_r($ar);print_r($arr);
 	$width=256; //128 X 2
     $height=128; //256;//223+32=255 make is half to save space
     $im = imagecreatetruecolor($width,$height);
@@ -1128,40 +1080,20 @@ function display_dw($ex_result,$label='')
 	imagestring($im, 5, 3, 1, $label, $black);
 	$px=0;
 	$py=256;
-	$length=count($ar);
-	
-	//for($p=1;$p<$length;$p=$p+2)
-	//{
-		//$y=$ar[$p]+$ar[$p+1];
-		//$x=$p*2;
-		////imagesetpixel ( $im , $x , $y , $black );
-		//imageline ( $im , $x , 0 , $x , $y-64 , $black ) ;
-
-	//}
-	//foreach ($ar as $k=>$v)
-	//{
-		////Micros-60
-		////base line=space=0x20=32
-		////max amplitude=223 (223+32=255)
-		//$y=(256-$v)/2 +16; //make half add 16 to get baseline
-		////$y=$v/2 +16; //make half add 16 to get baseline
-		//$x=$k*2;	//every two pixel
-		////imagesetpixel ( resource $image , int $x , int $y , int $color ) 
-		////imagesetpixel ( $im , $x , $y , $black );
-		//imageline ( $im , $px , $py , $x , $y , $black ) ;
-		//$py=$y;
-		//$px=$x;
-	//}
-
 	foreach ($ar as $k=>$v)
 	{
 		//Micros-60
 		//base line=space=0x20=32
 		//max amplitude=223 (223+32=255)
-		$y=(256-$v)/2 +16; //make half add 16 to get baseline
+		$y=(256-ord($v))/2 +16; //make half add 16 to get baseline
 		$x=$k*2;	//every two pixel
-		imageline ( $im , $x , 128 , $x , $y , $black ) ;
-	}	
+		//imagesetpixel ( resource $image , int $x , int $y , int $color ) 
+		//imagesetpixel ( $im , $x , $y , $black );
+		imageline ( $im , $px , $py , $x , $y , $black ) ;
+		$py=$y;
+		$px=$x;
+	}
+	
 	ob_start();	
 	imagepng($im);
 	$myStr = ob_get_contents();
@@ -1251,8 +1183,6 @@ function edit_blob_field($link,$examination_id,$sample_id)
 	$result_blob=run_query($link,$GLOBALS['database'],$sql_blob);
 	$ar_blob=get_single_row($result_blob);
 
-	$element_id='r_id_'.$sample_id.'_'.$examination_id;
-
 	echo '<div class="basic_form">';
 	set_lable($_POST['session_name'],$_POST['sample_id'],$examination_details,$examination_id);
 	//echo '	<div class=my_label>'.$examination_details['name'].'</div>
@@ -1263,18 +1193,7 @@ function edit_blob_field($link,$examination_id,$sample_id)
 								$sample_id.'-'.$examination_details['examination_id'].'-'.$ar_blob['fname'],
 								round(strlen($ar_blob['result'])/1024,0));
 	
-	echo_upload_two_pk($sample_id,$examination_id);	
-	echo '<input type=hidden
-					id="'.$element_id.'" 
-					name="'.$examination_id.'" 
-					data-exid="'.$examination_id.'" 
-					data-sid="'.$sample_id.'" 
-					data-type="blob" 
-					data-user="'.$_SESSION['login'].'" 
-					class="form-control autosave-blob p-0 m-0 no-gutters" 
-					>';
-	get_primary_result_blob($link,$sample_id,$examination_id);
-						
+	echo_upload_two_pk($sample_id,$examination_id);							
 	//echo
 	echo '</div>';
 	echo '<div  class=help  >Current File:'.$ar_blob['fname'].'</div>';
@@ -1682,22 +1601,15 @@ function save_insert($link)
 	{
 		foreach($stype_for_each_requested as $ex=>$exreq)
 		{
-			$examination_details=get_one_examination_details($link,$ex);
-			$edit_specification=json_decode($examination_details['edit_specification'],true);
-			$type=isset($edit_specification['type'])?$edit_specification['type']:'';
-					
-				
-				
 			//echo $ex.'<br>';
 			if($stype==$exreq)
 			{
-				if($type!='blob')
+				if($ex<100000)
 				{
 					insert_one_examination_without_result($link,$sid,$ex);
 				}
 				else
 				{
-					echo 'blob<br>';
 					insert_one_examination_blob_without_result($link,$sid,$ex);
 				}
 			}
@@ -1713,7 +1625,7 @@ function save_insert($link)
 					}
 					else
 					{
-						if($type!='blob')
+						if($ex<100000)
 						{
 							insert_one_examination_without_result($link,$sid,$ex);
 						}
@@ -1735,17 +1647,6 @@ function get_one_ex_result($link,$sample_id,$examination_id)
 		//echo $sql;
 		$result=run_query($link,$GLOBALS['database'],$sql);
 		$ar=get_single_row($result);
-		//echo  '<h4>'.$ar['result'].'</h4>';
-		return $ar['result'];
-}
-
-function get_one_ex_result_blob($link,$sample_id,$examination_id)
-{
-		$sql='select * from result_blob where sample_id=\''.$sample_id.'\' and examination_id=\''.$examination_id.'\'';
-		//echo $sql;
-		$result=run_query($link,$GLOBALS['database'],$sql);
-		$ar=get_single_row($result);
-		//echo  '<h4>'.$ar['result'].'</h4>';
 		return $ar['result'];
 }
 
@@ -1778,9 +1679,6 @@ function add_new_examination_and_profile($link,$sample_id,$list_of_selected_exam
 	{
 		
 		$ex_data=get_one_examination_details($link,$exr);
-		$edit_specification=json_decode($ex_data['edit_specification'],true);
-		$type=isset($edit_specification['type'])?$edit_specification['type']:'';
-
 		//echo '<br>'.$ex_data['sample_requirement'].'<br>';
 		//echo $sample_requirement.'<br>';
 		
@@ -1798,7 +1696,7 @@ function add_new_examination_and_profile($link,$sample_id,$list_of_selected_exam
 				//already inserted
 				//insert_one_examination_with_result($link,$sid,$ex,$_POST['mrd']);
 			}
-			elseif($type!='blob')
+			elseif($exr<100000)
 			{
 				insert_one_examination_without_result($link,$sample_id,$exr);
 			}
@@ -2075,289 +1973,5 @@ function set_sample_id($link, $sample_required_array)
 	return $sample_id_array;
 }
 
-
-////////////// TCPDF Functions///////////////////////
-
-function print_sample($link,$sample_id,$pdf)
-{
-	     //$pdf = new ACCOUNT1('P', 'mm', 'A4', true, 'UTF-8', false);
-	     
-	     $pdf->sample_id=$sample_id;
-	     $pdf->link=$link;
-	     $pdf->profile_wise_ex_list=get_profile_wise_ex_list($link,$sample_id);
-	     if($pdf->profile_wise_ex_list===false){return;}
-
-	ob_start();
-		view_sample_p($link,$sample_id,$pdf->profile_wise_ex_list);
-		$myStr = ob_get_contents();
-	ob_end_clean();
-
-	//echo $myStr;
-	//exit(0);
-	     //left,top,right
-	     $pdf->SetMargins(10, 40, 10);
-	     $pdf->SetAutoPageBreak(TRUE, 30);
-	     
-	     $pdf->SetFont('courier', '', 9);
-	     //$pdf->SetMargins(10, $pdf->current_y, 10); //no effect, page not added
-	     //$pdf->SetY($pdf->current_y); //no effect, page not added
-		 $pdf->AddPage();
-		 $pdf->SetY($pdf->current_y); //required , setMargin after add page have no effect
-		 $pdf->SetMargins(10, $pdf->current_y, 10); //will take effect from next page onwards
-
-	     $pdf->writeHTML($myStr, true, false, true, false, '');
-	     
-	     $pdf->writeHTML(count($GLOBALS['img_list']), true, false, true, false, '');
-	 
-	     //prepare for graphics
-	    $y=$pdf->GetY(); //Y first?
-		$x=$pdf->GetX();
-		
-		$i=0;
-			
-	     foreach($GLOBALS['img_list'] as $k=>$v)
-	     {
-			//somehow manual calculation of X and Y is required
-			//public function Image($file, $x='', $y='', $w=0, $h=0, $type='', $link='', $align='', $resize=false, 
-			//$dpi=300, $palign='', $ismask=false, $imgmask=false, $border=0, $fitbox=false, $hidden=false, $fitonpage=false, $alt=false, $altimgs=array()) {
-			$pdf->Image('@'.$v,$x+$i*40,$y+$i*0,40,20,$type='', $link='', $align='', $resize=true,
-						$dpi=300, $palign='', $ismask=false, $imgmask=false, $border=1);
-			$i++;
-		 }
-				     
-	     //$pdf->Output('report-'.$sample_id.'.pdf', 'I');
-}
-
-function display_dw_png($ex_result,$label)
-{
-	$ar=str_split($ex_result);
-	
-	$width=256; //128 X 2
-    $height=128; //256;//223+32=255 make is half to save space
-    $im = imagecreatetruecolor($width,$height);
-    $white = imagecolorallocate($im, 255, 255, 225);
-    $black = imagecolorallocate($im, 0,0,0);
-	imagefill($im,0,0,$white);
-	imagestring($im, 5, 3, 1, $label, $black);
-
-	$px=0;
-	$py=256;
-	$y=2;
-	foreach ($ar as $k=>$v)
-	{
-		$y=(256-ord($v))/2 +16; //make half add 16 to get baseline
-		$x=$k*2;	//every two pixel
-		imageline ( $im , $px , $py , $x , $y , $black ) ;
-		
-		$py=$y;
-		$px=$x;
-	}
-	
-	ob_start();	
-	imagepng($im);
-	$myStr = ob_get_contents();
-	ob_end_clean();
-	imagedestroy($im);	
-	return $myStr;
-}
-
-function view_sample_p($link,$sample_id,$profile_wise_ex_list)
-{
-	$ex_list=get_result_of_sample_in_array($link,$sample_id);
-	echo '<table border="0"  cellpadding="2">';
-
-	foreach($profile_wise_ex_list as $kp=>$vp)
-	{
-		if($kp==$GLOBALS['pid_profile']){continue;}	//pid is displyed on each page//not needed here
-
-		$pinfo=get_profile_info($link,$kp);
-		$profile_edit_specification=json_decode($pinfo['edit_specification'],true);
-		$print_hide=isset($profile_edit_specification['print_hide'])?$profile_edit_specification['print_hide']:'';
-		if($print_hide=='yes'){continue;}	//not to be printed
-		
-		$display_name=isset($profile_edit_specification['display_name'])?$profile_edit_specification['display_name']:'';
-
-		if($display_name!='no')
-		{		
-			echo '<tr><th colspan="3"><h2><u>'.$pinfo['name'].'</u></h2></th></tr>';
-		}
-		
-		if($pinfo['profile_id']>$GLOBALS['max_non_ex_profile'])
-		{
-		
-			$header=isset($profile_edit_specification['header'])?$profile_edit_specification['header']:'';
-			if($header!='no')
-			{
-				echo_result_header_p();
-			}
-		
-			foreach($vp as $ex_id)
-			{
-
-				$examination_details=get_one_examination_details($link,$ex_id);
-				$edit_specification=json_decode($examination_details['edit_specification'],true);
-				$type=isset($edit_specification['type'])?$edit_specification['type']:'';
-								
-				if($type!='blob')
-				{
-					view_field_p($link,$ex_id,$ex_list[$ex_id]);	
-				}
-				else
-				{
-					
-				}
-			}
-		}
-		else
-		{	
-			$count=1;
-
-			foreach($vp as $ex_id)
-			{
-				if($count%3==1)
-				{
-					echo '<tr>';
-				}
-
-				if($ex_id<100000)
-				{
-					echo '<td style="border-right:0.1px solid black;">';
-					view_field_hr_p($link,$ex_id,$ex_list[$ex_id]);	
-					echo '</td>';
-				}
-				else
-				{
-					//view_field_blob_hr($link,$ex_id,$sample_id);	
-				}
-				
-				
-				if($count%3==0)
-				{
-					echo '</tr>';
-				}
-			$count++;
-			}
-			$count--;
-			
-			if($count%3==1){echo '<td></td><td></td></tr>';}
-			if($count%3==2){echo '<td></td></tr>';}
-		}
-	}
-	
-	echo '</table>';	
-}
-
-function view_field_p($link,$ex_id,$ex_result)
-{
-		$examination_details=get_one_examination_details($link,$ex_id);
-		$edit_specification=json_decode($examination_details['edit_specification'],true);
-		$help=isset($edit_specification['help'])?$edit_specification['help']:'';
-		$type=isset($edit_specification['type'])?$edit_specification['type']:'';
-
-		$interval_l=isset($edit_specification['interval_l'])?$edit_specification['interval_l']:'';
-		$cinterval_l=isset($edit_specification['cinterval_l'])?$edit_specification['cinterval_l']:'';
-		$ainterval_l=isset($edit_specification['ainterval_l'])?$edit_specification['ainterval_l']:'';
-		$interval_h=isset($edit_specification['interval_h'])?$edit_specification['interval_h']:'';
-		$cinterval_h=isset($edit_specification['cinterval_h'])?$edit_specification['cinterval_h']:'';
-		$ainterval_h=isset($edit_specification['ainterval_h'])?$edit_specification['ainterval_h']:'';
-		$img=isset($edit_specification['img'])?$edit_specification['img']:'';
-
-		if($img=='dw')
-		{
-			//echo '<tr>';
-			//echo '<td style="border: 0.3px solid black;">'.$examination_details['name'].'</td>';
-			//echo '<td style="border: 0.3px solid black;">';
-			
-			//just save graphics in global array, for display leter on
-			//echo 'sssss';
-			$GLOBALS['img_list'][$examination_details['name']]=display_dw_png($ex_result,$examination_details['name']);
-			//echo '</td>';
-			//echo '<td style="border: 0.3px solid black;"></td></tr>';			
-		}
-		elseif($type=='subsection')
-		{		
-				echo '<tr>';
-				echo '	<td style="border: 0.3px solid black;"></td>
-				<td style="border: 0.3px solid black;"><h3 align="center">'.$examination_details['name'].'</h3></td>
-				<td style="border: 0.3px solid black;"></td>';
-				echo '</tr>';
-		//echo '	<pre><table border="1"><tr><td>sadda</td><td>sadda</td></tr><tr><td>sadda</td><td>sadda</td></tr></table>'.htmlspecialchars($help).'</pre>';
-		}
-		else
-		{		
-				echo '<tr>';
-		echo '	<td style="border: 0.3px solid black;">'.$examination_details['name'].'</td>
-				<td style="border: 0.3px solid black;"><pre>'.htmlspecialchars($ex_result.' '.
-				decide_alert($ex_result,$interval_l,$cinterval_l,$ainterval_l,$interval_h,$cinterval_h,$ainterval_h)).'</pre></td>
-				<td style="border: 0.3px solid black;">'.nl2br(htmlspecialchars($help)).'</td>';
-				echo '</tr>';
-		//echo '	<pre><table border="1"><tr><td>sadda</td><td>sadda</td></tr><tr><td>sadda</td><td>sadda</td></tr></table>'.htmlspecialchars($help).'</pre>';
-		}
-
-}		
-
-function display_dw_p($ex_result)
-{
-	$ar=str_split($ex_result);
-
-	$width=256; //128 X 2
-    $height=128; //256;//223+32=255 make is half to save space
-    $im = imagecreatetruecolor($width,$height);
-    $white = imagecolorallocate($im, 255, 255, 225);
-    $black = imagecolorallocate($im, 0,0,0);
-	imagefill($im,0,0,$white);
-	$px=0;
-	$py=256;
-	foreach ($ar as $k=>$v)
-	{
-		$y=(256-ord($v))/2 +16; //make half add 16 to get baseline
-		$x=$k*2;	//every two pixel
-		imageline ( $im , $px , $py , $x , $y , $black ) ;
-		$py=$y;
-		$px=$x;
-	}
-	
-	ob_start();	
-	imagepng($im);
-	$myStr = base64_encode(ob_get_contents());
-	ob_end_clean();
-
-	//echo "<img src='data:image/png;base64,".$myStr."'/>";
-	echo '<img src=\'data:image/png;base64,'.$myStr.'\'>';
-	//echo "x<img src='img/img.png'>y";
-	imagedestroy($im);	
-}
-
-function view_field_hr_p($link,$ex_id,$ex_result)
-{
-		$examination_details=get_one_examination_details($link,$ex_id);
-		$edit_specification=json_decode($examination_details['edit_specification'],true);
-		$help=isset($edit_specification['help'])?$edit_specification['help']:'';
-		$interval=isset($edit_specification['interval'])?$edit_specification['interval']:'';
-		
-		echo '<b>'.$examination_details['name'].':</b> '.htmlspecialchars($ex_result.' '.decide_alert($ex_result,$interval,'','','','',''));
-}	
-
-function echo_result_header_p()
-{
-	echo '<tr><td width="25%">Examination</td><td width="30%">Result</td><td width="45%">Unit, Ref. Intervals ,(Method)</td></tr>';
-}
-
-function get_profile_wise_ex_list($link,$sample_id)
-{
-	$ex_list=get_result_of_sample_in_array($link,$sample_id);
-	//print_r($ex_list);
-	$rblob=get_result_blob_of_sample_in_array($link,$sample_id);
-	//print_r($rblob);
-	$result_plus_blob_requested=$ex_list+$rblob;
-	//print_r($result_plus_blob_requested);
-	if(count($result_plus_blob_requested)==0)
-	{
-		echo '<h3>Nothing requested for sample_id='.$sample_id.'</h3>';
-		return false;
-	}
-	
-	return $profile_wise_ex_list=ex_to_profile($link,$result_plus_blob_requested);
-}
 
 ?>

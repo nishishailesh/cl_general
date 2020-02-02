@@ -6,7 +6,6 @@ require_once 'base/verify_login.php';
 	////////User code below/////////////////////
 require_once('tcpdf/tcpdf.php');
 
-
 $GLOBALS['img_list']=array();
 
 class ACCOUNT1 extends TCPDF {
@@ -14,6 +13,7 @@ class ACCOUNT1 extends TCPDF {
 	public $link;
 	public $current_y;
 	public $profile_wise_ex_list;
+
 	public function Header() 
 	{
 		ob_start();	
@@ -71,65 +71,40 @@ class ACCOUNT1 extends TCPDF {
 	
 	public function Footer() 
 	{
-	    $this->SetY(-20);
-		$this->Cell(0, 10, 'Page '.$this->getAliasNumPage().'/'.$this->getAliasNbPages(), 0, false, 'C', 0, '', 0, false, 'T', 'M');
+		$this->SetY(-20);
+		//$this->Cell(0, 10, 'Page '.$this->getAliasNumPage().'/'.$this->getAliasNbPages(), 0, false, 'C', 0, '', 0, false, 'T', 'M');
+		$this->Cell(0, 10, 'Page '.$this->getPageNumGroupAlias().'/'.$this->getPageGroupAlias(), 0, false, 'C', 0, '', 0, false, 'T', 'M');
 	}	
 }
 
 
 $link=get_link($GLOBALS['main_user'],$GLOBALS['main_pass']);
+//echo '<pre>';print_r($_POST);echo '</pre>';
 
 $pdf = new ACCOUNT1('P', 'mm', 'A4', true, 'UTF-8', false);
-
-print_sample($link,$_POST['sample_id'],$pdf);
-
-
-$sql='select * from result_blob where sample_id=\''.$_POST['sample_id'].'\'';
-$result=run_query($link,$GLOBALS['database'],$sql);
-
-
-while($ar=get_single_row($result))
+//$pdf = new ACCOUNT1(PDF_PAGE_ORIENTATION, PDF_UNIT, PDF_PAGE_FORMAT, true, 'UTF-8', false);
+for ($i=$_POST['from'];$i<=$_POST['to'];$i++)
 {
-	$ex_result=get_one_ex_result_blob($link,$_POST['sample_id'],$ar['examination_id']);
-	$png[]=display_dw_png($ex_result,$ar['examination_id']);
+	$released=get_one_ex_result($link,$i,$GLOBALS['released_by']);
+	//echo 'xxx'.$i.$released_by;
+	if(strlen($released)!=0)
+	{
+		$pdf->startPageGroup();
+		print_sample($link,$i,$pdf);
+	}
+	else
+	{
+		echo '<div class="d-inline-block">Sample _ID='.$i.' is [ not released / does not exist ]</div>';
+		sample_id_view_button($i,'_blank');
+	}
 }
 
-$i=0;
-$x=$pdf->GetX();
-$y=$pdf->GetY();
-
-foreach($png as $v)
-{
-	$pdf->Image('@'.$v,$x,$y,40,20,$type='', $link='', $align='', $resize=true,
-			$dpi=300, $palign='', $ismask=false, $imgmask=false, $border=1);	
-	$x=$x+40;
-}
-
-/*
-	$ex_result=get_one_ex_result_blob($link,$_POST['sample_id'],19);
-	$ex_resultt=get_one_ex_result_blob($link,$_POST['sample_id'],20);
-	$ex_resulttt=get_one_ex_result_blob($link,$_POST['sample_id'],21);
-
-	$png=display_dw_png($ex_result,'nothing');
-	$pdf->Image('@'.$png,$pdf->GetX(),$pdf->GetY(),40,20,$type='', $link='', $align='', $resize=true,
-			$dpi=300, $palign='', $ismask=false, $imgmask=false, $border=1);
-
-	
-	$png=display_dw_png($ex_resultt,'nothinnng');
-	$pdf->Image('@'.$png,$pdf->GetX()+40,$pdf->GetY(),40,20,$type='', $link='', $align='', $resize=true,
-			$dpi=300, $palign='', $ismask=false, $imgmask=false, $border=1);
-
-	$png=display_dw_png($ex_resulttt,'nothinnng');
-	$pdf->Image('@'.$png,$pdf->GetX()+80,$pdf->GetY(),40,20,$type='', $link='', $align='', $resize=true,
-			$dpi=300, $palign='', $ismask=false, $imgmask=false, $border=1);
-*/
-		
-$pdf->Output('report-'.$_POST['sample_id'].'.$pdf', 'I');
-
+$pdf->Output('report-multi.pdf', 'I');
 //////////////user code ends////////////////
 //tail();
 
-//echo '<pre>';print_r($_POST);echo '</pre>';
+echo '<pre>';print_r($_POST);echo '</pre>';
 
+//////////////Functions///////////////////////
 
 ?>

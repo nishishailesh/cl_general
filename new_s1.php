@@ -9,11 +9,14 @@ echo '		  <link rel="stylesheet" href="project_common.css">
 		  	
 $link=get_link($GLOBALS['main_user'],$GLOBALS['main_pass']);
 
-		main_menu();
-if($_POST['action']=='new_s1')
+main_menu();
+
+if($_POST['action']=='direct')
 {
-	get_data_specific($link,array());
+	get_data_specific($link);
 }
+
+
 elseif($_POST['action']=='insert')
 {
 	$sample_id_array=save_insert_specific($link);
@@ -25,7 +28,7 @@ elseif($_POST['action']=='insert')
 }
 
 
-function get_data_specific($link,$specific)
+function get_data_specific($link)
 {
 	echo '<form method=post class="bg-light jumbotron">';
 	echo '<input type=hidden name=session_name value=\''.session_name().'\'>';
@@ -40,12 +43,13 @@ function get_data_specific($link,$specific)
 	
 		echo '<div id=basic class="tab-pane active">';
 			get_basic_specific();
-			//get_one_field_for_insert($link,1001);
 			get_one_field_for_insert($link,1002);
 			get_one_field_for_insert($link,1004);
 			get_one_field_for_insert($link,1005);
 			get_one_field_for_insert($link,1006);
-			get_one_field_for_insert($link,84);
+			get_one_field_for_insert($link,1017);
+			get_one_field_for_insert($link,1018);
+			//get_one_field_for_insert($link,84);
 		echo '</div>';	
 		get_examination_data($link);
 		get_profile_data($link);

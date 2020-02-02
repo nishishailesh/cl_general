@@ -6,7 +6,7 @@ require_once 'project_common.php';
 require_once $GLOBALS['main_user_location'];
 //echo '<br>Sending POST from server<br><pre>';
 //print_r($_SESSION);
-print_r($_POST);
+//print_r($_POST);
 //print_r($_FILES);
 //echo '<br>With proper POSTing of data by to-script and proper output by from-script AJAX is complate';
 //javascript to encode url and PHP to decode POST value is must
@@ -34,15 +34,22 @@ else
 function save_result($link)
 {
 	
-	$sql='update result
+	$sql='update result_blob,primary_result_blob
 			set 
-				result=\''.my_safe_string($link,$_POST['result']).'\',	
-				recording_time=now(),
-				recorded_by=\''.$_POST['user'].'\'
+				result_blob.result=primary_result_blob.result,	
+				result_blob.recording_time=now(),
+				result_blob.recorded_by=\''.$_POST['user'].'\'
 			where 
-				sample_id=\''.$_POST['sample_id'].'\' 
+				result_blob.sample_id=\''.$_POST['sample_id'].'\' 
 				and
-				examination_id=\''.$_POST['examination_id'].'\'';
+				result_blob.examination_id=\''.$_POST['examination_id'].'\'
+				and
+				result_blob.sample_id=primary_result_blob.sample_id
+				and
+				result_blob.examination_id=primary_result_blob.examination_id
+				and
+				primary_result_blob.uniq=\''.$_POST['uniq'].'\'				
+				';
 	//echo $sql;
 	if(!$result=run_query($link,$GLOBALS['database'],$sql))
 	{
@@ -50,7 +57,7 @@ function save_result($link)
 	}
 	else
 	{
-		echo '<p>'.$_POST['sample_id'].'|'.$_POST['examination_id'].'|'.$_POST['result'].'|Saved</p>';				
+		echo '<p>Blob data for '.$_POST['sample_id'].'|'.$_POST['examination_id'].'  imported from primary table</p>';				
 	}
 }
 ?>

@@ -2,7 +2,7 @@
 $GLOBALS['nojunk']='';
 require_once 'base/verify_login.php';
 
-//my_print_r($_POST);
+//print_r($_POST);
 ////////User code below/////////////////////	
 	if(isset($_POST['fname_postfix']))
 	{
@@ -25,7 +25,7 @@ function download($link,$d,$t,$f,$pk,$pkv,$pk2,$pkv2,$postfix='')
 			from `'.$t.'`
 			where `'.$pk.'`=\''.$pkv.'\' and
 			 `'.$pk2.'`=\''.$pkv2.'\'';
-			
+	//echo $sql;		
 	$result=run_query($link,$d,$sql);
 	$ar=get_single_row($result);
 	$filename=$postfix;
