@@ -408,7 +408,7 @@ function save_insert_specific($link)
 	$sample_id_array=set_sample_id($link,$sample_required);
 //4	
 	//echo '<pre>following samples ids are alloted:<br>';print_r($sample_id_array);echo '</pre>';
-
+	show_sample_required($sample_id_array);
 //insert examinations////////////////////////////////////////////
 	
 	foreach($sample_id_array as $stype=>$sid)

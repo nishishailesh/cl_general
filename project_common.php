@@ -1613,6 +1613,15 @@ function save_insert($link)
 }
 */
 
+function show_sample_required($sar)
+{
+	//print_r($sar);
+	echo '<h5 class="text-dark">Required Samples with alloted Sample ID are as follows</h5>';
+	foreach($sar as $k=>$v)
+	{
+		echo '<h5 ><span class="text-success">'.$k.'</span>:<span class="text-primary">'.$v.'</span></h5>';
+	}
+}
 //find ex
 //find sample req for each
 //get unique 
@@ -1675,7 +1684,7 @@ function save_insert($link)
 	$sample_id_array=set_sample_id($link,$sample_required);
 //4	
 	//echo '<pre>following samples ids are alloted:<br>';print_r($sample_id_array);echo '</pre>';
-
+	show_sample_required($sample_id_array);
 //insert examinations////////////////////////////////////////////
 	
 	foreach($sample_id_array as $stype=>$sid)
@@ -1697,7 +1706,7 @@ function save_insert($link)
 				}
 				else
 				{
-					echo 'blob<br>';
+					//echo 'blob<br>';
 					insert_one_examination_blob_without_result($link,$sid,$ex);
 				}
 			}
