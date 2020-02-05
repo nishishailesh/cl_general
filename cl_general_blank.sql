@@ -63,7 +63,8 @@ CREATE TABLE `primary_result_blob` (
   `uniq` varchar(100) NOT NULL,
   `result` mediumblob DEFAULT NULL,
   `fname` varchar(100) DEFAULT NULL,
-  PRIMARY KEY (`sample_id`,`examination_id`,`uniq`)
+  PRIMARY KEY (`sample_id`,`examination_id`),
+  KEY `examination_id` (`examination_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 ROW_FORMAT=COMPACT;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -132,7 +133,7 @@ CREATE TABLE `result` (
   KEY `examination_id` (`examination_id`),
   KEY `recorded_by` (`recorded_by`),
   CONSTRAINT `result_ibfk_5` FOREIGN KEY (`examination_id`) REFERENCES `examination` (`examination_id`) ON UPDATE CASCADE,
-  CONSTRAINT `result_ibfk_6` FOREIGN KEY (`recorded_by`) REFERENCES `user` (`user`) ON UPDATE CASCADE
+  CONSTRAINT `result_ibfk_6` FOREIGN KEY (`recorded_by`) REFERENCES `user` (`user`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 ROW_FORMAT=COMPACT;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -153,8 +154,7 @@ CREATE TABLE `result_blob` (
   PRIMARY KEY (`sample_id`,`examination_id`),
   KEY `examination_id` (`examination_id`),
   KEY `recorded_by` (`recorded_by`),
-  CONSTRAINT `result_blob_ibfk_1` FOREIGN KEY (`examination_id`) REFERENCES `examination` (`examination_id`) ON UPDATE CASCADE,
-  CONSTRAINT `result_blob_ibfk_2` FOREIGN KEY (`recorded_by`) REFERENCES `user` (`user`) ON UPDATE CASCADE
+  CONSTRAINT `result_blob_ibfk_1` FOREIGN KEY (`recorded_by`) REFERENCES `user` (`user`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 ROW_FORMAT=COMPACT;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -200,4 +200,4 @@ CREATE TABLE `user` (
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2020-02-05 15:42:01
+-- Dump completed on 2020-02-05 23:02:57

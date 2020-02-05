@@ -46,16 +46,16 @@ function get_data_specific($link)
 			get_one_field_for_insert($link,1002);
 			get_one_field_for_insert($link,1008);
 
-			get_one_field_for_insert($link,1007);
-			get_one_field_for_insert($link,1020);
-			get_one_field_for_insert($link,1021);
-
 			get_one_field_for_insert($link,1004);
 			get_one_field_for_insert($link,1005);
 			get_one_field_for_insert($link,1006);
 			get_one_field_for_insert($link,1017);
 			get_one_field_for_insert($link,1018);
-			//get_one_field_for_insert($link,84);
+
+			get_one_field_for_insert($link,1007);
+			get_one_field_for_insert($link,1020);
+			get_one_field_for_insert($link,1021);
+			
 		echo '</div>';	
 		get_examination_data($link);
 		get_profile_data($link);
@@ -150,7 +150,6 @@ function get_one_field_for_insert($link,$examination_id)
 			echo '<p class="help">'.$help.'</p>';	
 		echo '</div>';
 	}
-	
 	elseif($type=='number')
 	{
 		$step=isset($edit_specification['step'])?$edit_specification['step']:1;
@@ -187,6 +186,8 @@ function get_one_field_for_insert($link,$examination_id)
 	}
 	elseif($type=='date' || $type=='time')
 	{
+		if($type=='date'){$default=strftime("%Y-%m-%d");}
+		elseif($type=='time'){$default=strftime("%H:%M");}
 		//////
 		echo '<div class="basic_form  m-0 p-0 no-gutters">';
 			////
@@ -208,7 +209,7 @@ function get_one_field_for_insert($link,$examination_id)
 						>';
 				echo '</div>';
 				echo '<div class="d-inline  no-gutters">';
-					//get_primary_result($link,$sample_id,$examination_id);
+					show_source_button($element_id,$default);
 				echo '</div>';
 			echo '</div>';
 			echo '<p class="help">'.$help.'</p>';	
@@ -275,7 +276,6 @@ function get_one_field_for_insert($link,$examination_id)
 			echo '<p class="help">'.$help.'</p>';	
 		echo '</div>';
 	} 
-
 	elseif($type=='json')
 	{
 		//////

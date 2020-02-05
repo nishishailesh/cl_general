@@ -42,6 +42,24 @@ function mk_select_from_array($name, $select_array,$disabled='',$default='')
 	return TRUE;
 }
 
+function mk_array_from_sql($link,$sql,$field_name)
+{
+	$result=run_query($link,$GLOBALS['database'],$sql);
+	$ret=array();
+	while($ar=get_single_row($result))
+	{
+		$ret[]=$ar[$field_name];
+	}
+	return $ret;
+}
+
+function mk_select_from_sql($link,$sql,$field_name,$select_name,$select_id,$disabled='',$default='')
+{
+	$ar=mk_array_from_sql($link,$sql,$field_name);
+	mk_select_from_array($select_name,$ar,$disabled,$default);
+}
+
+
 
 function get_one_examination_details($link,$examination_id)
 {
@@ -673,6 +691,18 @@ function get_primary_result($link,$sample_id,$examination_id)
 					value=\''.$ar['result'].'\' >'.$ar['result'].'</button>';
 	}
 	//return $values;
+}
+
+//used to supply default
+//calls sync_with_that() from project_common.js
+function show_source_button($link_element_id,$my_value)
+{
+	$element_id='source_for_'.$link_element_id;
+	echo '<button onclick="sync_with_that(this,\''.$link_element_id.'\')"
+				type=button
+				class="btn btn-sm btn-outline-dark  no-gutters align-top"
+				id=\''.$element_id.'\' 
+				value=\''.$my_value.'\'>'.$my_value.'</button>';
 }
 
 function get_primary_result_blob($link,$sample_id,$examination_id)
