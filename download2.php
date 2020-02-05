@@ -25,7 +25,7 @@ function download($link,$d,$t,$f,$pk,$pkv,$pk2,$pkv2,$postfix='')
 			from `'.$t.'`
 			where `'.$pk.'`=\''.$pkv.'\' and
 			 `'.$pk2.'`=\''.$pkv2.'\'';
-	//echo $sql;		
+	//echo $sql;
 	$result=run_query($link,$d,$sql);
 	$ar=get_single_row($result);
 	$filename=$postfix;

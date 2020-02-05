@@ -77,7 +77,7 @@ function get_one_field_for_insert($link,$examination_id)
 	if(!$edit_specification){$edit_specification=array();}
 
 		$result='';
-		
+
 	$type=isset($edit_specification['type'])?$edit_specification['type']:'text';
 	$readonly=isset($edit_specification['readonly'])?$edit_specification['readonly']:'';
 	$help=isset($edit_specification['help'])?$edit_specification['help']:'';
@@ -239,7 +239,7 @@ function get_one_field_for_insert($link,$examination_id)
 			echo '<p class="help">'.$help.'</p>';	
 		echo '</div>';
 	}
-	elseif($type=='dw')
+	elseif($type=='blob')
 	{
 		//////
 		echo '<div class="basic_form  m-0 p-0 no-gutters">';
@@ -415,10 +415,14 @@ function save_insert_specific($link)
 	{
 		foreach($stype_for_each_requested as $ex=>$exreq)
 		{
+
+			$examination_details=get_one_examination_details($link,$ex);
+			$edit_specification=json_decode($examination_details['edit_specification'],true);
+			$type=isset($edit_specification['type'])?$edit_specification['type']:'';
 			//echo $ex.'<br>';
 			if($stype==$exreq)
 			{
-				if($ex<100000)
+				if($type!='blob')
 				{
 					if(array_key_exists('__ex__'.$ex,$_POST))
 					{
@@ -454,7 +458,7 @@ function save_insert_specific($link)
 					}
 					else
 					{
-						if($ex<100000)
+						if($type!='blob')
 						{
 							insert_one_examination_without_result($link,$sid,$ex);
 						}

@@ -6,7 +6,7 @@ require_once 'project_common.php';
 require_once $GLOBALS['main_user_location'];
 //echo '<br>Sending POST from server<br><pre>';
 //print_r($_SESSION);
-print_r($_POST);
+//print_r($_POST);
 //print_r($_FILES);
 //echo '<br>With proper POSTing of data by to-script and proper output by from-script AJAX is complate';
 //javascript to encode url and PHP to decode POST value is must

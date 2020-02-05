@@ -87,7 +87,7 @@ print_sample($link,$_POST['sample_id'],$pdf);
 $sql='select * from result_blob where sample_id=\''.$_POST['sample_id'].'\'';
 $result=run_query($link,$GLOBALS['database'],$sql);
 
-
+$png=array();
 while($ar=get_single_row($result))
 {
 	$ex_result=get_one_ex_result_blob($link,$_POST['sample_id'],$ar['examination_id']);
