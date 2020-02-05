@@ -44,6 +44,12 @@ function get_data_specific($link)
 		echo '<div id=basic class="tab-pane active">';
 			get_basic_specific();
 			get_one_field_for_insert($link,1002);
+			get_one_field_for_insert($link,1008);
+
+			get_one_field_for_insert($link,1007);
+			get_one_field_for_insert($link,1020);
+			get_one_field_for_insert($link,1021);
+
 			get_one_field_for_insert($link,1004);
 			get_one_field_for_insert($link,1005);
 			get_one_field_for_insert($link,1006);
