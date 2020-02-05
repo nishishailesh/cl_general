@@ -571,8 +571,12 @@ function edit_sample($link,$sample_id)
 		foreach($vp as $ex_id)
 		{
 			if($ex_id==$GLOBALS['mrd'] || $ex_id==$GLOBALS['sample_requirement'] ){$readonly='readonly';}else{$readonly='';}
-			
-			if($ex_id<100000)
+
+				$examination_details=get_one_examination_details($link,$ex_id);
+				$edit_specification=json_decode($examination_details['edit_specification'],true);
+				$type=isset($edit_specification['type'])?$edit_specification['type']:'';
+								
+			if($type!='blob')
 			{
 				edit_field($link,$ex_id,$ex_list,$sample_id,$readonly);	
 			}
@@ -1599,50 +1603,6 @@ function my_on_off_profile($label,$id)
 			>'.$label.'</button>';
 }
 
-/*
-function save_insert($link)
-{
-	//find list of examinations requested//////////////////////////////
-	$requested=array();
-	$ex_requested=explode(',',$_POST['list_of_selected_examination']);
-	$requested=array_merge($requested,$ex_requested);
-	
-	$profile_requested=explode(',',$_POST['list_of_selected_profile']);
-	foreach($profile_requested as $value)
-	{
-		$psql='select * from profile where profile_id=\''.$value.'\'';
-		$result=run_query($link,$GLOBALS['database'],$psql);
-		$ar=get_single_row($result);
-		$profile_ex_requested=explode(',',$ar['examination_id_list']);
-		$requested=array_merge($requested,$profile_ex_requested);
-	}
-
-	$requested=array_filter(array_unique($requested));
-	
-//1	//must to link samples from single patients
-	$sample_id=get_new_sample_id($link,$_POST['mrd'],$sample_requirement);
-
-	//echo '<pre>following is requested:<br>';print_r($requested);echo '</pre>';
-	foreach ($requested as $ex)
-	{
-			if($ex==$GLOBALS['mrd'])
-			{
-				//mrd inserted, do nothing
-			}
-			elseif($ex<100000)
-			{
-				insert_one_examination_without_result($link,$sample_id,$ex);
-			}
-			else  //blob as attachment 
-			{
-				insert_one_examination_blob_without_result($link,$sample_id,$ex);
-			}
-	}
-	
-	return $sample_id;
-}
-*/
-
 function show_sample_required($sar)
 {
 	//print_r($sar);
@@ -2258,7 +2218,10 @@ function view_sample_p($link,$sample_id,$profile_wise_ex_list)
 					echo '<tr>';
 				}
 
-				if($ex_id<100000)
+				$examination_details=get_one_examination_details($link,$ex_id);
+				$edit_specification=json_decode($examination_details['edit_specification'],true);
+				$type=isset($edit_specification['type'])?$edit_specification['type']:'';					
+				if($type!='blob')
 				{
 					echo '<td style="border-right:0.1px solid black;">';
 					view_field_hr_p($link,$ex_id,$ex_list[$ex_id]);	

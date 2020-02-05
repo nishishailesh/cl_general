@@ -30,12 +30,18 @@ class ACCOUNT1 extends TCPDF {
 			$count=1;
 			foreach($this->profile_wise_ex_list[$GLOBALS['pid_profile']] as $v)
 			{
+				
 				if($count%3==1)
 				{
 					echo '<tr>';
 				}
 
-				if($v<100000)
+				
+				$examination_details=get_one_examination_details($this->link,$v);
+				$edit_specification=json_decode($examination_details['edit_specification'],true);
+				$type=isset($edit_specification['type'])?$edit_specification['type']:'';
+
+				if($type!='blob')
 				{
 					$r=get_one_ex_result($this->link,$this->sample_id,$v);
 					echo '<td style="border-right:0.1px solid black;">';
@@ -93,30 +99,7 @@ for ($i=$_POST['from'];$i<=$_POST['to'];$i++)
 		print_sample($link,$i,$pdf);
 		
 		
-		/////////////DW
-		//$sql='select * from result_blob where sample_id=\''.$i.'\'';
-		//$result=run_query($link,$GLOBALS['database'],$sql);
 
-
-		//while($ar=get_single_row($result))
-		//{
-			//$ex_result=get_one_ex_result_blob($link,$i,$ar['examination_id']);
-			//$png[]=display_dw_png($ex_result,$ar['examination_id']);
-		//}
-
-		
-		//$x=$pdf->GetX();
-		//$y=$pdf->GetY();
-
-		//foreach($png as $v)
-		//{
-			//$pdf->Image('@'.$v,$x,$y,40,20,$type='', $link='', $align='', $resize=true,
-					//$dpi=300, $palign='', $ismask=false, $imgmask=false, $border=1);	
-			//$x=$x+40;
-		//}
-		
-		
-		///////////////
 	}
 	else
 	{

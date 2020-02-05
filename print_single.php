@@ -30,12 +30,18 @@ class ACCOUNT1 extends TCPDF {
 			$count=1;
 			foreach($this->profile_wise_ex_list[$GLOBALS['pid_profile']] as $v)
 			{
+				
 				if($count%3==1)
 				{
 					echo '<tr>';
 				}
 
-				if($v<100000)
+				
+				$examination_details=get_one_examination_details($this->link,$v);
+				$edit_specification=json_decode($examination_details['edit_specification'],true);
+				$type=isset($edit_specification['type'])?$edit_specification['type']:'';
+
+				if($type!='blob')
 				{
 					$r=get_one_ex_result($this->link,$this->sample_id,$v);
 					echo '<td style="border-right:0.1px solid black;">';
@@ -83,7 +89,7 @@ $pdf = new ACCOUNT1('P', 'mm', 'A4', true, 'UTF-8', false);
 
 print_sample($link,$_POST['sample_id'],$pdf);
 
-
+///arrange for blobs
 $sql='select * from result_blob where sample_id=\''.$_POST['sample_id'].'\'';
 $result=run_query($link,$GLOBALS['database'],$sql);
 
@@ -92,7 +98,17 @@ while($ar=get_single_row($result))
 {
 	$ex_result=get_one_ex_result_blob($link,$_POST['sample_id'],$ar['examination_id']);
 	$ex_details=get_one_examination_details($link,$ar['examination_id']);
-	$png[]=display_dw_png($ex_result,$ex_details['name']);
+
+	//only type=blob,img=dw will be printed this way
+	$edit_specification=json_decode($ex_details['edit_specification'],true);
+	if(!$edit_specification){$edit_specification=array();}
+	$type=isset($edit_specification['type'])?$edit_specification['type']:'text';
+	$img=isset($edit_specification['img'])?$edit_specification['img']:'';
+	if($type=='blob' && $img=='dw')
+	//if($type=='blob')
+	{
+		$png[]=display_dw_png($ex_result,$ex_details['name']);
+	}
 }
 
 $i=0;
@@ -106,25 +122,7 @@ foreach($png as $v)
 	$x=$x+40;
 }
 
-/*
-	$ex_result=get_one_ex_result_blob($link,$_POST['sample_id'],19);
-	$ex_resultt=get_one_ex_result_blob($link,$_POST['sample_id'],20);
-	$ex_resulttt=get_one_ex_result_blob($link,$_POST['sample_id'],21);
-
-	$png=display_dw_png($ex_result,'nothing');
-	$pdf->Image('@'.$png,$pdf->GetX(),$pdf->GetY(),40,20,$type='', $link='', $align='', $resize=true,
-			$dpi=300, $palign='', $ismask=false, $imgmask=false, $border=1);
-
 	
-	$png=display_dw_png($ex_resultt,'nothinnng');
-	$pdf->Image('@'.$png,$pdf->GetX()+40,$pdf->GetY(),40,20,$type='', $link='', $align='', $resize=true,
-			$dpi=300, $palign='', $ismask=false, $imgmask=false, $border=1);
-
-	$png=display_dw_png($ex_resulttt,'nothinnng');
-	$pdf->Image('@'.$png,$pdf->GetX()+80,$pdf->GetY(),40,20,$type='', $link='', $align='', $resize=true,
-			$dpi=300, $palign='', $ismask=false, $imgmask=false, $border=1);
-*/
-		
 $pdf->Output('report-'.$_POST['sample_id'].'.$pdf', 'I');
 
 //////////////user code ends////////////////
