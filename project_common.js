@@ -64,18 +64,20 @@ function sync_with_that(me,that_element_id)
 function sync_all()
 {
 	$("[id^=pr_id_]").each(
-	function()
-	{
-		target=document.getElementById('r_id_'+$(this).attr('data-sid')+'_'+$(this).attr('data-exid'))
-		target.setAttribute('data-uniq',$(this).attr('data-uniq'))
-		target.value=$(this).val()
-		var event = new Event('change');
-		target.dispatchEvent(event);		
-	}
-	
-	
-	
+		function()
+		{
+			target=document.getElementById('r_id_'+$(this).attr('data-sid')+'_'+$(this).attr('data-exid'))
+			target.setAttribute('data-uniq',$(this).attr('data-uniq'))
+			target.value=$(this).val()
+			var event = new Event('change');
+			target.dispatchEvent(event);		
+		}
 	)
+}
+
+function calcuate_for_target(me,target_element_id,equation)
+{
+	alert(target_element_id+equation)
 }
 
 function set_print_class(jsn)

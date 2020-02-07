@@ -1,4 +1,5 @@
 <?php
+require_once 'Evaluator.php';
 
 function main_menu()
 {
@@ -732,6 +733,48 @@ function get_primary_result_blob($link,$sample_id,$examination_id)
 	}
 	//return $values;
 }
+
+function show_calculate_button($link,$sample_id,$examination_id,$equation)
+{
+	$target_element_id='r_id_'.$sample_id.'_'.$examination_id;
+	
+	$this_element_id='cal_for_'.$target_element_id;
+	echo '<button onclick="calcuate_for_target(this,\''.$target_element_id.'\',\''.$equation.'\')"
+				type=button
+				class="btn btn-sm btn-outline-dark  no-gutters align-top"
+				id=\''.$this_element_id.'\' 
+				value=\''.$equation.'\'>'.$equation.'</button>';
+}
+
+function calculate_result($link,$equation,$sample_id,$decimal=0)
+{
+	//echo $equation;
+	$data=explode(',',$equation);
+	$data_count=count($data);
+	//print_r($data);
+	$eq=$data[0];
+	$eq_length=strlen($eq);
+	
+	$parameter=1;
+	
+	$ret='';
+	for($i=0;$i<$eq_length;$i++)
+	{
+		if($eq[$i]=='E')
+		{		
+			$ex_result=get_one_ex_result($link,$sample_id,$data[$parameter]);
+			//echo $ex_result;
+			$ret=$ret.$ex_result;
+			$parameter++;
+		}
+		else{$ret=$ret.$eq[$i];}
+	}
+	
+	$evaluator = new \Matex\Evaluator();
+	return round($evaluator->execute($ret),$decimal);
+}
+
+
 function edit_field($link,$examination_id,$result_array,$sample_id,$readonly='')
 {
 	if(array_key_exists($examination_id,$result_array)){$result=$result_array[$examination_id];}else{$result='';}
@@ -744,6 +787,8 @@ function edit_field($link,$examination_id,$result_array,$sample_id,$readonly='')
 	$help=isset($edit_specification['help'])?$edit_specification['help']:'';
 	$pattern=isset($edit_specification['pattern'])?$edit_specification['pattern']:'';
 	$placeholder=isset($edit_specification['placeholder'])?$edit_specification['placeholder']:'';
+	$step=isset($edit_specification['step'])?$edit_specification['step']:0;
+	
 	
 	$element_id='r_id_'.$sample_id.'_'.$examination_id;
 	if($type=='yesno')
@@ -773,7 +818,7 @@ function edit_field($link,$examination_id,$result_array,$sample_id,$readonly='')
 					get_primary_result($link,$sample_id,$examination_id);
 				echo '</div>';
 			echo '</div>';
-			echo '<p class="help">'.$help.'</p>';	
+			echo '<div class="help"><pre>'.$help.'</pre></div>';	
 		echo '</div>';
 	}
 	else if($type=='select')
@@ -815,13 +860,14 @@ function edit_field($link,$examination_id,$result_array,$sample_id,$readonly='')
 					get_primary_result($link,$sample_id,$examination_id);
 				echo '</div>';
 			echo '</div>';
-			echo '<p class="help">'.$help.'</p>';	
+			echo '<div class="help"><pre>'.$help.'</pre></div>';	
 		echo '</div>';
 	}
 	
 	elseif($type=='number')
 	{
-		$step=isset($edit_specification['step'])?$edit_specification['step']:1;
+		$decimal=isset($edit_specification['decimal'])?$edit_specification['decimal']:0;
+		$calculate=isset($edit_specification['calculate'])?$edit_specification['calculate']:'';	
 		
 				//////
 		echo '<div class="basic_form  m-0 p-0 no-gutters">';
@@ -847,9 +893,13 @@ function edit_field($link,$examination_id,$result_array,$sample_id,$readonly='')
 				echo '</div>';
 				echo '<div class="d-inline  no-gutters">';
 					get_primary_result($link,$sample_id,$examination_id);
+					if(strlen($calculate)>0)
+					{
+						show_source_button($element_id,calculate_result($link,$calculate,$sample_id,$decimal));
+					}
 				echo '</div>';
 			echo '</div>';
-			echo '<p class="help">'.$help.'</p>';	
+			echo '<div class="help"><pre>'.$help.'</pre></div>';	
 		echo '</div>';
 	}
 	elseif($type=='date' || $type=='time')
@@ -878,7 +928,7 @@ function edit_field($link,$examination_id,$result_array,$sample_id,$readonly='')
 					get_primary_result($link,$sample_id,$examination_id);
 				echo '</div>';
 			echo '</div>';
-			echo '<p class="help">'.$help.'</p>';	
+			echo '<div class="help"><pre>'.$help.'</pre></div>';	
 		echo '</div>';
 	}
 	elseif($type=='datetime-local')
@@ -909,7 +959,7 @@ function edit_field($link,$examination_id,$result_array,$sample_id,$readonly='')
 					get_primary_result($link,$sample_id,$examination_id);
 				echo '</div>';
 			echo '</div>';
-			echo '<p class="help">'.$help.'</p>';	
+			echo '<div class="help"><pre>'.$help.'</pre></div>';	
 		echo '</div>';
 	}
 	elseif($type=='blob')
@@ -950,7 +1000,7 @@ function edit_field($link,$examination_id,$result_array,$sample_id,$readonly='')
 					get_primary_result($link,$sample_id,$examination_id);
 				echo '</div>';
 			echo '</div>';
-			echo '<p class="help">'.$help.'</p>';	
+			echo '<div class="help"><pre>'.$help.'</pre></div>';	
 		echo '</div>';
 	}
 	 else  if($type=='subsection')
@@ -979,7 +1029,7 @@ function edit_field($link,$examination_id,$result_array,$sample_id,$readonly='')
 					get_primary_result($link,$sample_id,$examination_id);
 				echo '</div>';
 			echo '</div>';
-			echo '<p class="help">'.$help.'</p>';	
+			echo '<div class="help"><pre>'.$help.'</pre></div>';	
 		echo '</div>';
 	} 
 	else  
@@ -1008,7 +1058,7 @@ function edit_field($link,$examination_id,$result_array,$sample_id,$readonly='')
 					get_primary_result($link,$sample_id,$examination_id);
 				echo '</div>';
 			echo '</div>';
-			echo '<p class="help">'.$help.'</p>';	
+			echo '<div class="help"><pre>'.$help.'</pre></div>';	
 		echo '</div>';
 	} 
 }
