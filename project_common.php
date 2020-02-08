@@ -421,6 +421,16 @@ function sample_id_edit_button($sample_id)
 	</form></div>';
 }
 
+
+function sample_id_calculate_button($sample_id)
+{
+	echo '<div class="d-inline-block" ><form method=post action=edit_general.php class=print_hide>
+	<button class="btn btn-outline-primary btn-sm" name=sample_id value=\''.$sample_id.'\' >Calculate</button>
+	<input type=hidden name=session_name value=\''.$_POST['session_name'].'\'>
+	<input type=hidden name=action value=calculate>
+	</form></div>';
+}
+
 function sample_id_view_button($sample_id,$target='')
 {
 	echo '<div class="d-inline-block" ><form method=post action=view_single.php class=print_hide target=\''.$target.'\'>
@@ -560,6 +570,7 @@ function edit_sample($link,$sample_id)
 			<div>';
 				sample_id_edit_button($sample_id);
 				sample_id_view_button($sample_id);
+				sample_id_calculate_button($sample_id);
 				echo '<button class="btn btn-sm btn-warning" onclick="sync_all()">Sync All</button>';
 			echo '</div>
 			<div class=help>Unique Number to get this data</div>';
@@ -746,16 +757,18 @@ function show_calculate_button($link,$sample_id,$examination_id,$equation)
 				value=\''.$equation.'\'>'.$equation.'</button>';
 }
 
-function calculate_result($link,$equation,$sample_id,$decimal=0)
+function calculate_result($link,$equation,$ex_list,$sample_id,$decimal=0)
 {
+	//check devide by zero,  e is not allowed to have 0
+	//check if ex result is empty
 	//echo $equation;
-	$data=explode(',',$equation);
+	$data=explode(',',$ex_list);
 	$data_count=count($data);
 	//print_r($data);
-	$eq=$data[0];
+	$eq=$equation;
 	$eq_length=strlen($eq);
 	
-	$parameter=1;
+	$parameter=0;
 	
 	$ret='';
 	for($i=0;$i<$eq_length;$i++)
@@ -763,15 +776,40 @@ function calculate_result($link,$equation,$sample_id,$decimal=0)
 		if($eq[$i]=='E')
 		{		
 			$ex_result=get_one_ex_result($link,$sample_id,$data[$parameter]);
-			//echo $ex_result;
+			//echo $data[$parameter].'-result = '.$ex_result;
 			$ret=$ret.$ex_result;
 			$parameter++;
 		}
+		elseif($eq[$i]=='e')
+		{		
+			$ex_result=get_one_ex_result($link,$sample_id,$data[$parameter]);
+			if($ex_result>0)
+			{
+				//echo $ex_result;
+				$ret=$ret.$ex_result;
+				$parameter++;
+			}
+			else
+			{
+				//echo $data[$parameter].'-result = 0';
+				return false;
+			}
+		}
 		else{$ret=$ret.$eq[$i];}
 	}
+	echo 'round('.$ret.','.$decimal.')<br>';
+	return trim(shell_exec('calc "round('.$ret.','.$decimal.')"'));
+	//$evaluator = new \Matex\Evaluator();
 	
-	$evaluator = new \Matex\Evaluator();
-	return round($evaluator->execute($ret),$decimal);
+	//try
+	//{
+		//return round($evaluator->execute($ret),$decimal);
+	//}
+	//catch( \exception $e )
+	//{
+		//return $e->getMessage();
+	//}
+	
 }
 
 
@@ -868,7 +906,11 @@ function edit_field($link,$examination_id,$result_array,$sample_id,$readonly='')
 	{
 		$decimal=isset($edit_specification['decimal'])?$edit_specification['decimal']:0;
 		$calculate=isset($edit_specification['calculate'])?$edit_specification['calculate']:'';	
-		
+		$ex_list=isset($edit_specification['ex_list'])?$edit_specification['ex_list']:'';	
+		//if(strlen($calculate)>0)
+		//{
+			//$result=calculate_result($link,$calculate,$sample_id,$decimal);
+		//}
 				//////
 		echo '<div class="basic_form  m-0 p-0 no-gutters">';
 			////
@@ -895,7 +937,7 @@ function edit_field($link,$examination_id,$result_array,$sample_id,$readonly='')
 					get_primary_result($link,$sample_id,$examination_id);
 					if(strlen($calculate)>0)
 					{
-						show_source_button($element_id,calculate_result($link,$calculate,$sample_id,$decimal));
+						//show_source_button($element_id,calculate_result($link,$calculate,$ex_list,$sample_id,$decimal));
 					}
 				echo '</div>';
 			echo '</div>';
@@ -1781,8 +1823,9 @@ function save_insert($link)
 function get_one_ex_result($link,$sample_id,$examination_id)
 {
 		$sql='select * from result where sample_id=\''.$sample_id.'\' and examination_id=\''.$examination_id.'\'';
-		//echo $sql;
+		//echo 'xxx'.$sql;
 		$result=run_query($link,$GLOBALS['database'],$sql);
+		//if(!$result){return false;}
 		$ar=get_single_row($result);
 		//echo  '<h4>'.$ar['result'].'</h4>';
 		return $ar['result'];
@@ -2020,6 +2063,7 @@ function echo_class_button($link,$class)
 function get_search_condition($link)
 {
 	echo '<form method=post>';
+	echo '<button type=submit class="btn btn-primary form-control" name=action value=set_search>Set Search</button>';
 	echo '<div class="basic_form">';
 	get_examination_data($link);
 	echo '</div>';
