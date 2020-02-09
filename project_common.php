@@ -1,5 +1,6 @@
 <?php
-require_once 'Evaluator.php';
+//require_once 'Evaluator.php';
+require_once('tcpdf/tcpdf.php');
 
 function main_menu()
 {
@@ -13,6 +14,9 @@ function main_menu()
 			<button class="btn btn-outline-primary m-0 p-0" formaction=view_database_id.php type=submit name=action value=get_dbid>View Sample ID</button>			
 			<button class="btn btn-outline-primary m-0 p-0" formaction=search.php type=submit name=action value=get_search_condition>Search</button>			
 			<button class="btn btn-outline-primary m-0 p-0" formaction=view_database_id_from_to_for_print.php type=submit name=action value=get_from_to>Print</button>			
+			<button class="btn btn-outline-primary m-0 p-0" formaction=start.php type=submit name=action value=home><img src=img/home.jpeg height=20></button>			
+			
+			
 			<!--<button class="btn btn-outline-primary dropdown-toggle m-0 p-0" type="button" data-toggle="dropdown">New Specific</button>
 			<div class="dropdown-menu m-0 p-0">		
 					<button class="btn btn-outline-secondary btn-block m-0 p-0" formaction=new_s1.php type=submit name=action value=direct>Direct</button>
@@ -1471,17 +1475,7 @@ echo '<div id=basic class="tab-pane active">';
 echo '<div class="basic_form">';
 	echo '	<label class="my_label text-danger" for="mrd">MRD</label>
 			<input size=13 id=mrd name=mrd class="form-control text-danger" required="required" type=text pattern="SUR/[0-9][0-9]/[0-9]{8}" placeholder="MRD" value="SUR/'.$YY.'/"\>
-			<p class="help"><span class=text-danger>Must have</span> 8 digit after SUR/YY/</p>';
-/*			
-	echo '	<label  class="my_label text-danger" for="name">Name</label>
-			<input class="form-control text-danger" type=text required="required" pattern="[a-zA-Z\s]{2,}" id=name name=name placeholder=name>
-			<p class="help"><span class=text-danger>Must have</span> atleast two characters</p>';
-
-	echo '	<label  class="my_label" for="group_id">Request ID</label>
-			<input class="form-control" type=text id=request_id name=request_id placeholder=request_id>
-			<p class="help">Give single Request ID to all today\'s samples from this patient</p>';
-*/
-			
+			<p class="help"><span class=text-danger>Must have</span> 8 digit after SUR/YY/</p>';		
 echo '</div>';
 echo '</div>';	
 
@@ -2472,4 +2466,80 @@ function dashboard($link)
 	echo '</ul>';
 		
 }
+
+
+class ACCOUNT1 extends TCPDF {
+	public $sample_id;
+	public $link;
+	public $current_y;
+	public $profile_wise_ex_list;
+	public function Header() 
+	{
+		ob_start();	
+	$sr=get_one_ex_result($this->link,$this->sample_id,$GLOBALS['sample_requirement']);
+	$sr_array=explode('-',$sr);
+	$header=$GLOBALS[$sr_array[2]];
+	
+	echo '<table  cellpadding="2">
+	<tr><td style="text-align:center" colspan="3"><h2>'.$header['name'].'</h2></td></tr>
+	<tr><td style="text-align:center" colspan="3"><h3>'.$header['section'].'<b> (Sample ID:</b> '.$this->sample_id.')</h3></td></tr>
+	<tr><td style="text-align:center" colspan="3"><h5>'.$header['address'].'</h5></td></tr>
+	<tr><td style="text-align:center" colspan="3"><h5>'.$header['phone'].'</h5></td></tr>';
+
+			$count=1;
+			foreach($this->profile_wise_ex_list[$GLOBALS['pid_profile']] as $v)
+			{
+				
+				if($count%3==1)
+				{
+					echo '<tr>';
+				}
+
+				
+				$examination_details=get_one_examination_details($this->link,$v);
+				$edit_specification=json_decode($examination_details['edit_specification'],true);
+				$type=isset($edit_specification['type'])?$edit_specification['type']:'';
+
+				if($type!='blob')
+				{
+					$r=get_one_ex_result($this->link,$this->sample_id,$v);
+					echo '<td style="border-right:0.1px solid black;">';
+					view_field_hr_p($this->link,$v,$r);	
+					echo '</td>';
+				}
+				else
+				{
+					//view_field_blob_hr($link,$ex_id,$sample_id);	
+				}
+				
+				
+				if($count%3==0)
+				{
+					echo '</tr>';
+				}
+			$count++;
+			}
+			$count--;
+			
+			if($count%3==1){echo '<td></td><td></td></tr>';}
+			if($count%3==2){echo '<td></td></tr>';}
+			
+	echo '</table>
+	<hr></hr>';
+
+	 $myStr = ob_get_contents();
+	 ob_end_clean();
+	$this->SetY(10);
+	$this->writeHTML($myStr, true, false, true, false, '');
+	$this->current_y=$this->GetY();
+	}
+	
+	public function Footer() 
+	{
+	    $this->SetY(-20);
+		$this->Cell(0, 10, 'Page '.$this->getAliasNumPage().'/'.$this->getAliasNbPages(), 0, false, 'C', 0, '', 0, false, 'T', 'M');
+	}	
+}
+
+
 ?>

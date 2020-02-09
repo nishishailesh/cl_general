@@ -14,7 +14,7 @@ echo '		  <link rel="stylesheet" href="project_common.css">
 		  <script src="project_common.js"></script>';	
 $link=get_link($GLOBALS['main_user'],$GLOBALS['main_pass']);
 
-get_dbid($link);
+get_dbid();
 
 //////////////user code ends////////////////
 tail();
