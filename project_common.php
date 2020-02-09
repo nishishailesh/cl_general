@@ -2456,4 +2456,20 @@ function get_profile_wise_ex_list($link,$sample_id)
 	return $profile_wise_ex_list=ex_to_profile($link,$result_plus_blob_requested);
 }
 
+function dashboard($link)
+{
+	$sql='select * from dashboard order by priority';
+	echo '<h3>Dashboard</h3>';
+	$result=run_query($link,$GLOBALS['database'],$sql);
+	
+	echo '<ul>';
+	while($ar=get_single_row($result))
+	{
+		echo '<li><pre>';
+		echo '<span class="badge badge-primary ">'.$ar['topic'].'</span><p class="text-dark">'.$ar['description'].'</p>';
+		echo '</pre></li>';
+	}
+	echo '</ul>';
+		
+}
 ?>
