@@ -150,6 +150,7 @@ function update_password($du,$dp,$ud,$ut,$uf,$uv,$pf,$pv,$exf,$p1,$p2,$expiry_pe
 {
 	if(verify_login($du,$dp,$ud,$ut,$uf,$uv,$pf,$pv,$exf)===false){return false;}
 	if($p1!=$p2){return false;}
+	if(strlen($p2)<8){echo 'Minimum password Length:8';return false;}
 	
 	$link=get_link($du,$dp);
 	$old_eDate = date('Y-m-d');
@@ -175,7 +176,7 @@ function read_new_passoword()
 						<h3>Change Password</h3>
 						<input class="form-control" readonly type=text name=login placeholder=Username value=\''.$_SESSION['login'].'\'>
 						<input class="form-control" type=password name=password placeholder=\'Current Password\'>
-						<input class="form-control" type=password name=password1 placeholder=\'New Password\'>
+						<input class="form-control" type=password name=password1 placeholder=\'New Password, min length=8\'>
 						<input class="form-control" type=password name=password2 placeholder=\'New Passord again\'>
 						<input type=hidden name=session_name value=\''.session_name().'\'>
 						<button class="form-control btn btn-primary" type=submit name=action value=update_password>Update Password</button>

@@ -117,7 +117,8 @@ function get_single_row($result)
 		}
 		else
 		{
-			return false;
+			//return false;
+			echo 'error get_single_row():'.mysqli_error($link); return false;
 		}
 }
 
