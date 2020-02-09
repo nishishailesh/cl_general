@@ -2,7 +2,7 @@
 //$GLOBALS['nojunk']='';
 require_once 'project_common.php';
 require_once 'base/verify_login.php';
-echo '<link rel="stylesheet" type="text/css" media="print" href="bootstrap/css/bootstrap.min.css">';
+//echo '<link rel="stylesheet" type="text/css" media="print" href="bootstrap/css/bootstrap.min.css">';
 	////////User code below/////////////////////
 echo '		  <link rel="stylesheet" href="project_common.css">
 		  <script src="project_common.js"></script>';
