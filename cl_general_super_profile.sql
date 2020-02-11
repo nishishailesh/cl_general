@@ -16,29 +16,30 @@
 /*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
 
 --
--- Table structure for table `sample_id_strategy`
+-- Table structure for table `super_profile`
 --
 
-DROP TABLE IF EXISTS `sample_id_strategy`;
+DROP TABLE IF EXISTS `super_profile`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `sample_id_strategy` (
-  `sample_requirement` varchar(100) COLLATE utf8_bin NOT NULL,
-  `lowest_id` bigint(20) DEFAULT NULL,
-  `highest_id` bigint(20) DEFAULT NULL,
-  `description` varchar(500) COLLATE utf8_bin NOT NULL,
-  PRIMARY KEY (`sample_requirement`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
+CREATE TABLE `super_profile` (
+  `super_profile_id` int(11) NOT NULL,
+  `name` varchar(100) NOT NULL,
+  `profile_id_list` varchar(500) NOT NULL,
+  `extra` varchar(300) DEFAULT NULL,
+  `edit_specification` varchar(500) NOT NULL,
+  PRIMARY KEY (`super_profile_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
--- Dumping data for table `sample_id_strategy`
+-- Dumping data for table `super_profile`
 --
 
-LOCK TABLES `sample_id_strategy` WRITE;
-/*!40000 ALTER TABLE `sample_id_strategy` DISABLE KEYS */;
-INSERT INTO `sample_id_strategy` VALUES ('Citrate-Blood-HI',2000000,2999999,'Haematology'),('EDTA-Blood-HI',2000000,2999999,'Haematology'),('EDTA-BodyFluid-CP',3000000,3999999,'Clinical Pathology - Body Fluid'),('EDTA-CSF-CP',3000000,3999999,'Clinical Pathology - CSF'),('Fluoride-Blood-BI',1000000,1499999,'Biochemistry'),('None',NULL,NULL,''),('Plain-Blood-BI',1000000,1499999,'Biochemistry'),('Plain-Blood-MI',6000000,6999999,'Microbiology'),('Plain-CSF-BI',1000000,1499999,'Biochemistry'),('Plain-Semen-CP',3000000,3999999,'Clinical Pathology - Semen'),('Plain-Stool-CP',3000000,3999999,'Clinical Pathology - Stool'),('Plain-Urine-CP',3000000,3999999,'Clinical Pathology - Urine');
-/*!40000 ALTER TABLE `sample_id_strategy` ENABLE KEYS */;
+LOCK TABLES `super_profile` WRITE;
+/*!40000 ALTER TABLE `super_profile` DISABLE KEYS */;
+INSERT INTO `super_profile` VALUES (1,'CBC PSMP','21,23,25,26,27',NULL,''),(2,'Coagulation','32,33,34,35,36',NULL,'');
+/*!40000 ALTER TABLE `super_profile` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
 

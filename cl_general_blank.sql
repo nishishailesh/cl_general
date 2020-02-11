@@ -28,7 +28,7 @@ CREATE TABLE `dashboard` (
   `description` varchar(2000) NOT NULL,
   `priority` int(11) DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -192,6 +192,23 @@ CREATE TABLE `sample_id_strategy` (
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
+-- Table structure for table `super_profile`
+--
+
+DROP TABLE IF EXISTS `super_profile`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `super_profile` (
+  `super_profile_id` int(11) NOT NULL,
+  `name` varchar(100) NOT NULL,
+  `profile_id_list` varchar(500) NOT NULL,
+  `extra` varchar(300) DEFAULT NULL,
+  `edit_specification` varchar(500) NOT NULL,
+  PRIMARY KEY (`super_profile_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
 -- Table structure for table `user`
 --
 
@@ -217,4 +234,4 @@ CREATE TABLE `user` (
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2020-02-09 22:38:08
+-- Dump completed on 2020-02-11 21:58:39

@@ -1,5 +1,6 @@
 var selected_ex=[]
 var selected_profile=[]
+var selected_super_profile=[]
 
 function select_examination_js(me,ex_id,list_id)
 {
@@ -31,6 +32,23 @@ function select_profile_js(me,ex_id,list_id)
 		document.getElementById(list_id).value=selected_profile
 		me.classList.add('bg-warning')
 	}
+}
+
+function select_super_profile_js(me,ex_id,list_id)
+{
+	if(selected_super_profile.indexOf(ex_id) !== -1)
+	{
+		selected_super_profile.splice(selected_super_profile.indexOf(ex_id),1)
+		document.getElementById(list_id).value=selected_super_profile
+		me.classList.remove('bg-warning')
+	}
+	else
+	{
+		selected_super_profile.push(ex_id);
+		document.getElementById(list_id).value=selected_super_profile
+		me.classList.add('bg-warning')
+	}	
+	
 }
 
 function sync_result(me)

@@ -1544,12 +1544,14 @@ function get_data($link)
 			<li class="active" ><button class="btn btn-secondary" type=button data-toggle="tab" href="#basic">Basic</button></li>
 			<li><button class="btn btn-secondary" type=button  data-toggle="tab" href="#examination">Examinations</button></li>
 			<li><button class="btn btn-secondary" type=button  data-toggle="tab" href="#profile">Profiles</button></li>
+			<li><button class="btn btn-secondary" type=button  data-toggle="tab" href="#super_profile">SuperProfiles</button></li>
 			<li><button type=submit class="btn btn-primary form-control" name=action value=insert>Save</button></li>
 		</ul>';
 	echo '<div class="tab-content">';
 		get_basic();
 		get_examination_data($link);
 		get_profile_data($link);
+		get_super_profile_data($link);
 	echo '</div>';
 
 	echo '</form>';			
@@ -1621,7 +1623,7 @@ function get_examination_data($link)
 			echo '</div>';
 		echo '</div>';
 	}
-	echo '<input type=text name=list_of_selected_examination id=list_of_selected_examination>';
+	echo '<input type=text readonly name=list_of_selected_examination id=list_of_selected_examination>';
 	echo '</div>';
 }
 
@@ -1635,7 +1637,22 @@ function get_profile_data($link)
 	{
 		my_on_off_profile($ar['name'],$ar['profile_id']);
 	}
-	echo '<input type=text name=list_of_selected_profile id=list_of_selected_profile>';
+	echo '<input type=text readonly name=list_of_selected_profile id=list_of_selected_profile>';
+	echo '</div>';
+	echo '</div>';
+}
+
+function get_super_profile_data($link)
+{
+	$sql='select * from super_profile';
+	$result=run_query($link,$GLOBALS['database'],$sql);
+	echo '<div id=super_profile  class="tab-pane">';
+	echo '<div class="ex_profile">';
+	while($ar=get_single_row($result))
+	{
+		my_on_off_super_profile($ar['name'],$ar['super_profile_id']);
+	}
+	echo '<input type=text readonly name=list_of_selected_super_profile id=list_of_selected_super_profile>';
 	echo '</div>';
 	echo '</div>';
 }
@@ -1646,7 +1663,6 @@ function get_profile_info($link,$profile_id)
 	$result=run_query($link,$GLOBALS['database'],$sql);
 	return get_single_row($result);
 }
-
 
 function get_examination_blob_data($link)
 {
@@ -1688,6 +1704,15 @@ function my_on_off_profile($label,$id)
 			onclick="select_profile_js(this, \''.$id.'\',\'list_of_selected_profile\')"
 			>'.$label.'</button>';
 }
+function my_on_off_super_profile($label,$id)
+{
+	
+	echo '<button 
+			class="btn btn-sm btn-outline-primary"
+			type=button 
+			onclick="select_super_profile_js(this, \''.$id.'\',\'list_of_selected_super_profile\')"
+			>'.$label.'</button>';
+}
 
 function show_sample_required($sar)
 {
@@ -1701,8 +1726,25 @@ function show_sample_required($sar)
 //find ex
 //find sample req for each
 //get unique 
+
+function convert_super_profile_to_profile($link,$super_profile_csv)
+{
+	$super_profile_requested=explode(',',$super_profile_csv);
+	$profile_requested_in_super_profile=array();
+	foreach($super_profile_requested as $sp)
+	{
+		$psql='select * from super_profile where super_profile_id=\''.$sp.'\'';
+		$result=run_query($link,$GLOBALS['database'],$psql);
+		$ar=get_single_row($result);
+		$profile_requested=explode(',',$ar['profile_id_list']);
+		$profile_requested_in_super_profile=array_merge($profile_requested_in_super_profile,$profile_requested);
+	}
+	return $profile_requested_in_super_profile;
+}
+
 function save_insert($link)
 {
+			//find list of super_profiles requested, merge with profiles requested,then..
 			//find list of examinations requested
 			//determine sample-type required
 			//find sample_id to be given
@@ -1717,6 +1759,12 @@ function save_insert($link)
 	//echo '<pre>following is requested:<br>';print_r($requested);echo '</pre>';
 	
 	$profile_requested=explode(',',$_POST['list_of_selected_profile']);
+	$profile_requested_in_super_profile=convert_super_profile_to_profile($link,$_POST['list_of_selected_super_profile']);
+	$profile_requested=array_unique(array_merge($profile_requested,$profile_requested_in_super_profile));
+
+//0	
+	echo '<pre>following profiles are requested:<br>';print_r($profile_requested);echo '</pre>';
+	
 	foreach($profile_requested as $value)
 	{
 		$psql='select * from profile where profile_id=\''.$value.'\'';
@@ -2452,7 +2500,7 @@ function get_profile_wise_ex_list($link,$sample_id)
 
 function dashboard($link)
 {
-	$sql='select * from dashboard order by priority';
+	$sql='select * from dashboard order by priority desc';
 	echo '<h3>Dashboard</h3>';
 	$result=run_query($link,$GLOBALS['database'],$sql);
 	

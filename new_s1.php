@@ -37,6 +37,7 @@ function get_data_specific($link)
 			<li class="active" ><button class="btn btn-secondary" type=button data-toggle="tab" href="#basic">Basic</button></li>
 			<li><button class="btn btn-secondary" type=button  data-toggle="tab" href="#examination">Examinations</button></li>
 			<li><button class="btn btn-secondary" type=button  data-toggle="tab" href="#profile">Profiles</button></li>
+			<li><button class="btn btn-secondary" type=button  data-toggle="tab" href="#super_profile">SuperProfiles</button></li>
 			<li><button type=submit class="btn btn-primary form-control" name=action value=insert>Save</button></li>
 		</ul>';
 	echo '<div class="tab-content">';
@@ -59,6 +60,7 @@ function get_data_specific($link)
 		echo '</div>';	
 		get_examination_data($link);
 		get_profile_data($link);
+		get_super_profile_data($link);
 	echo '</div>';
 
 	echo '</form>';			
@@ -347,6 +349,7 @@ function get_one_field_for_insert($link,$examination_id)
 
 function save_insert_specific($link)
 {
+			//find list of super_profiles requested, merge with profiles requested,then..
 			//find list of examinations requested
 			//determine sample-type required
 			//find sample_id to be given
@@ -359,6 +362,10 @@ function save_insert_specific($link)
 	//echo '<pre>following is requested:<br>';print_r($requested);echo '</pre>';
 	
 	$profile_requested=explode(',',$_POST['list_of_selected_profile']);
+	
+	$profile_requested_in_super_profile=convert_super_profile_to_profile($link,$_POST['list_of_selected_super_profile']);
+	$profile_requested=array_unique(array_merge($profile_requested,$profile_requested_in_super_profile));
+
 	foreach($profile_requested as $value)
 	{
 		$psql='select * from profile where profile_id=\''.$value.'\'';
