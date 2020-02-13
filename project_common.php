@@ -13,7 +13,8 @@ function main_menu()
 			<button class="btn btn-outline-primary btn-block m-0 p-0" formaction=new_s1.php type=submit name=action value=direct>New Direct</button>
 			<button class="btn btn-outline-primary m-0 p-0" formaction=view_database_id.php type=submit name=action value=get_dbid>View Sample ID</button>			
 			<button class="btn btn-outline-primary m-0 p-0" formaction=search.php type=submit name=action value=get_search_condition>Search</button>			
-			<button class="btn btn-outline-primary m-0 p-0" formaction=view_database_id_from_to_for_print.php type=submit name=action value=get_from_to>Print</button>			
+			<button class="btn btn-outline-primary m-0 p-0" formaction=view_database_id_from_to_for_print.php type=submit name=action value=get_from_to>Print From-To</button>			
+			<button class="btn btn-outline-primary m-0 p-0" formaction=search_and_print.php type=submit name=action value=get_search_condition>Search & Print</button>			
 			<button class="btn btn-outline-primary m-0 p-0" formaction=start.php type=submit name=action value=home><img src=img/home.jpeg height=20></button>			
 			
 			
@@ -543,6 +544,18 @@ function ex_to_profile($link,$ex_array)
 	return $ret;
 }
 
+function copy_bin_text($link)
+{
+	$sql='select * from copy_bin_text';
+	//echo $sql;
+	$result=run_query($link,$GLOBALS['database'],$sql);
+	while($ar=get_single_row($result))
+	{
+		//echo $ar['text'];
+		echo '<span style="width: 400px;" class="text-truncate d-block" onclick="copy_to_bin(this)">'.htmlspecialchars($ar['text']).'.&#13;</span>';
+	}
+	
+}
 function edit_sample($link,$sample_id)
 {
 	$ex_list=get_result_of_sample_in_array($link,$sample_id);
@@ -557,14 +570,20 @@ function edit_sample($link,$sample_id)
 	//print_r($profile_wise_ex_list);
 	//echo '</pre>';
 	echo 
-	'<div class="position-fixed bg-secondary ">
+	'<div class="position-fixed bg-secondary">
 		<button 
 		type=button
-		class="btn btn-warning btn-sm"
+		class="btn btn-warning btn-sm p-0 m-0 d-inline"
 		 data-toggle="collapse" 
-		data-target="#advice" href="#advice">Paste-Bin</button>
+		data-target="#advice" href="#advice"><img src="img/copypaste.png" width=20></button>
 		<div class="p-3 collapse" id="advice">';
-		echo $GLOBALS['advice'];
+		echo '<p id=cb_4 onclick="clear_bin()" class="bg-danger d-inline">clear</p>
+			<p id=cb_5 onclick="copy_binn()" class="bg-warning d-inline">copy</p>';
+		copy_bin_text($link);	
+			//<span class="d-block" id=cb_1 onclick="copy_to_bin(this)">A for apple.&#13;</span>
+			//<span class="d-block" id=cb_2 onclick="copy_to_bin(this)">B for Big apple.&#13;</span>
+			//<span class="d-block"  id=cb_3 onclick="copy_to_bin(this)">C for Chota apple.&#13;</span>
+			echo '<textarea id=cb_ta cols=50 rows=4></textarea>';
 		echo '</div>
 	</div>';
 		
@@ -1763,7 +1782,7 @@ function save_insert($link)
 	$profile_requested=array_unique(array_merge($profile_requested,$profile_requested_in_super_profile));
 
 //0	
-	echo '<pre>following profiles are requested:<br>';print_r($profile_requested);echo '</pre>';
+	//echo '<pre>following profiles are requested:<br>';print_r($profile_requested);echo '</pre>';
 	
 	foreach($profile_requested as $value)
 	{
@@ -2114,11 +2133,11 @@ function get_search_condition($link)
 	echo '</form>';
 }
 
-function set_search($link)
+function set_search($link,$action='')
 {
 	$ex_requested=explode(',',$_POST['list_of_selected_examination']);
 	//print_r($ex_requested);
-	echo '<form method=post>';
+	echo '<form method=post '.$action.'>';
 		foreach($ex_requested as $v)
 		{
 			$examination_details=get_one_examination_details($link,$v);
@@ -2585,7 +2604,8 @@ class ACCOUNT1 extends TCPDF {
 	public function Footer() 
 	{
 	    $this->SetY(-20);
-		$this->Cell(0, 10, 'Page '.$this->getAliasNumPage().'/'.$this->getAliasNbPages(), 0, false, 'C', 0, '', 0, false, 'T', 'M');
+		//$this->Cell(0, 10, 'Page '.$this->getAliasNumPage().'/'.$this->getAliasNbPages(), 0, false, 'C', 0, '', 0, false, 'T', 'M');
+		$this->Cell(0, 10, 'Page '.$this->getPageNumGroupAlias().'/'.$this->getPageGroupAlias(), 0, false, 'C', 0, '', 0, false, 'T', 'M');
 	}	
 }
 

@@ -37,10 +37,10 @@ function get_dbid()
 
 echo '<form method=post action=print_from_to.php target=_blank>';
 echo '<div class="basic_form">';
-	echo '	<label class="my_label text-danger" for="from">From Database ID</label>
+	echo '	<label class="my_label text-danger" for="from">From Sample ID</label>
 			<input type=number size=13 id=from name=from class="form-control text-danger" required="required" \>
 			<p class="help"><span class=text-danger>Must be</span> number</p>';
-	echo '	<label class="my_label text-danger" for="to">To Database ID</label>
+	echo '	<label class="my_label text-danger" for="to">To Sample ID</label>
 			<input type=number size=13 id=from name=to class="form-control text-danger" required="required" \>
 			<p class="help"><span class=text-danger>Must be</span> number</p>';
 echo '</div>';

@@ -16,15 +16,18 @@ $GLOBALS['released_by']=1014;
 $GLOBALS['pid_profile']=1;
 
 $GLOBALS['advice']='
-		<ul>
-				<LI><h6 class="bg-danger d-inline">Copy and Paste relevent part from here to advice box</h6></LI>
-				<LI><h6 class="bg-warning d-inline">Click Paste-bin button again to close this</h6></LI>
-                <li>Target Cells</li>
-                <li>Polychromatic</li>
-                <li>Microcytic</li>
-        </ul>
-';
+						Nothing
+					';
 
+$GLOBALS['advice']='
+							<p id=cb_4 onclick="clear_bin()" class="bg-danger d-inline">clear bin</p>
+							<p id=cb_5 onclick="copy_binn()" class="bg-warning d-inline">copy</p>
+							<span class="d-block" id=cb_1 onclick="copy_to_bin(this)">A for apple.&#13;</span>
+							<span class="d-block" id=cb_2 onclick="copy_to_bin(this)">B for Big apple.&#13;</span>
+							<span class="d-block"  id=cb_3 onclick="copy_to_bin(this)">C for Chota apple.&#13;</span>
+							<textarea id=cb_ta cols=50></textarea>
+						';
+						
 $GLOBALS['HI']=array('name'=>'New Civil Hospital Surat Laboratory Services',
 						'section'=>'Hematology and Immunology Section',
 						'address'=>'OPD-10, NCHS, Surat',

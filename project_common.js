@@ -1,6 +1,7 @@
 var selected_ex=[]
 var selected_profile=[]
 var selected_super_profile=[]
+var copy_bin=''
 
 function select_examination_js(me,ex_id,list_id)
 {
@@ -47,8 +48,29 @@ function select_super_profile_js(me,ex_id,list_id)
 		selected_super_profile.push(ex_id);
 		document.getElementById(list_id).value=selected_super_profile
 		me.classList.add('bg-warning')
-	}	
-	
+	}
+}
+
+function copy_to_bin(me)
+{
+	//copy_bin=copy_bin+me.innerHTML
+	//alert(copy_bin)
+	document.getElementById('cb_ta').value=document.getElementById('cb_ta').value+me.innerHTML
+}
+
+function clear_bin()
+{
+	//copy_bin='';
+	//alert(copy_bin)
+	document.getElementById('cb_ta').value=''
+}
+
+function copy_binn()
+{
+	x=document.getElementById('cb_ta')
+	x.select()
+	x.setSelectionRange(0, 99999)
+	document.execCommand("copy")
 }
 
 function sync_result(me)

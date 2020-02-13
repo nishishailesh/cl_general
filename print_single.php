@@ -50,7 +50,7 @@ foreach($png as $v)
 }
 
 	
-$pdf->Output('report-'.$_POST['sample_id'].'.$pdf', 'I');
+$pdf->Output('report-'.$_POST['sample_id'].'.pdf', 'I');
 
 //////////////user code ends////////////////
 //tail();
