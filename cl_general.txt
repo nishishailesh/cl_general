@@ -1,0 +1,45 @@
+Total Sample On a Day
+=====================
+select count(examination_id) as Total_Sample from result where examination_id=1017 and result="2020-02-13"
+
+Sample with receipt date
+========================
+select r1.sample_id,r1.examination_id,r2.sample_id,r2.examination_id,r2.result from result r1,result r2 where r1.sample_id=r2.sample_id and r2.examination_id=1017 and r2.result="2020-02-13"
+
+
+test with received on
+======================
+select 
+	r1.sample_id,r1.examination_id,e1.name, 
+	r2.sample_id,r2.examination_id,e2.name ,
+	r2.result 
+from 
+	examination e1,examination e2, 
+	result r1,result r2 
+where 
+	r1.sample_id=r2.sample_id and 
+	r2.examination_id=1017 and 
+	r2.result="2020-02-13" and
+	e1.examination_id=r1.examination_id and 
+	e2.examination_id=r2.examination_id 
+order by r1.sample_id
+
+
+test count with date received on
+======================
+select 
+	r1.examination_id, e1.name, 
+	r2.examination_id, e2.name ,
+	r2.result,
+	count(r2.result)
+from 
+	examination e1,examination e2, 
+	result r1,result r2 
+where 
+	r1.sample_id=r2.sample_id and 
+	r2.examination_id=1017 and 
+	r2.result="2020-02-13" and
+	e1.examination_id=r1.examination_id and 
+	e2.examination_id=r2.examination_id 
+group by r1.examination_id
+order by r1.examination_id

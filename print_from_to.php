@@ -16,7 +16,6 @@ $pdf = new ACCOUNT1('P', 'mm', 'A4', true, 'UTF-8', false);
 //$pdf = new ACCOUNT1(PDF_PAGE_ORIENTATION, PDF_UNIT, PDF_PAGE_FORMAT, true, 'UTF-8', false);
 for ($i=$_POST['from'];$i<=$_POST['to'];$i++)
 {
-	$pdf->startPageGroup();
 	$released=get_one_ex_result($link,$i,$GLOBALS['released_by']);
 	//echo 'xxx'.$i.$released_by;
 	if(strlen($released)!=0)

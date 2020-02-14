@@ -2235,7 +2235,8 @@ function set_sample_id($link, $sample_required_array)
 function print_sample($link,$sample_id,$pdf)
 {
 	     //$pdf = new ACCOUNT1('P', 'mm', 'A4', true, 'UTF-8', false);
-	     
+	$pdf->startPageGroup();
+     
 	     $pdf->sample_id=$sample_id;
 	     $pdf->link=$link;
 	     $pdf->profile_wise_ex_list=get_profile_wise_ex_list($link,$sample_id);
@@ -2609,5 +2610,361 @@ class ACCOUNT1 extends TCPDF {
 	}	
 }
 
+///////////dashbard functions/////
+
+function show_dashboard($link)
+{
+	get_sql($link);
+	
+}
+
+function get_sql($link)
+{
+        if(!$result=run_query($link,$GLOBALS['database'],'select * from view_info_data')){return false;}
+
+        echo '
+        <table border=1 class="table-striped table-hover"><tr><th colspan=20>Select the data to view</th></tr>';
+
+        $first_data='yes';
+
+        while($array=get_single_row($result))
+        {
+                if($first_data=='yes')
+                {
+                        echo '<tr>';
+                        foreach($array as $key=>$value)
+                        {
+							    if($key!='sql'){
+                                echo '<th bgcolor=lightgreen>'.$key.'</th>';}
+                        }
+                        echo '</tr>';
+                        $first_data='no';
+                }
+
+				echo'<form style="margin-bottom:0;" method=post>';
+                echo '<tr>';
+                foreach($array as $key=>$value)
+                {
+					echo'<input type=hidden name=session_name value=\''.$_SESSION['login'].'\'>';
+					echo '<input type=hidden name=session_name value=\''.$_POST['session_name'].'\'>';
+                       if($key=='id')
+                        { 
+                         echo '<td>
+							<input type=hidden name=action value=display_data>
+							<button class="btn btn-danger" type=submit name=id value=\''.$value.'\'>'.$value.'</button></td>';
+                        }
+                        elseif($key=='sql'){}
+                        elseif($key=='Fields')
+                        {
+                                echo '<td class="badge badge-warning">'.$value.'</td>';							
+						}
+                        else
+                        {
+                                echo '<td>'.$value.'</td>';
+                        }
+                }
+				echo '</tr>';
+				echo '</form>';
+
+        }
+        echo '</table>';
+    
+}
+function prepare_result_from_view_data_id($link,$id)
+{
+
+         if(!$result_id=run_query($link,$GLOBALS['database'],'select * from view_info_data where id=\''.$id.'\''))
+         {
+			 echo '<h1>Problem</h1>';
+		 }
+		 else
+		 {
+			 echo '<h1>Success</h1>';
+		 }
+        $array_id=get_single_row($result_id);
+
+        $sql=$array_id['sql'].'';
+        $info=$array_id['info'];
+
+		//echo $sql.'<br>';
+        ////modify sql
+        //print_r($_POST);
+        
+        if(isset($_POST['__p1'])) 
+        {
+			if(strlen($_POST['__p1'])>0)
+			{
+				$sql=str_replace('__p1',$_POST['__p1'],$sql);			
+				$p1=$_POST['__p1'];
+			}
+			else
+			{
+				$p1='';
+			}
+		}
+		else
+		{
+			$p1='';
+		}
+
+
+        if(isset($_POST['__p2'])) 
+        {
+			if(strlen($_POST['__p2'])>0)
+			{
+				$sql=str_replace('__p2',$_POST['__p2'],$sql);			
+				$p2=$_POST['__p2'];
+			}
+			else
+			{
+				$p2='';
+			}
+		}
+		else
+		{
+			$p2='';
+		}
+
+        if(isset($_POST['__p3'])) 
+        {
+			if(strlen($_POST['__p3'])>0)
+			{
+				$sql=str_replace('__p3',$_POST['__p3'],$sql);			
+				$p3=$_POST['__p3'];
+			}
+			else
+			{
+				$p3='';
+			}
+		}
+		else
+		{
+			$p3='';
+		}
+
+        if(isset($_POST['__p4'])) 
+        {
+			if(strlen($_POST['__p4'])>0)
+			{
+				$sql=str_replace('__p4',$_POST['__p4'],$sql);			
+				$p4=$_POST['__p4'];
+			}
+			else
+			{
+				$p4='';
+			}
+		}
+		else
+		{
+			$p4='';
+		}
+        //////////////
+		//echo $sql;
+
+
+        if(!$result=run_query($link,$GLOBALS['database'],$sql))
+        {
+			 echo '<h1>Problem</h1>';
+		}
+		 else
+		 {
+			 //echo '<h1>Success</h1>';
+		 }
+
+
+		echo_export_button_dashboard($link,$id,$p1,$p2,$p3,$p4);
+		display_sql_result_data($result);
+
+}
+
+
+function echo_export_button_dashboard($link,$id,$p1,$p2,$p3,$p4)
+{
+	echo '<form method=post class="d-inline" action=export3.php>';
+		echo '<input type=hidden name=session_name value=\''.$_SESSION['login'].'\'>';
+		echo '<input type=hidden name=session_name value=\''.$_POST['session_name'].'\'>';			
+		echo '<input type=hidden name=id value=\''.$id.'\'>';
+		echo '<input type=hidden name=__p1 value=\''.$p1.'\'>		
+			<input type=hidden name=__p2 value=\''.$p2.'\'>		
+			<input type=hidden name=__p3 value=\''.$p3.'\'>		
+			<input type=hidden name=__p4 value=\''.$p4.'\'>		
+			
+			<button class="btn btn-info"  
+			formtarget=_blank
+			type=submit
+			name=action
+			value=export>Export</button>
+		</form>';
+}
+	
+function display_sql_result_data($result)
+{
+	echo '<button data-toggle="collapse" data-target="#sql_result" class="btn btn-dark">Show/Hide Result</button>';
+	echo '<div id="sql_result" class="collapse show">';		
+		
+	
+       echo '<table border=1 class="table-striped table-hover">';
+				
+        $first_data='yes';
+
+        while($array=get_single_row($result))
+        {
+			//echo '<pre>';
+			//print_r($array);
+                if($first_data=='yes')
+                {
+                        echo '<tr bgcolor=lightgreen>';
+                        foreach($array as $key=>$value)
+                        {
+                                echo '<th>'.$key.'</th>';
+                        }
+                        echo '</tr>';
+                        $first_data='no';
+                }
+                echo '<tr>';
+                foreach($array as $key=>$value)
+                {
+                        echo '<td>'.$value.'</td>';
+                }
+                echo '</tr>';
+
+        }
+        echo '</table>';	
+	echo '</div>';	
+	
+}
+//111119500892
+//one
+
+function prepare_result_for_export($link,$id)
+{
+
+         if(!$result_id=run_query($link,$GLOBALS['database'],'select * from view_info_data where id=\''.$id.'\''))
+         {
+			 //echo '<h1>Problem</h1>';
+		 }
+		 else
+		 {
+			// echo '<h1>Success</h1>';
+		 }
+        $array_id=get_single_row($result_id);
+
+        $sql=$array_id['sql'].'';
+        $info=$array_id['info'];
+
+		//echo $sql.'<br>';
+        ////modify sql
+        //print_r($_POST);
+        
+        if(isset($_POST['__p1'])) 
+        {
+			if(strlen($_POST['__p1'])>0)
+			{
+				$sql=str_replace('__p1',$_POST['__p1'],$sql);			
+				$p1=$_POST['__p1'];
+			}
+			else
+			{
+				$p1='';
+			}
+		}
+		else
+		{
+			$p1='';
+		}
+
+
+        if(isset($_POST['__p2'])) 
+        {
+			if(strlen($_POST['__p2'])>0)
+			{
+				$sql=str_replace('__p2',$_POST['__p2'],$sql);			
+				$p2=$_POST['__p2'];
+			}
+			else
+			{
+				$p2='';
+			}
+		}
+		else
+		{
+			$p2='';
+		}
+
+        if(isset($_POST['__p3'])) 
+        {
+			if(strlen($_POST['__p3'])>0)
+			{
+				$sql=str_replace('__p3',$_POST['__p3'],$sql);			
+				$p3=$_POST['__p3'];
+			}
+			else
+			{
+				$p3='';
+			}
+		}
+		else
+		{
+			$p3='';
+		}
+
+        if(isset($_POST['__p4'])) 
+        {
+			if(strlen($_POST['__p4'])>0)
+			{
+				$sql=str_replace('__p4',$_POST['__p4'],$sql);			
+				$p4=$_POST['__p4'];
+			}
+			else
+			{
+				$p4='';
+			}
+		}
+		else
+		{
+			$p4='';
+		}
+        //////////////
+		//echo $sql;
+
+
+        if(!$result=run_query($link,$GLOBALS['database'],$sql))
+        {
+			 echo '<h1>Problem</h1>';
+		}
+		 else
+		 {
+			 echo '<h1>Success</h1>';
+		 }
+
+
+		export_data($result);
+}
+
+function export_data($result)
+{
+	    $fp = fopen('php://output', 'w');
+	    if ($fp && $result) 
+	    {
+		    header('Content-Type: text/csv');
+		    header('Content-Disposition: attachment; filename="export.csv"');
+		
+	    	$first='yes';
+		
+		   while ($row = get_single_row($result))
+		   {
+			    if($first=='yes')
+			    {
+				  fputcsv($fp, array_keys($row));
+				  $first='no';
+			    }
+			
+			fputcsv($fp, array_values($row));
+		  }
+	   }
+}
+
+
+//////////end of dashboard functions
 
 ?>

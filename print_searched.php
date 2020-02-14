@@ -31,7 +31,6 @@ $link=get_link($GLOBALS['main_user'],$GLOBALS['main_pass']);
 			//echo 'xxx'.$i.$released_by;
 			if(strlen($released)!=0)
 			{
-				$pdf->startPageGroup();
 				print_sample($link,$sid,$pdf);
 			}
 			else
