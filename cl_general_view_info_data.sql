@@ -16,29 +16,29 @@
 /*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
 
 --
--- Table structure for table `dashboard`
+-- Table structure for table `view_info_data`
 --
 
-DROP TABLE IF EXISTS `dashboard`;
+DROP TABLE IF EXISTS `view_info_data`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `dashboard` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
-  `topic` varchar(100) NOT NULL,
-  `description` varchar(2000) NOT NULL,
-  `priority` int(11) DEFAULT NULL,
+CREATE TABLE `view_info_data` (
+  `id` int(11) NOT NULL,
+  `info` varchar(100) NOT NULL,
+  `Fields` varchar(2000) NOT NULL,
+  `sql` varchar(1000) NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
--- Dumping data for table `dashboard`
+-- Dumping data for table `view_info_data`
 --
 
-LOCK TABLES `dashboard` WRITE;
-/*!40000 ALTER TABLE `dashboard` DISABLE KEYS */;
-INSERT INTO `dashboard` VALUES (1,'Calculated Parameters','Prothrombin Time related calculation of indexes is now available. \nWhen in <b>Edit</b> mode, Click <b>Calculate</b> to refresh calculation.\nModification in database is required to add new calculated tests.\nChanging ISI value in database as required is essential',NULL),(2,'Suggestions and Feedback','For suggestion for improvement, contact lab in-charge or whatsApp: 9664555812 Dr Shailesh ',NULL),(3,'Super Profiles','Use Super Profiles to reduce your clicks and prevent lapses in entry',1);
-/*!40000 ALTER TABLE `dashboard` ENABLE KEYS */;
+LOCK TABLES `view_info_data` WRITE;
+/*!40000 ALTER TABLE `view_info_data` DISABLE KEYS */;
+INSERT INTO `view_info_data` VALUES (1,'Total Sample On a Day','<input type=date name=__p1 title=\'Give Date\'>','select count(examination_id) as Total_Sample from result where examination_id=1017 and result=\"__p1\"\r\n'),(2,'Test count on a date','<input type=date name=__p1 title=\'Give Date\'>','select  	r1.examination_id A ,e1.name B ,  	r2.examination_id C ,e2.name D, 	r2.result E, 	count(r2.result) F from  	examination e1,examination e2,  	result r1,result r2  where  	r1.sample_id=r2.sample_id and  	r2.examination_id=1017 and  	r2.result=\"__p1\" and 	e1.examination_id=r1.examination_id and  	e2.examination_id=r2.examination_id  group by r1.examination_id order by r1.examination_id');
+/*!40000 ALTER TABLE `view_info_data` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
 
