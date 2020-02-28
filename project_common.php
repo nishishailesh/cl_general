@@ -130,16 +130,29 @@ function echo_result_header()
 function show_all_buttons_for_sample($link,$sample_id)
 {
 	$released_by=get_one_ex_result($link,$sample_id,$GLOBALS['released_by']);
-	if(strlen($released_by)==0)
+	$interim_released_by=get_one_ex_result($link,$sample_id,$GLOBALS['interim_released_by']);
+	if(strlen($released_by)==0 && strlen($interim_released_by)==0)		//no interim, no release, allow edit/delete no print
 	{
 		sample_id_prev_button($sample_id);
 		sample_id_view_button($sample_id);
 		sample_id_next_button($sample_id);
 		sample_id_release_button($sample_id);	
+		sample_id_interim_release_button($sample_id);	
 		sample_id_edit_button($sample_id);
 		sample_id_delete_button($sample_id);
 	}
-	else
+	else if(strlen($released_by)==0 && strlen($interim_released_by)!=0)	//interim but not released, so allow edit,delete,print
+	{
+		sample_id_prev_button($sample_id);
+		sample_id_view_button($sample_id);
+		sample_id_next_button($sample_id);
+		sample_id_release_button($sample_id);	
+		sample_id_interim_release_button($sample_id);					//allow new interim release too
+		sample_id_print_button($sample_id);			
+		sample_id_edit_button($sample_id);
+		sample_id_delete_button($sample_id);
+	}	
+	else 																	//released with/without interim (so, edit/delete)
 	{
 		//sample_id_edit_button($sample_id);
 		sample_id_prev_button($sample_id);
@@ -490,6 +503,16 @@ function sample_id_release_button($sample_id)
 	<button class="btn btn-outline-secondary btn-sm" name=sample_id value=\''.$sample_id.'\' >Release</button>
 	<input type=hidden name=session_name value=\''.$_POST['session_name'].'\'>
 	<input type=hidden name=action value=release_sample>
+	</form></div>';
+}
+
+
+function sample_id_interim_release_button($sample_id)
+{
+	echo '<div class="d-inline-block" ><form method=post action=interim_release_sample.php class=print_hide>
+	<button class="btn btn-outline-secondary btn-sm" name=sample_id value=\''.$sample_id.'\' >Interim Release</button>
+	<input type=hidden name=session_name value=\''.$_POST['session_name'].'\'>
+	<input type=hidden name=action value=interim_release_sample>
 	</form></div>';
 }
 

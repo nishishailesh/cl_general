@@ -1,8 +1,8 @@
--- MySQL dump 10.17  Distrib 10.3.22-MariaDB, for debian-linux-gnu (x86_64)
+-- MySQL dump 10.16  Distrib 10.1.26-MariaDB, for debian-linux-gnu (x86_64)
 --
 -- Host: localhost    Database: cl_general
 -- ------------------------------------------------------
--- Server version	10.3.22-MariaDB-0+deb10u1
+-- Server version	10.1.26-MariaDB-0+deb9u1
 
 /*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
 /*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
@@ -92,7 +92,7 @@ CREATE TABLE `primary_result_blob` (
   `sample_id` bigint(20) NOT NULL,
   `examination_id` int(11) NOT NULL,
   `uniq` varchar(100) NOT NULL,
-  `result` mediumblob DEFAULT NULL,
+  `result` mediumblob,
   `fname` varchar(100) DEFAULT NULL,
   PRIMARY KEY (`sample_id`,`examination_id`,`uniq`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 ROW_FORMAT=COMPACT;
@@ -177,7 +177,7 @@ DROP TABLE IF EXISTS `result_blob`;
 CREATE TABLE `result_blob` (
   `sample_id` bigint(20) NOT NULL,
   `examination_id` int(11) NOT NULL,
-  `result` mediumblob DEFAULT NULL,
+  `result` mediumblob,
   `fname` varchar(100) DEFAULT NULL,
   `recording_time` datetime DEFAULT NULL,
   `recorded_by` bigint(20) DEFAULT NULL,
@@ -264,4 +264,4 @@ CREATE TABLE `view_info_data` (
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2020-02-28 10:40:16
+-- Dump completed on 2020-02-28 16:10:10

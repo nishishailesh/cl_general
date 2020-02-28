@@ -18,12 +18,13 @@ if($mrd!=$_POST['mrd']){echo '<link rel="stylesheet" href="bootstrap/css/bootstr
 								<h3><span class="bg-warning">MRD and Sample ID donot match</span></h3>';exit(0);}
 
 $released=get_one_ex_result($link,$_POST['sample_id'],$GLOBALS['released_by']);
+$interim_released=get_one_ex_result($link,$_POST['sample_id'],$GLOBALS['interim_released_by']);
 
 //echo 'xxx'.$i.$released_by;
-if(strlen($released)==0)
+if(strlen($released)==0 && strlen($interim_released)==0)
 {
 	echo '	<link rel="stylesheet" href="bootstrap/css/bootstrap.min.css">
-			<h3><span class="bg-warning">Sample ID='.$_POST['sample_id'].' of MRD='.$_POST['mrd'].' is not released by the lab</span></h3>';exit(0);
+			<h3><span class="bg-warning">Sample ID='.$_POST['sample_id'].' of MRD='.$_POST['mrd'].' is not released/interim-released by the lab</span></h3>';exit(0);
 }
 $pdf = new ACCOUNT1('P', 'mm', 'A4', true, 'UTF-8', false);
 

@@ -13,6 +13,7 @@ $GLOBALS['mrd']=1001;
 $GLOBALS['sample_requirement']=1000;
 $GLOBALS['max_non_ex_profile']=20;
 $GLOBALS['released_by']=1014;
+$GLOBALS['interim_released_by']=1019;
 $GLOBALS['pid_profile']=1;
 
 $GLOBALS['advice']='
