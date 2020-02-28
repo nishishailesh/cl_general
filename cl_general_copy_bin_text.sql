@@ -36,7 +36,7 @@ CREATE TABLE `copy_bin_text` (
 
 LOCK TABLES `copy_bin_text` WRITE;
 /*!40000 ALTER TABLE `copy_bin_text` DISABLE KEYS */;
-INSERT INTO `copy_bin_text` VALUES (1,'para1','This will work in\r\n all modern browsers, and IE9 and up. Thanks Tommy!\r\n\r\nLike this? I send out a short email \r\neach weekday with code snippets, tools, techniques, and interesting'),(2,'para2','Hiding text or links in your content to manipulate Google\'s search rankings can be seen as deceptive and is a violation of Google\'s Webmaster Guidelines.');
+INSERT INTO `copy_bin_text` VALUES (1,'CBC','Smear shows atypical WBC. Screening for Leukemia Adviced'),(2,'Thalassemia','Planty of target cells seen. Thalassemia screening is adviced');
 /*!40000 ALTER TABLE `copy_bin_text` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
@@ -49,4 +49,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2020-02-17 22:36:32
+-- Dump completed on 2020-02-28 10:40:16
