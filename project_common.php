@@ -207,7 +207,57 @@ function view_sample($link,$sample_id)
 		echo '<img src="img/show_hide.png" height=32 data-toggle="collapse" class=sh href=\'#'.$div_id.'\' ><div></div><div></div>';
 		echo '<div class="collapse show" id=\''.$div_id.'\'>';
 		echo '<h3>'.$pinfo['name'].'</h3><div></div><div></div>';
-		if($pinfo['profile_id']>$GLOBALS['max_non_ex_profile'])
+		$profile_edit_specification=json_decode($pinfo['edit_specification'],true);
+		$print_style=isset($profile_edit_specification['print_style'])?$profile_edit_specification['print_style']:'';		
+	
+		if($print_style=='horizontal')
+		{
+			echo '<div class=horiz>';
+			foreach($vp as $ex_id)
+			{
+				$examination_details=get_one_examination_details($link,$ex_id);
+				$edit_specification=json_decode($examination_details['edit_specification'],true);
+				$img=isset($edit_specification['img'])?$edit_specification['img']:'';
+				$type=isset($edit_specification['type'])?$edit_specification['type']:'';
+				
+				
+				if($type!='blob')
+				{
+					view_field_hr($link,$ex_id,$ex_list[$ex_id]);	
+				}
+				else
+				{
+					view_field_blob_hr($link,$ex_id,$sample_id);
+					if($img=='dw')
+					{
+						$ex_result=get_one_ex_result_blob($link,$sample_id,$ex_id);
+						display_dw($ex_result,$examination_details['name']);
+					}	
+				}
+			}
+			echo '</div>';			
+		}
+		
+		elseif($print_style=='vertical')
+		{
+			foreach($vp as $ex_id)
+			{
+				$examination_details=get_one_examination_details($link,$ex_id);
+				$edit_specification=json_decode($examination_details['edit_specification'],true);
+				$type=isset($edit_specification['type'])?$edit_specification['type']:'';					
+				if($type!='blob')
+				{
+					view_field_vr($link,$ex_id,$ex_list[$ex_id]);	
+				}
+				else
+				{
+					//blob ignored
+					//view_field_blob_hr($link,$ex_id,$sample_id);	
+				}
+			}
+		}
+		
+		else
 		{
 			echo_result_header();
 		
@@ -233,34 +283,7 @@ function view_sample($link,$sample_id)
 					}
 				}
 			}
-		}
-		
-		else
-		{
-			echo '<div class=horiz>';
-			foreach($vp as $ex_id)
-			{
-				$examination_details=get_one_examination_details($link,$ex_id);
-				$edit_specification=json_decode($examination_details['edit_specification'],true);
-				$img=isset($edit_specification['img'])?$edit_specification['img']:'';
-				$type=isset($edit_specification['type'])?$edit_specification['type']:'';
-				
-				if($type!='blob')
-				{
-					view_field_hr($link,$ex_id,$ex_list[$ex_id]);	
-				}
-				else
-				{
-					view_field_blob_hr($link,$ex_id,$sample_id);
-					if($img=='dw')
-					{
-						$ex_result=get_one_ex_result_blob($link,$sample_id,$ex_id);
-						display_dw($ex_result,$examination_details['name']);
-					}	
-				}
-			}
-			echo '</div>';			
-		}
+		}		
 		echo '</div>';
 	}
 	
@@ -1778,8 +1801,11 @@ function convert_super_profile_to_profile($link,$super_profile_csv)
 		$psql='select * from super_profile where super_profile_id=\''.$sp.'\'';
 		$result=run_query($link,$GLOBALS['database'],$psql);
 		$ar=get_single_row($result);
-		$profile_requested=explode(',',$ar['profile_id_list']);
-		$profile_requested_in_super_profile=array_merge($profile_requested_in_super_profile,$profile_requested);
+		if(isset($ar['profile_id_list']))
+		{
+			$profile_requested=explode(',',$ar['profile_id_list']);
+			$profile_requested_in_super_profile=array_merge($profile_requested_in_super_profile,$profile_requested);
+		}
 	}
 	return $profile_requested_in_super_profile;
 }
@@ -1912,7 +1938,15 @@ function get_one_ex_result($link,$sample_id,$examination_id)
 		//if(!$result){return false;}
 		$ar=get_single_row($result);
 		//echo  '<h4>'.$ar['result'].'</h4>';
-		return $ar['result'];
+		if(isset($ar['result']))
+		{
+			return $ar['result'];
+		}
+		else
+		{
+			return false;
+			
+		}
 }
 
 function get_one_ex_result_blob($link,$sample_id,$examination_id)
@@ -2351,6 +2385,8 @@ function view_sample_p($link,$sample_id,$profile_wise_ex_list)
 		$pinfo=get_profile_info($link,$kp);
 		$profile_edit_specification=json_decode($pinfo['edit_specification'],true);
 		$print_hide=isset($profile_edit_specification['print_hide'])?$profile_edit_specification['print_hide']:'';
+		$print_style=isset($profile_edit_specification['print_style'])?$profile_edit_specification['print_style']:'';
+		
 		if($print_hide=='yes'){continue;}	//not to be printed
 		
 		$display_name=isset($profile_edit_specification['display_name'])?$profile_edit_specification['display_name']:'';
@@ -2360,33 +2396,9 @@ function view_sample_p($link,$sample_id,$profile_wise_ex_list)
 			echo '<tr><th colspan="3"><h2><u>'.$pinfo['name'].'</u></h2></th></tr>';
 		}
 		
-		if($pinfo['profile_id']>$GLOBALS['max_non_ex_profile'])
-		{
-		
-			$header=isset($profile_edit_specification['header'])?$profile_edit_specification['header']:'';
-			if($header!='no')
-			{
-				echo_result_header_p();
-			}
-		
-			foreach($vp as $ex_id)
-			{
+		//if($pinfo['profile_id']>$GLOBALS['max_non_ex_profile'])
 
-				$examination_details=get_one_examination_details($link,$ex_id);
-				$edit_specification=json_decode($examination_details['edit_specification'],true);
-				$type=isset($edit_specification['type'])?$edit_specification['type']:'';
-								
-				if($type!='blob')
-				{
-					view_field_p($link,$ex_id,$ex_list[$ex_id]);	
-				}
-				else
-				{
-					
-				}
-			}
-		}
-		else
+		if($print_style=='horizontal')
 		{	
 			$count=1;
 
@@ -2423,6 +2435,50 @@ function view_sample_p($link,$sample_id,$profile_wise_ex_list)
 			if($count%3==1){echo '<td></td><td></td></tr>';}
 			if($count%3==2){echo '<td></td></tr>';}
 		}
+		elseif($print_style=='vertical')
+		{	
+			foreach($vp as $ex_id)
+			{
+				$examination_details=get_one_examination_details($link,$ex_id);
+				$edit_specification=json_decode($examination_details['edit_specification'],true);
+				$type=isset($edit_specification['type'])?$edit_specification['type']:'';					
+				if($type!='blob')
+				{
+					view_field_vr_p($link,$ex_id,$ex_list[$ex_id]);	
+				}
+				else
+				{
+					//blob ignored
+					//view_field_blob_hr($link,$ex_id,$sample_id);	
+				}
+			}
+		}
+		else
+		{
+		
+			$header=isset($profile_edit_specification['header'])?$profile_edit_specification['header']:'';
+			if($header!='no')
+			{
+				echo_result_header_p();
+			}
+		
+			foreach($vp as $ex_id)
+			{
+
+				$examination_details=get_one_examination_details($link,$ex_id);
+				$edit_specification=json_decode($examination_details['edit_specification'],true);
+				$type=isset($edit_specification['type'])?$edit_specification['type']:'';
+								
+				if($type!='blob')
+				{
+					view_field_p($link,$ex_id,$ex_list[$ex_id]);	
+				}
+				else
+				{
+					
+				}
+			}
+		}				
 	}
 	
 	echo '</table>';	
@@ -2518,6 +2574,78 @@ function view_field_hr_p($link,$ex_id,$ex_result)
 		
 		echo '<b>'.$examination_details['name'].':</b> '.htmlspecialchars($ex_result.' '.decide_alert($ex_result,$interval,'','','','',''));
 }	
+
+
+function view_field_vr_p($link,$ex_id,$ex_result)
+{
+		$examination_details=get_one_examination_details($link,$ex_id);
+		$edit_specification=json_decode($examination_details['edit_specification'],true);
+		//$help=isset($edit_specification['help'])?$edit_specification['help']:'';
+		$interval=isset($edit_specification['interval'])?$edit_specification['interval']:'';
+		$type=isset($edit_specification['type'])?$edit_specification['type']:'';
+		
+		if($type=='subsection')
+		{
+			echo '	<tr>
+					<td colspan="3"><h2 style="text-align:center">'.$examination_details['name'].'</h2></td>
+				</tr>'	;
+		}
+		else
+		{
+			if(strlen($ex_result)<$GLOBALS['print_side_or_below'])
+			{
+				echo '	<tr>
+					<td colspan="3"><pre><b>'.$examination_details['name'].':</b>'.htmlspecialchars($ex_result.' '.decide_alert($ex_result,$interval,'','','','','')).'</pre></td>
+				</tr>';
+			}
+			else
+			{
+				echo '	<tr>
+					<td colspan="3"><h3>'.$examination_details['name'].'</h3></td><td></td><td></td>
+				</tr>
+				<tr>
+					<td colspan="3">'.nl2br(htmlspecialchars($ex_result.' '.decide_alert($ex_result,$interval,'','','','',''))).'</td>
+				</tr>';
+			}
+		}		
+}	
+//<td colspan="3"><pre>'.nl2br(htmlspecialchars($ex_result.' '.decide_alert($ex_result,$interval,'','','','',''))).'</pre></td>
+
+
+function view_field_vr($link,$ex_id,$ex_result)
+{
+		$examination_details=get_one_examination_details($link,$ex_id);
+		$edit_specification=json_decode($examination_details['edit_specification'],true);
+		//$help=isset($edit_specification['help'])?$edit_specification['help']:'';
+		$interval=isset($edit_specification['interval'])?$edit_specification['interval']:'';
+		$type=isset($edit_specification['type'])?$edit_specification['type']:'';
+		
+		if($type=='subsection')
+		{
+			echo '	<tr>
+					<td colspan="3"><h2 style="text-align:center">'.$examination_details['name'].'</h2></td>
+				</tr>'	;
+		}
+		else
+		{
+			if(strlen($ex_result)<$GLOBALS['print_side_or_below'])
+			{
+				echo '	<tr>
+					<td colspan="3"><b>'.$examination_details['name'].':</b>'.htmlspecialchars($ex_result.' '.decide_alert($ex_result,$interval,'','','','','')).'</td>
+				</tr>';
+			}
+			else
+			{
+				echo '	<tr>
+					<td colspan="3"><h4>'.$examination_details['name'].'</h4></td><td></td><td></td>
+				</tr>
+				<tr>
+					<td colspan="3">'.nl2br(htmlspecialchars($ex_result.' '.decide_alert($ex_result,$interval,'','','','',''))).'</td>
+				</tr>';
+			}
+		}		
+}	
+//<td colspan="3"><pre>'.nl2br(htmlspecialchars($ex_result.' '.decide_alert($ex_result,$interval,'','','','',''))).'</pre></td>
 
 function echo_result_header_p()
 {

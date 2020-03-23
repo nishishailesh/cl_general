@@ -15,6 +15,7 @@ $GLOBALS['max_non_ex_profile']=20;
 $GLOBALS['released_by']=1014;
 $GLOBALS['interim_released_by']=1019;
 $GLOBALS['pid_profile']=1;
+$GLOBALS['print_side_or_below']=100;
 
 $GLOBALS['advice']='
 						Nothing
@@ -46,4 +47,11 @@ $GLOBALS['BI']=array('name'=>'New Civil Hospital Surat Laboratory Services',
 						'address'=>'Beside Blood Bank, 2nd Floor, NCHS, Surat',
 						'phone'=>'0261 2244456 Ext. 317,366'
 						);
+
+$GLOBALS['HP']=array('name'=>'New Civil Hospital Surat Laboratory Services',
+						'section'=>'Histopathology Section',
+						'address'=>'3nd Floor, GMC, Surat',
+						'phone'=>'0261 2244456 Ext. 317,366'
+						);
+												
 ?>
