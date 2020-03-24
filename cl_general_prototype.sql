@@ -2,7 +2,7 @@
 --
 -- Host: localhost    Database: cl_general
 -- ------------------------------------------------------
--- Server version	10.3.22-MariaDB-1
+-- Server version	10.3.22-MariaDB-0+deb10u1
 
 /*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
 /*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
@@ -35,7 +35,7 @@ CREATE TABLE `prototype` (
 
 LOCK TABLES `prototype` WRITE;
 /*!40000 ALTER TABLE `prototype` DISABLE KEYS */;
-INSERT INTO `prototype` VALUES (1,'Ca Breast'),(2,'Lymphoma');
+INSERT INTO `prototype` VALUES (1,'Breast CAP'),(2,'Lymphoma');
 /*!40000 ALTER TABLE `prototype` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
@@ -48,4 +48,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2020-03-24 22:14:12
+-- Dump completed on 2020-03-24 22:24:03

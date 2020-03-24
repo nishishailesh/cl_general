@@ -32,7 +32,7 @@ else if($_POST['action']=='paste_prototype')
 //////////////user code ends////////////////
 tail();
 
-echo '<pre>';print_r($_POST);echo '</pre>';
+//echo '<pre>';print_r($_POST);echo '</pre>';
 
 //////////////Functions///////////////////////
 
