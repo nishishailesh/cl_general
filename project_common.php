@@ -15,6 +15,7 @@ function main_menu()
 			<button class="btn btn-outline-primary m-0 p-0" formaction=search.php type=submit name=action value=get_search_condition>Search</button>			
 			<button class="btn btn-outline-primary m-0 p-0" formaction=view_database_id_from_to_for_print.php type=submit name=action value=get_from_to>Print From-To</button>			
 			<button class="btn btn-outline-primary m-0 p-0" formaction=search_and_print.php type=submit name=action value=get_search_condition>Search & Print</button>			
+			<button class="btn btn-outline-primary m-0 p-0" formaction=copy_prototype.php type=submit name=action value=copy_prototype>Copy Prototype</button>			
 			<button class="btn btn-outline-primary m-0 p-0" formaction=start.php type=submit name=action value=home><img src=img/home.jpeg height=20></button>			
 			
 			
@@ -48,6 +49,27 @@ function mk_select_from_array($name, $select_array,$disabled='',$default='')
 	return TRUE;
 }
 
+
+function mk_select_from_array_kv($name, $select_array,$disabled='',$default='')
+{	
+	echo '<select  '.$disabled.' name=\''.$name.'\'>';
+	foreach($select_array as $key=>$value)
+	{
+				//echo $default.'?'.$value;
+		if($value==$default)
+		{
+			echo '<option  selected value=\''.$key.'\' > '.$value.' </option>';
+		}
+		else
+		{
+			echo '<option   value=\''.$key.'\' >'.$value.' </option>';
+		}
+	}
+	echo '</select>';	
+	return TRUE;
+}
+
+
 function mk_array_from_sql($link,$sql,$field_name)
 {
 	$result=run_query($link,$GLOBALS['database'],$sql);
@@ -59,12 +81,29 @@ function mk_array_from_sql($link,$sql,$field_name)
 	return $ret;
 }
 
+function mk_array_from_sql_kv($link,$sql,$field_name_k,$field_name_v)
+{
+	$result=run_query($link,$GLOBALS['database'],$sql);
+	$ret=array();
+	while($ar=get_single_row($result))
+	{
+		$ret[$ar[$field_name_k]]=$ar[$field_name_v];
+	}
+	return $ret;
+}
+
 function mk_select_from_sql($link,$sql,$field_name,$select_name,$select_id,$disabled='',$default='')
 {
 	$ar=mk_array_from_sql($link,$sql,$field_name);
 	mk_select_from_array($select_name,$ar,$disabled,$default);
 }
 
+
+function mk_select_from_sql_kv($link,$sql,$field_name_k,$field_name_v,$select_name,$select_id,$disabled='',$default='')
+{
+	$ar=mk_array_from_sql_kv($link,$sql,$field_name_k,$field_name_v);
+	mk_select_from_array_kv($select_name,$ar,$disabled,$default);
+}
 
 
 function get_one_examination_details($link,$examination_id)
@@ -75,6 +114,13 @@ function get_one_examination_details($link,$examination_id)
 	return $ar=get_single_row($result);
 }
 
+function get_protoype_name($link,$prototype_id)
+{
+	$sql='select * from prototype where prototype_id=\''.$prototype_id.'\'';
+	$result=run_query($link,$GLOBALS['database'],$sql);
+	
+	return $ar['name'];
+}
 function view_sample_table($link,$sample_id)
 {
 	$sql='select * from result where sample_id=\''.$sample_id.'\'';
@@ -895,6 +941,7 @@ function edit_field($link,$examination_id,$result_array,$sample_id,$readonly='')
 	$pattern=isset($edit_specification['pattern'])?$edit_specification['pattern']:'';
 	$placeholder=isset($edit_specification['placeholder'])?$edit_specification['placeholder']:'';
 	$step=isset($edit_specification['step'])?$edit_specification['step']:0;
+	$zoom=isset($edit_specification['zoom'])?$edit_specification['zoom']:'';
 	
 	
 	$element_id='r_id_'.$sample_id.'_'.$examination_id;
@@ -908,7 +955,7 @@ function edit_field($link,$examination_id,$result_array,$sample_id,$readonly='')
 			echo '<div class="m-0 p-0 no-gutters">';
 				////
 				echo '<div class="d-inline-block  no-gutters">';
-			echo '
+					echo '
 					<button 
 						'.$readonly.'
 					id="'.$element_id.'" 
@@ -920,9 +967,9 @@ function edit_field($link,$examination_id,$result_array,$sample_id,$readonly='')
 						value=\''.$result.'\'
 						type=button
 						>'.$result.'</button>';
-					echo '</div>';
+				echo '</div>';
 				echo '<div class="d-inline  no-gutters">';
-					get_primary_result($link,$sample_id,$examination_id);
+						get_primary_result($link,$sample_id,$examination_id);
 				echo '</div>';
 			echo '</div>';
 			echo '<div class="help"><pre>'.$help.'</pre></div>';	
@@ -1153,7 +1200,7 @@ function edit_field($link,$examination_id,$result_array,$sample_id,$readonly='')
 			echo '<div class="m-0 p-0 no-gutters">';
 				////
 				echo '<div class="d-inline-block no-gutters">';
-				echo '<textarea rows=1
+				echo '<textarea rows=1 
 					'.$readonly.'
 					id="'.$element_id.'" 
 					name="'.$examination_id.'" 
@@ -1161,15 +1208,16 @@ function edit_field($link,$examination_id,$result_array,$sample_id,$readonly='')
 					data-sid="'.$sample_id.'" 
 					data-user="'.$_SESSION['login'].'" 
 					pattern="'.$pattern.'" 
-					class="form-control autosave p-0 m-0 no-gutters" 
+					class="form-control autosave p-0 m-0 no-gutters '.$zoom.' " 
+					style="resize: both;"
 					type=\''.$type.'\' >'.
 					htmlspecialchars($result,ENT_QUOTES).'</textarea>';
 				echo '</div>';
-				echo '<div class="d-inline  no-gutters">';
-					get_primary_result($link,$sample_id,$examination_id);
-				echo '</div>';
+				//echo '<div class="d-inline  no-gutters">';
+				//	get_primary_result($link,$sample_id,$examination_id);
+				//echo '</div>';
 			echo '</div>';
-			echo '<div class="help"><pre>'.$help.'</pre></div>';	
+			//echo '<div class="help"><pre>'.$help.'</pre></div>';	
 		echo '</div>';
 	} 
 }
@@ -2595,7 +2643,7 @@ function view_field_vr_p($link,$ex_id,$ex_result)
 			if(strlen($ex_result)<$GLOBALS['print_side_or_below'])
 			{
 				echo '	<tr>
-					<td colspan="3"><pre><b>'.$examination_details['name'].':</b>'.htmlspecialchars($ex_result.' '.decide_alert($ex_result,$interval,'','','','','')).'</pre></td>
+					<td colspan="3"><b style="font-size: 1.1em;">'.$examination_details['name'].':</b>'.htmlspecialchars($ex_result.' '.decide_alert($ex_result,$interval,'','','','','')).'</td>
 				</tr>';
 			}
 			else
@@ -2622,26 +2670,26 @@ function view_field_vr($link,$ex_id,$ex_result)
 		
 		if($type=='subsection')
 		{
-			echo '	<tr>
-					<td colspan="3"><h2 style="text-align:center">'.$examination_details['name'].'</h2></td>
-				</tr>'	;
+			echo '	<div>
+					<h2 style="text-align:center">'.$examination_details['name'].'</h2>
+				</div>'	;
 		}
 		else
 		{
 			if(strlen($ex_result)<$GLOBALS['print_side_or_below'])
 			{
-				echo '	<tr>
-					<td colspan="3"><b>'.$examination_details['name'].':</b>'.htmlspecialchars($ex_result.' '.decide_alert($ex_result,$interval,'','','','','')).'</td>
-				</tr>';
+				echo '	<div>
+					<b>'.$examination_details['name'].':</b>'.htmlspecialchars($ex_result.' '.decide_alert($ex_result,$interval,'','','','','')).'
+				</div>';
 			}
 			else
 			{
-				echo '	<tr>
-					<td colspan="3"><h4>'.$examination_details['name'].'</h4></td><td></td><td></td>
-				</tr>
-				<tr>
-					<td colspan="3">'.nl2br(htmlspecialchars($ex_result.' '.decide_alert($ex_result,$interval,'','','','',''))).'</td>
-				</tr>';
+				echo '	<div>
+					<h4>'.$examination_details['name'].'</h4>
+				</div>
+				<div>
+					'.nl2br(htmlspecialchars($ex_result.' '.decide_alert($ex_result,$interval,'','','','',''))).'
+				</div>';
 			}
 		}		
 }	
@@ -3115,7 +3163,23 @@ function export_data($result)
 	   }
 }
 
-
+function show_examination_bin()
+{
+	echo 
+	'<div class="position-fixed bg-secondary">
+		<button 
+		type=button
+		class="btn btn-warning btn-sm p-0 m-0 d-inline"
+		 data-toggle="collapse" 
+		data-target="#advice" href="#advice"><img src="img/copypaste.png" width=20></button>
+		<div class="p-3 collapse" id="advice">';
+		echo '<p id=cb_4 onclick="clear_bin()" class="bg-danger d-inline">clear</p>
+			<p id=cb_5 onclick="copy_binn()" class="bg-warning d-inline">copy</p>';
+		copy_bin_text($link);	
+			echo '<textarea id=cb_ta cols=50 rows=4></textarea>';
+		echo '</div>
+	</div>';
+}
 //////////end of dashboard functions
 
 ?>

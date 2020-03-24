@@ -64,6 +64,12 @@
 	  grid-template-columns: 20% 50% 30%;
 	}	
 
+	.basic_form_histo
+	{
+	  display: grid;
+	  grid-template-columns: 100%;
+	}
+
 	.horiz
 	{
 	  display: grid;
@@ -92,6 +98,7 @@
 	  grid-template-columns: 25% 40% 35%;
 	}	
 
+
 	  #main_menu, #root_menu, .data_header, .sh, .print_hide
 	 {
 		 display:none
@@ -110,4 +117,9 @@
 	}
 	
 	 footer {page-break-after: always;}	  
+}
+
+.zoom:focus {
+    height: 6em;
+    width: 50em;
 }

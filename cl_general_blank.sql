@@ -116,6 +116,38 @@ CREATE TABLE `profile` (
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
+-- Table structure for table `prototype`
+--
+
+DROP TABLE IF EXISTS `prototype`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `prototype` (
+  `prototype_id` int(11) NOT NULL,
+  `name` varchar(200) NOT NULL,
+  PRIMARY KEY (`prototype_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Table structure for table `prototype_data`
+--
+
+DROP TABLE IF EXISTS `prototype_data`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `prototype_data` (
+  `prototype_id` int(11) NOT NULL,
+  `examination_id` int(11) NOT NULL,
+  `result` varchar(5000) NOT NULL,
+  PRIMARY KEY (`prototype_id`,`examination_id`),
+  KEY `examination_id` (`examination_id`),
+  CONSTRAINT `prototype_data_ibfk_1` FOREIGN KEY (`examination_id`) REFERENCES `examination` (`examination_id`),
+  CONSTRAINT `prototype_data_ibfk_2` FOREIGN KEY (`prototype_id`) REFERENCES `prototype` (`prototype_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
 -- Table structure for table `report`
 --
 
@@ -248,4 +280,4 @@ CREATE TABLE `view_info_data` (
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2020-03-23  9:42:49
+-- Dump completed on 2020-03-24  9:53:59

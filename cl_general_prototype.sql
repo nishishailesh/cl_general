@@ -16,28 +16,27 @@
 /*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
 
 --
--- Table structure for table `report`
+-- Table structure for table `prototype`
 --
 
-DROP TABLE IF EXISTS `report`;
+DROP TABLE IF EXISTS `prototype`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `report` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
-  `report_name` varchar(100) NOT NULL,
-  `examination_id` varchar(1000) DEFAULT NULL,
-  PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4;
+CREATE TABLE `prototype` (
+  `prototype_id` int(11) NOT NULL,
+  `name` varchar(200) NOT NULL,
+  PRIMARY KEY (`prototype_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
--- Dumping data for table `report`
+-- Dumping data for table `prototype`
 --
 
-LOCK TABLES `report` WRITE;
-/*!40000 ALTER TABLE `report` DISABLE KEYS */;
-INSERT INTO `report` VALUES (1,'Haemogram','1001,3,2,4,5,6,7,8,1,9');
-/*!40000 ALTER TABLE `report` ENABLE KEYS */;
+LOCK TABLES `prototype` WRITE;
+/*!40000 ALTER TABLE `prototype` DISABLE KEYS */;
+INSERT INTO `prototype` VALUES (1,'Ca Breast'),(2,'Lymphoma');
+/*!40000 ALTER TABLE `prototype` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
 
