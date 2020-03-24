@@ -2648,18 +2648,21 @@ function view_field_vr_p($link,$ex_id,$ex_result)
 			}
 			else
 			{
-				//$formatted=nl2br(htmlspecialchars($ex_result.' '.decide_alert($ex_result,$interval,'','','','','')));
-				$formatted=nl2br($ex_result.' '.decide_alert($ex_result,$interval,'','','','',''));
+				$formatted=nl2br(htmlspecialchars($ex_result.' '.decide_alert($ex_result,$interval,'','','','','')));
+				$bold_formatted1=str_replace('(((','<b>',$formatted);
+				$bold_formatted2=str_replace(')))','</b>',$bold_formatted1);
+				//$formatted=nl2br($ex_result.' '.decide_alert($ex_result,$interval,'','','','',''));
 				echo '	<tr>
 					<td colspan="3"><h3>'.$examination_details['name'].'</h3></td><td></td><td></td>
 				</tr>
 				<tr>
-					<td colspan="3">'.$formatted.'</td>
+					<td colspan="3">'.$bold_formatted2.'</td>
 					
 				</tr>';
 			}
 		}		
 }	
+
 //<td colspan="3"><pre>'.nl2br(htmlspecialchars($ex_result.' '.decide_alert($ex_result,$interval,'','','','',''))).'</pre></td>
 //<td colspan="3">'.nl2br(htmlspecialchars($ex_result.' '.decide_alert($ex_result,$interval,'','','','',''))).'</td>
 //<td colspan="3">'.nl2br($ex_result.' '.decide_alert($ex_result,$interval,'','','','','')).'</td>
@@ -2692,13 +2695,13 @@ function view_field_vr($link,$ex_id,$ex_result)
 					<h4>'.$examination_details['name'].'</h4>
 				</div>
 				<div>
-					'.nl2br($ex_result.' '.decide_alert($ex_result,$interval,'','','','','')).'
+					'.nl2br(htmlspecialchars($ex_result.' '.decide_alert($ex_result,$interval,'','','','',''))).'
 				</div>';
 			}
 		}		
 }	
 //'.nl2br(htmlspecialchars($ex_result.' '.decide_alert($ex_result,$interval,'','','','',''))).'
-
+//'.nl2br($ex_result.' '.decide_alert($ex_result,$interval,'','','','','')).'
 
 function echo_result_header_p()
 {
