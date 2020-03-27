@@ -297,8 +297,7 @@ function view_sample($link,$sample_id)
 				}
 				else
 				{
-					//blob ignored
-					//view_field_blob_hr($link,$ex_id,$sample_id);	
+					view_field_blob_vr($link,$ex_id,$sample_id);	
 				}
 			}
 		}
@@ -380,6 +379,69 @@ function view_field_blob_hr($link,$kblob,$sample_id)
 									);
 				echo ':'.$ar_blob['fname'].'</div>
 				';
+}
+
+function view_field_blob_vr($link,$kblob,$sample_id)
+{
+		$sql_blob='select * from result_blob where sample_id=\''.$sample_id.'\' and examination_id=\''.$kblob.'\'';
+		$result_blob=run_query($link,$GLOBALS['database'],$sql_blob);
+		$ar_blob=get_single_row($result_blob);
+	
+		//print_r($ar);
+		$examination_blob_details=get_one_examination_details($link,$kblob);
+		$edit_specification=json_decode($examination_blob_details['edit_specification'],true);		
+		$img=isset($edit_specification['img'])?$edit_specification['img']:'';
+		
+		//print_r($examination_details);
+		echo '	
+				<div class="print_hide"><b>'.$examination_blob_details['name'].'
+				:</b>';
+				echo_download_button_two_pk('result_blob','result',
+									'sample_id',$sample_id,
+									'examination_id',$examination_blob_details['examination_id'],
+									$sample_id.'-'.$examination_blob_details['examination_id'].'-'.$ar_blob['fname']
+									);
+				echo ':'.$ar_blob['fname'].'</div>
+				';
+		
+		if($img=='png')
+		{
+			echo '<div><b>';
+			echo $examination_blob_details['name'];
+			echo ':</b></div>';
+			echo '<div>';
+			//no effect of last three parameters, not implemented
+			display_png($ar_blob['result'],$ar_blob['fname'],500,200);	
+			echo '</b>div>';
+		}
+}
+
+
+function view_field_blob_vr_p($link,$kblob,$sample_id)
+{
+		$sql_blob='select * from result_blob where sample_id=\''.$sample_id.'\' and examination_id=\''.$kblob.'\'';
+		$result_blob=run_query($link,$GLOBALS['database'],$sql_blob);
+		$ar_blob=get_single_row($result_blob);
+	
+		//print_r($ar);
+		$examination_blob_details=get_one_examination_details($link,$kblob);
+		$edit_specification=json_decode($examination_blob_details['edit_specification'],true);		
+		$img=isset($edit_specification['img'])?$edit_specification['img']:'';
+		$wd=isset($edit_specification['width'])?$edit_specification['width']:'400';
+		$ht=isset($edit_specification['height'])?$edit_specification['height']:'200';
+		echo '<tr><td colspan="3"><b>';
+		echo $examination_blob_details['name'];
+		echo ':</b></td></tr>';
+
+		echo '<tr><td colspan="3">';
+		//print_r($examination_details);
+		if($img=='png')
+		{
+			//no effect of last three parameters, not implemented
+			//width bigger than nature have no effect
+			display_png_p($ar_blob['result'],$ar_blob['fname'],$wd,$ht);	
+		}
+		echo '</td></tr>';
 }
 /*
 function view_sample($link,$sample_id)
@@ -2024,7 +2086,14 @@ function add_new_examination_and_profile($link,$sample_id,$list_of_selected_exam
 		//echo $psql;
 		$result=run_query($link,$GLOBALS['database'],$psql);
 		$ar=get_single_row($result);
-		$profile_ex_requested=explode(',',$ar['examination_id_list']);
+		if(isset($ar['examination_id_list']))
+		{
+			$profile_ex_requested=explode(',',$ar['examination_id_list']);
+		}
+		else
+		{
+			$profile_ex_requested=array();
+		}
 		$requested=array_merge($requested,$profile_ex_requested);
 	}
 	//print_r($requested);
@@ -2421,6 +2490,28 @@ function display_dw_png($ex_result,$label)
 	return $myStr;
 }
 
+
+
+function display_png($ex_result,$label='',$width=0,$height=0)
+{	
+	$encoded_image=base64_encode($ex_result);	
+	echo '<img src="data:image/png;base64,'.$encoded_image.'" />';
+}
+
+
+function display_png_p($ex_result,$label='',$width=100,$height=100)
+{	
+	$encoded_image=base64_encode($ex_result);	
+	//Ha Ha!!! lots of time wasted for silly things.Thanks to internet
+	//$final='data:image/png;base64,@'.$encoded_image;
+	//$img = '<img src="@' . preg_replace('#^data:image/[^;]+;base64,#', '', $final) . ' " width="'.$width.'" height="'.$height.'"/> ';
+	//$img = '<img src="@' . preg_replace('#^data:image/[^;]+;base64,#', '', $final) . ' " width="'.$width.'" height="'.$height.'"/> ';
+	
+	//$img = '<img src="@'.$encoded_image.'" width="'.$width.'" height="'.$height.'"/> ';
+	$img = '<img src="@'.$encoded_image.'" width="'.$width.'" /> ';
+	echo $img;
+}
+
 function view_sample_p($link,$sample_id,$profile_wise_ex_list)
 {
 	$ex_list=get_result_of_sample_in_array($link,$sample_id);
@@ -2496,8 +2587,7 @@ function view_sample_p($link,$sample_id,$profile_wise_ex_list)
 				}
 				else
 				{
-					//blob ignored
-					//view_field_blob_hr($link,$ex_id,$sample_id);	
+					view_field_blob_vr_p($link,$ex_id,$sample_id);	
 				}
 			}
 		}
@@ -2640,17 +2730,22 @@ function view_field_vr_p($link,$ex_id,$ex_result)
 		}
 		else
 		{
+
+				$formatted=nl2br(htmlspecialchars($ex_result.' '.decide_alert($ex_result,$interval,'','','','','')));
+				$bold_formatted1=str_replace('(((','<b>',$formatted);
+				$bold_formatted2=str_replace(')))','</b>',$bold_formatted1);
+							
 			if(strlen($ex_result)<$GLOBALS['print_side_or_below'])
 			{
 				echo '	<tr>
-					<td colspan="3"><b style="font-size: 1.1em;">'.$examination_details['name'].':</b>'.htmlspecialchars($ex_result.' '.decide_alert($ex_result,$interval,'','','','','')).'</td>
+					<td colspan="3"><b style="font-size: 1.1em;">'.$examination_details['name'].':</b>'.$bold_formatted2.'</td>
 				</tr>';
 			}
 			else
 			{
-				$formatted=nl2br(htmlspecialchars($ex_result.' '.decide_alert($ex_result,$interval,'','','','','')));
-				$bold_formatted1=str_replace('(((','<b>',$formatted);
-				$bold_formatted2=str_replace(')))','</b>',$bold_formatted1);
+				//$formatted=nl2br(htmlspecialchars($ex_result.' '.decide_alert($ex_result,$interval,'','','','','')));
+				//$bold_formatted1=str_replace('(((','<b>',$formatted);
+				//$bold_formatted2=str_replace(')))','</b>',$bold_formatted1);
 				//$formatted=nl2br($ex_result.' '.decide_alert($ex_result,$interval,'','','','',''));
 				echo '	<tr>
 					<td colspan="3"><h3>'.$examination_details['name'].'</h3></td><td></td><td></td>
