@@ -412,7 +412,7 @@ function view_field_blob_vr($link,$kblob,$sample_id)
 			echo '<div>';
 			//no effect of last three parameters, not implemented
 			display_png($ar_blob['result'],$ar_blob['fname'],500,200);	
-			echo '</b>div>';
+			echo '</b></div>';
 		}
 }
 
@@ -1554,7 +1554,7 @@ function edit_blob_field($link,$examination_id,$sample_id)
 	//get result_blob details
 	$sql_blob='select * from result_blob where sample_id=\''.$sample_id.'\' and examination_id=\''.$examination_id.'\' ';
 	$result_blob=run_query($link,$GLOBALS['database'],$sql_blob);
-	$ar_blob=get_single_row($result_blob);
+	//$ar_blob=get_single_row($result_blob);
 
 	$element_id='r_id_'.$sample_id.'_'.$examination_id;
 
@@ -1562,12 +1562,16 @@ function edit_blob_field($link,$examination_id,$sample_id)
 	set_lable($_POST['session_name'],$_POST['sample_id'],$examination_details,$examination_id);
 	//echo '	<div class=my_label>'.$examination_details['name'].'</div>
 	echo'<div class="border ">';	
-	echo_download_button_two_pk('result_blob','result',
+	
+	if(get_row_count($result_blob)>0)
+	{
+		$ar_blob=get_single_row($result_blob);
+		echo_download_button_two_pk('result_blob','result',
 								'sample_id',$sample_id,
 								'examination_id',$examination_details['examination_id'],
 								$sample_id.'-'.$examination_details['examination_id'].'-'.$ar_blob['fname'],
 								round(strlen($ar_blob['result'])/1024,0));
-	
+	}
 	echo_upload_two_pk($sample_id,$examination_id);	
 	echo '<input type=hidden
 					id="'.$element_id.'" 
@@ -1582,7 +1586,10 @@ function edit_blob_field($link,$examination_id,$sample_id)
 						
 	//echo
 	echo '</div>';
-	echo '<div  class=help  >Current File:'.$ar_blob['fname'].'</div>';
+	if(isset($ar_blob['fname']))
+	{
+		echo '<div  class=help  >Current File:'.$ar_blob['fname'].'</div>';
+	}
 	echo '</div>';
 }
 
