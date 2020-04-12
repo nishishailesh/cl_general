@@ -1275,11 +1275,11 @@ function edit_field($link,$examination_id,$result_array,$sample_id,$readonly='')
 					type=\''.$type.'\' >'.
 					htmlspecialchars($result,ENT_QUOTES).'</textarea>';
 				echo '</div>';
-				//echo '<div class="d-inline  no-gutters">';
-				//	get_primary_result($link,$sample_id,$examination_id);
-				//echo '</div>';
+				echo '<div class="d-inline  no-gutters">';
+					get_primary_result($link,$sample_id,$examination_id);
+				echo '</div>';
 			echo '</div>';
-			//echo '<div class="help"><pre>'.$help.'</pre></div>';	
+			echo '<div class="help"><pre>'.$help.'</pre></div>';	
 		echo '</div>';
 	} 
 }

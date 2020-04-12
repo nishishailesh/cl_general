@@ -36,7 +36,6 @@ CREATE TABLE `copy_bin_text` (
 
 LOCK TABLES `copy_bin_text` WRITE;
 /*!40000 ALTER TABLE `copy_bin_text` DISABLE KEYS */;
-INSERT INTO `copy_bin_text` VALUES (1,'CBC','Smear shows atypical WBC. Screening for Leukemia Adviced'),(2,'Thalassemia','Planty of target cells seen. Thalassemia screening is adviced');
 /*!40000 ALTER TABLE `copy_bin_text` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
@@ -49,4 +48,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2020-03-28 21:28:04
+-- Dump completed on 2020-04-13  0:18:07
