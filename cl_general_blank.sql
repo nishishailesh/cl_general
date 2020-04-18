@@ -99,6 +99,22 @@ CREATE TABLE `primary_result_blob` (
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
+-- Table structure for table `primary_result_e`
+--
+
+DROP TABLE IF EXISTS `primary_result_e`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `primary_result_e` (
+  `sample_id` bigint(20) NOT NULL,
+  `examination_id` int(11) NOT NULL,
+  `uniq` varchar(100) NOT NULL,
+  `result` varchar(5000) DEFAULT NULL,
+  PRIMARY KEY (`sample_id`,`examination_id`,`uniq`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 ROW_FORMAT=COMPACT;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
 -- Table structure for table `profile`
 --
 
@@ -280,4 +296,4 @@ CREATE TABLE `view_info_data` (
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2020-04-13  0:18:07
+-- Dump completed on 2020-04-18 22:42:06

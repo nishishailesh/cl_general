@@ -33,10 +33,29 @@ if($_POST['action']=='calculate')
 	calculate_and_update($link,$_POST['sample_id']);
 	edit_sample($link,$_POST['sample_id']);
 }
+
+if($_POST['action']=='sync_ALL')
+{
+	sync_all($link,$_POST['sample_id']);
+	edit_sample($link,$_POST['sample_id']);
+}
+
+if($_POST['action']=='sync_single')
+{
+	if(!isset($_POST['is_blob']))
+	{
+		save_single_result($link,$_POST['sample_id'],$_POST['examination_id'],$_POST['result']);
+	}
+	else
+	{
+		save_single_result_blob($link,$_POST['sample_id'],$_POST['examination_id'],$_POST['uniq']);
+	}
+	edit_sample($link,$_POST['sample_id']);
+}
 //////////////user code ends////////////////
 tail();
 
-//echo '<pre>';print_r($_POST);print_r($_FILES);echo '</pre>';
+echo '<pre>';print_r($_POST);print_r($_FILES);echo '</pre>';
 
 //////////////Functions///////////////////////
 function calculate_and_update($link,$sample_id)
@@ -86,6 +105,43 @@ function save_single_result($link,$sample_id,$examination_id,$ex_result)
 	{
 		//echo '<p>'.$sample_id.'|'.$examination_id.'|'.$ex_result.'|Saved</p>';				
 	}
+}
+
+function save_single_result_blob($link,$sample_id,$examination_id,$uniq)
+{
+	$sql_blob='select * from result_blob where sample_id=\''.$sample_id.'\' and 
+							examination_id=\''.$examination_id.'\'';
+	//echo ($sql_blob);
+	$result_blob=run_query($link,$GLOBALS['database'],$sql_blob);
+	$ar_blob=get_single_row($result_blob);
+	
+	$sql_primary_blob='select * from primary_result_blob 
+						where 	sample_id=\''.$sample_id.'\' and 
+								examination_id=\''.$ar_blob['examination_id'].'\' and
+								uniq=\''.$uniq.'\'';							
+	//echo $sql_primary_blob;
+	$result_primary_blob=run_query($link,$GLOBALS['database'],$sql_primary_blob);
+	$arr_blob=get_single_row($result_primary_blob);
+	
+	if($arr_blob !==NULL && $arr_blob !==FALSE)
+	{
+		//print_r($arr);
+		//echo $ar_blob['sample_id'].'>>'.$ar_blob['examination_id'].'>>'.$ar_blob['fname'].'||||'.
+	    //$arr_blob['sample_id'].'>>'.$arr_blob['examination_id'].'>>'.$arr_blob['fname'].'>>'.$arr_blob['uniq'].'<br>';
+	
+		$update_sql_blob='update result_blob 
+							set 
+								result=\''.my_safe_string($link,$arr_blob['result']).'\' ,
+								fname=\''.my_safe_string($link,$arr_blob['fname']).'\' 
+							where
+								sample_id=\''.$sample_id.'\' and 
+								examination_id=\''.$arr_blob['examination_id'].'\'';
+								
+								
+		//echo $update_sql_blob.'<br>';
+		if(!run_query($link,$GLOBALS['database'],$update_sql_blob))
+		{echo 'blob data synchronization failed';}
+	}	
 }
 //////////////Functions///////////////////////
 

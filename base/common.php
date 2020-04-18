@@ -114,6 +114,7 @@ function get_single_row($result)
 		if($result!=false)
 		{
 			return mysqli_fetch_assoc($result);
+			//return NULL if no row (not FALSE)
 		}
 		else
 		{

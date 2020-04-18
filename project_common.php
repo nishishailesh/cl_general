@@ -589,6 +589,15 @@ function sample_id_view_button($sample_id,$target='')
 	</form></div>';
 }
 
+function sample_id_sync_all_button($sample_id,$target='')
+{
+	echo '<div class="d-inline-block" ><form method=post action=edit_general.php class=print_hide>
+	<button class="btn btn-sm btn-warning" name=sample_id value=\''.$sample_id.'\' >Sync ALL</button>
+	<input type=hidden name=session_name value=\''.$_POST['session_name'].'\'>
+	<input type=hidden name=action value=sync_ALL>
+	</form></div>';
+}
+
 function sample_id_print_button($sample_id)
 {
 	echo '<div class="d-inline-block" ><form method=post action=print_single.php target=_blank class=print_hide>
@@ -748,7 +757,9 @@ function edit_sample($link,$sample_id)
 				sample_id_edit_button($sample_id);
 				sample_id_view_button($sample_id);
 				sample_id_calculate_button($sample_id);
-				echo '<button class="btn btn-sm btn-warning" onclick="sync_all()">Sync All</button>';
+				sample_id_sync_all_button($sample_id);
+				//removed javascript based system
+				//echo '<button class="btn btn-sm btn-warning" onclick="sync_all()">Sync All</button>';
 			echo '</div>
 			<div class=help>Unique Number to get this data</div>';
 	echo '</div>';	
@@ -876,15 +887,27 @@ function get_primary_result($link,$sample_id,$examination_id)
 	{
 		//$values=$values.$ar['result'].',';
 		$element_id='pr_id_'.$sample_id.'_'.$examination_id;
-		echo '<button onclick="sync_result(this)"
+		
+		//comneted java script based update
+		/*echo '<button onclick="sync_result(this)"
 					class="btn btn-sm btn-outline-dark  no-gutters align-top"
 					id=\''.$element_id.'\' 
 					data-sid=\''.$sample_id.'\' 
 					data-exid=\''.$examination_id.'\' 
 					value=\''.$ar['result'].'\' >'.$ar['result'].'</button>';
+		*/			
+		echo '<form class="d-inline" method=post><button type=submit
+					class="btn btn-sm btn-outline-important  no-gutters align-top"
+					name=result value=\''.$ar['result'].'\' >'.$ar['result'].'</button>
+					<input type=hidden name=sample_id value=\''.$sample_id.'\' >
+					<input type=hidden name=examination_id value=\''.$examination_id.'\'> 
+					<input type=hidden name=action value=sync_single>
+					<input type=hidden name=session_name value=\''.session_name().'\'>
+			</form>';
 	}
 	//return $values;
 }
+
 
 //used to supply default
 //calls sync_with_that() from project_common.js
@@ -910,7 +933,9 @@ function get_primary_result_blob($link,$sample_id,$examination_id)
 	{
 		//$values=$values.$ar['result'].',';
 		$element_id='pr_id_'.$sample_id.'_'.$examination_id;
-		echo '<button onclick="sync_result_blob(this)"
+		
+		//commneted javascript based updation
+		/*echo '<button onclick="sync_result_blob(this)"
 					class="btn btn-sm btn-outline-dark  no-gutters align-top"
 					id=\''.$element_id.'\' 
 					data-sid=\''.$sample_id.'\' 
@@ -918,6 +943,17 @@ function get_primary_result_blob($link,$sample_id,$examination_id)
 					data-exid=\''.$examination_id.'\' 
 					data-uniq=\''.$ar['uniq'].'\' 
 					value=\''.$ar['uniq'].'\' >'.$ar['uniq'].'</button>';
+		*/			
+					
+		echo '<form class="d-inline" method=post><button type=submit
+					class="btn btn-sm btn-outline-important  no-gutters align-top"
+					name=uniq value=\''.$ar['uniq'].'\' >'.$ar['uniq'].'</button>
+					<input type=hidden name=sample_id value=\''.$sample_id.'\' >
+					<input type=hidden name=examination_id value=\''.$examination_id.'\'> 
+					<input type=hidden name=is_blob value=yes>
+					<input type=hidden name=action value=sync_single>
+					<input type=hidden name=session_name value=\''.session_name().'\'>
+			</form>';					
 	}
 	//return $values;
 }
@@ -989,6 +1025,75 @@ function calculate_result($link,$equation,$ex_list,$sample_id,$decimal=0)
 	
 }
 
+
+function sync_all($link,$sample_id)
+{
+	//echo 'Sync All';
+	
+	//result////////////////////////////////
+	$sql='select * from result where sample_id=\''.$sample_id.'\'';
+	$result=run_query($link,$GLOBALS['database'],$sql);
+
+	while($ar=get_single_row($result))
+	{
+		
+		$sql_primary='select * from primary_result 
+							where 	sample_id=\''.$sample_id.'\' and 
+									examination_id=\''.$ar['examination_id'].'\' order by uniq desc limit 1';									
+		$result_primary=run_query($link,$GLOBALS['database'],$sql_primary);
+		
+		$arr=get_single_row($result_primary);
+		if($arr !==NULL )
+		{
+			//print_r($arr);
+			//echo $ar['sample_id'].'>>'.$ar['examination_id'].'>>'.$ar['result'].'||||'.
+		    //$arr['sample_id'].'>>'.$arr['examination_id'].'>>'.$arr['result'].'>>'.$arr['uniq'].'<br>';
+		
+			$update_sql='update result set result=\''.my_safe_string($link,$arr['result']).'\' where
+									sample_id=\''.$sample_id.'\' and 
+									examination_id=\''.$ar['examination_id'].'\'';
+			//echo $update_sql.'<br>';
+			if(!run_query($link,$GLOBALS['database'],$update_sql))
+			{echo 'data synchronization failed';}
+		}	
+	}
+	
+	//result_blob////////////////////////////	
+	$sql_blob='select * from result_blob where sample_id=\''.$sample_id.'\'';
+	//echo ($sql_blob);
+	$result_blob=run_query($link,$GLOBALS['database'],$sql_blob);
+	
+	while($ar_blob=get_single_row($result_blob))
+	{
+		
+		$sql_primary_blob='select * from primary_result_blob 
+							where 	sample_id=\''.$sample_id.'\' and 
+									examination_id=\''.$ar_blob['examination_id'].'\' order by uniq desc limit 1';									
+		//echo $sql_primary_blob;
+		$result_primary_blob=run_query($link,$GLOBALS['database'],$sql_primary_blob);
+		
+		$arr_blob=get_single_row($result_primary_blob);
+		if($arr_blob !==NULL )
+		{
+			//print_r($arr);
+			//echo $ar_blob['sample_id'].'>>'.$ar_blob['examination_id'].'>>'.$ar_blob['fname'].'||||'.
+		    //$arr_blob['sample_id'].'>>'.$arr_blob['examination_id'].'>>'.$arr_blob['fname'].'>>'.$arr_blob['uniq'].'<br>';
+		
+			$update_sql_blob='update result_blob 
+								set 
+									result=\''.my_safe_string($link,$arr_blob['result']).'\' ,
+									fname=\''.my_safe_string($link,$arr_blob['fname']).'\' 
+								where
+									sample_id=\''.$sample_id.'\' and 
+									examination_id=\''.$arr_blob['examination_id'].'\'';
+			//echo $update_sql_blob.'<br>';
+			if(!run_query($link,$GLOBALS['database'],$update_sql_blob))
+			{echo 'blob data synchronization failed';}
+		}	
+	}
+	
+		
+}
 
 function edit_field($link,$examination_id,$result_array,$sample_id,$readonly='')
 {
@@ -1595,7 +1700,7 @@ function edit_blob_field($link,$examination_id,$sample_id)
 
 function echo_upload_two_pk($sample_id,$examination_id)
 {
-	echo '<form method=post enctype="multipart/form-data">';
+	echo '<form method=post class="d-inline" enctype="multipart/form-data">';
 	echo '<input type=hidden name=session_name value=\''.$_POST['session_name'].'\'>';
 	echo '<input type=hidden readonly size=8  name=examination_id value=\''.$examination_id.'\'>';
 	echo '<input type=hidden name=sample_id value=\''.$sample_id.'\'>';		
