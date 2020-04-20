@@ -219,33 +219,43 @@ function view_sample($link,$sample_id)
 	//print_r($rblob);
 	$result_plus_blob_requested=$ex_list+$rblob;
 	//print_r($result_plus_blob_requested);
-	if(count($result_plus_blob_requested)==0)
-	{
-		echo '<h3>No such sample with sample_id='.$sample_id.'</h3>';
-		return;
-	}
+
 	$profile_wise_ex_list=ex_to_profile($link,$result_plus_blob_requested);
 
-	$sr=get_one_ex_result($link,$sample_id,$GLOBALS['sample_requirement']);
-	//echo $sr;
-	$sr_array=explode('-',$sr);
-	//print_r($sr_array);
-	$header=$GLOBALS[$sr_array[2]];
-	echo '<H2 class="text-center only_print">'.$header['name'].'</H2>
-	<H3 class="text-center only_print">'.$header['section'].'</H3>
-	<H4 class="text-center only_print">'.$header['address'].'</H4>
-	<H5 class="text-center only_print">'.$header['phone'].'</H5>
-	<hr>
-	';
-
-	echo '<div class="basic_form">
+	if(count($result_plus_blob_requested)!=0)
+	{
+		$sr=get_one_ex_result($link,$sample_id,$GLOBALS['sample_requirement']);
+		//echo $sr;
+		$sr_array=explode('-',$sr);
+		//print_r($sr_array);
+		$header=$GLOBALS[$sr_array[2]];
+		echo '<H2 class="text-center only_print">'.$header['name'].'</H2>
+		<H3 class="text-center only_print">'.$header['section'].'</H3>
+		<H4 class="text-center only_print">'.$header['address'].'</H4>
+		<H5 class="text-center only_print">'.$header['phone'].'</H5>
+		<hr>';
+	
+	
+		echo '<div class="basic_form">
 			<div class=my_label ><span class="badge badge-primary ">Sample ID</span>
 			<span class="badge badge-info"><h5>'.$sample_id.'</h5></span></div>			<div>';
 			show_all_buttons_for_sample($link,$sample_id);
 			echo '</div>
 			<div class="help print_hide">Unique Number to get this data</div>';
-	echo '</div>';	
+		echo '</div>';	
+	}
+	else
+	{
+		sample_id_prev_button($sample_id);
+		sample_id_next_button($sample_id);
+	}
 	
+	if(count($result_plus_blob_requested)==0)
+	{
+		echo '<h3>No such sample with sample_id='.$sample_id.'</h3>';
+		return;
+	}
+		
 	foreach($profile_wise_ex_list as $kp=>$vp)
 	{
 		$pinfo=get_profile_info($link,$kp);
@@ -333,6 +343,59 @@ function view_sample($link,$sample_id)
 	}
 	
 	echo '<br><footer></footer>';	
+}
+
+
+function view_sample_compact($link,$sample_id)
+{
+
+	$ex_list=get_result_of_sample_in_array($link,$sample_id);
+	//print_r($ex_list);
+	$rblob=get_result_blob_of_sample_in_array($link,$sample_id);
+	//print_r($rblob);
+	$result_plus_blob_requested=$ex_list+$rblob;
+	//print_r($result_plus_blob_requested);
+	echo '<div>';
+		sample_id_prev_button($sample_id);
+		sample_id_next_button($sample_id);
+		$sr=get_one_ex_result($link,$sample_id,$GLOBALS['sample_requirement']);
+		echo '<span class="bg-warning">'.$sample_id.'---'.$sr.'</span>';
+
+		if(count($result_plus_blob_requested)==0)
+		{
+			echo '<h3>No such sample with sample_id='.$sample_id.'</h3>';
+			return;
+		}
+		$profile_wise_ex_list=ex_to_profile($link,$result_plus_blob_requested);
+
+		foreach($profile_wise_ex_list as $kp=>$vp)
+		{
+			$pinfo=get_profile_info($link,$kp);
+			$profile_edit_specification=json_decode($pinfo['edit_specification'],true);
+			$compact=isset($profile_edit_specification['compact'])?$profile_edit_specification['compact']:'';		
+			if($compact!='no')
+			{
+				echo '<h5 class="text-danger">'.$pinfo['name'].'</h5>';
+				echo '<table border=1>';
+				foreach($vp as $ex_id)
+				{
+					$examination_details=get_one_examination_details($link,$ex_id);
+					$edit_specification=json_decode($examination_details['edit_specification'],true);
+					$type=isset($edit_specification['type'])?$edit_specification['type']:'';
+					
+					if($type!='blob')
+					{
+						echo '<tr><td>'.$examination_details['name'].'</td><td>'.$ex_list[$ex_id].'</td></tr>';
+					}
+					else
+					{
+						echo $examination_details['name'];
+					}
+				}
+				echo '</table>';
+			}
+		}
+	echo '</div>';
 }
 
 function view_field_blob($link,$kblob,$sample_id)
@@ -611,7 +674,7 @@ function sample_id_print_button($sample_id)
 function sample_id_next_button($sample_id)
 {
 	echo '<div class="d-inline-block" ><form method=post action=view_single.php  class=print_hide>
-	<button class="btn btn-outline-danger btn-sm" name=sample_id value=\''.($sample_id+1).'\' >Next</button>
+	<button class="btn btn-outline-danger btn-sm m-0 p-0" name=sample_id value=\''.($sample_id+1).'\' >Next</button>
 	<input type=hidden name=session_name value=\''.$_POST['session_name'].'\'>
 	<input type=hidden name=action value=view_single>
 	</form></div>';
@@ -620,8 +683,8 @@ function sample_id_next_button($sample_id)
 
 function sample_id_prev_button($sample_id)
 {
-	echo '<div class="d-inline-block" ><form method=post action=view_single.php class=print_hide>
-	<button class="btn btn-outline-danger btn-sm" name=sample_id value=\''.($sample_id-1).'\' >Previous</button>
+	echo '<div class="d-inline-block " ><form method=post action=view_single.php class=print_hide>
+	<button class="btn btn-outline-danger  btn-sm m-0 p-0" name=sample_id value=\''.($sample_id-1).'\' >Previous</button>
 	<input type=hidden name=session_name value=\''.$_POST['session_name'].'\'>
 	<input type=hidden name=action value=view_single>
 	</form></div>';

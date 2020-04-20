@@ -32,8 +32,6 @@ tail();
 
 function get_dbid()
 {
-	$YY=strftime("%y");
-
 echo '<form method=post action=view_single.php>';
 echo '<div class="basic_form">';
 	echo '	<label class="my_label text-danger" for="mrd">Database ID</label>
