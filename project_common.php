@@ -13,7 +13,8 @@ function main_menu()
 			<div class="dropdown-menu m-0 p-0 ">
 				<div class="btn-group-vertical d-block">
 					<button class="btn btn-outline-primary m-0 p-0 " formaction=new_general.php type=submit name=action value=new_general>New</button>
-					<button class="btn btn-outline-primary m-0 p-0 " formaction=new_s1.php type=submit name=action value=direct>New Direct</button>
+					<button class="btn btn-outline-primary m-0 p-0 " formaction=new_s1.php type=submit name=action value=direct>New Direct(Patho)</button>
+					<button class="btn btn-outline-primary m-0 p-0 " formaction=new_specific_biochemistry.php type=submit name=action value=direct>New Direct(Bio)</button>
 				</div>
 			</div>
 		</div>
@@ -33,7 +34,8 @@ function main_menu()
 				<div class="dropdown-menu m-0 p-0">
 					<div class="btn-group-vertical  d-block">
 						<button class="btn btn-outline-primary m-0 p-0" formaction=view_database_id_from_to_for_print.php type=submit name=action value=get_from_to>Print From-To</button>			
-						<button class="btn btn-outline-primary m-0 p-0" formaction=search_and_print.php type=submit name=action value=get_search_condition>Search & Print</button>			
+						<button class="btn btn-outline-primary m-0 p-0" formaction=search_and_print.php type=submit name=action value=get_search_condition>Search & Print</button>
+						<button class="btn btn-outline-primary m-0 p-0" formaction=print_multiple_scanned_barcode.php type=submit name=action value=get_scan>Scan & Print</button>						
 					</div>
 				</div>
 		</div>
@@ -670,6 +672,16 @@ function sample_id_barcode_button($sample_id)
 	</form></div>';
 }
 
+function sample_id_barcode_button_array($sample_id_array)
+{
+	$serialized=base64_encode(serialize($sample_id_array));
+	echo '<div class="d-inline-block" ><form method=post target=_blank action=print_multiple_barcode.php class=print_hide>
+	<button class="btn btn-outline-primary btn-sm" name=sample_id_array value=\''.$serialized.'\' >[|||||||]  [||||||]</button>
+	<input type=hidden name=session_name value=\''.$_POST['session_name'].'\'>
+	<input type=hidden name=action value=print_barcode>
+	</form></div>';
+}
+
 function sample_id_calculate_button($sample_id)
 {
 	echo '<div class="d-inline-block" ><form method=post action=edit_general.php class=print_hide>
@@ -725,6 +737,25 @@ function sample_id_prev_button($sample_id)
 	<input type=hidden name=action value=view_single>
 	</form></div>';
 }
+
+function sample_id_prev_button_edit($sample_id)
+{
+	echo '<div class="d-inline-block " ><form method=post action=edit_general.php class=print_hide>
+	<button class="btn btn-outline-danger  btn-sm m-0 p-0" name=sample_id value=\''.($sample_id-1).'\' >Previous</button>
+	<input type=hidden name=session_name value=\''.$_POST['session_name'].'\'>
+	<input type=hidden name=action value=edit_general>
+	</form></div>';
+}
+
+function sample_id_next_button_edit($sample_id)
+{
+	echo '<div class="d-inline-block" ><form method=post action=edit_general.php  class=print_hide>
+	<button class="btn btn-outline-danger btn-sm m-0 p-0" name=sample_id value=\''.($sample_id+1).'\' >Next</button>
+	<input type=hidden name=session_name value=\''.$_POST['session_name'].'\'>
+	<input type=hidden name=action value=edit_general>
+	</form></div>';
+}
+
 
 function sample_id_delete_button($sample_id)
 {
@@ -853,6 +884,8 @@ function edit_sample($link,$sample_id)
 			<div class=my_label ><span class="badge badge-primary ">Sample ID</span>
 			<span class="badge badge-info"><h5>'.$sample_id.'</h5></span></div>
 			<div>';
+				sample_id_prev_button_edit($sample_id);
+				sample_id_next_button_edit($sample_id);
 				sample_id_edit_button($sample_id);
 				sample_id_view_button($sample_id);
 				sample_id_calculate_button($sample_id);
@@ -1952,11 +1985,13 @@ function add_get_data($link,$sample_id)
 	echo '<ul class="nav nav-pills nav-justified">
 			<li><button class="btn btn-secondary" type=button  data-toggle="tab" href="#examination">Examinations</button></li>
 			<li><button class="btn btn-secondary" type=button  data-toggle="tab" href="#profile">Profiles</button></li>
+			<li><button class="btn btn-secondary" type=button  data-toggle="tab" href="#super_profile">SuperProfiles</button></li>
 			<li><button type=submit class="btn btn-primary form-control" name=action value=insert>Save</button></li>
 		</ul>';
 	echo '<div class="tab-content">';
 		get_examination_data($link);
 		get_profile_data($link);
+		get_super_profile_data($link);
 	echo '</div>';
 
 	echo '</form>';			
@@ -2102,8 +2137,10 @@ function my_on_off_super_profile($label,$id)
 
 function show_sample_required($sar)
 {
-	//print_r($sar);
-	echo '<h5 class="text-dark">Required Samples with alloted Sample ID are as follows</h5>';
+	//print_r(array_values($sar));
+	echo '<h5 class="text-dark d-inline  ">Required Samples with alloted Sample ID are as follows</h5>';
+	sample_id_barcode_button_array(array_values($sar));
+
 	foreach($sar as $k=>$v)
 	{
 		echo '<h5 ><span class="text-success">'.$k.'</span>:<span class="text-primary">'.$v.'</span></h5>';
@@ -3543,7 +3580,8 @@ function prepare_sample_barcode($link,$sample_id,$pdf)
 	
 		$sql='select * from result where sample_id=\''.$sample_id.'\'';
 		$result=run_query($link,$GLOBALS['database'],$sql);
-
+		if(get_row_count($result)==0){return;}
+		
 		$pdf->AddPage();
 		$pdf->write1DBarcode($sample_id, 'C128', 02, 5 , 30, 13, 0.4, $style, 'N');		
 		

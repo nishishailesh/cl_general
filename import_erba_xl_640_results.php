@@ -30,27 +30,13 @@ function get_import_file()
 	echo'</form>';
 }
 
-function prepare_id_code_array($link,$equipment)
-{
-	$sql='select * from host_code where equipment=\''.$equipment.'\'';
-	$result=run_query($link,$GLOBALS['database'],$sql);
-	$ret=array();
-	
-	while($ar=get_single_row($result))
-	{
-		$ret[$ar['examination_id']]=$ar['code'];
-	}
-	return $ret;
-}
-
-
 function get_code_for_examination_id($link,$equipment,$examination_id)
 {
 	$sql='select * from host_code where equipment=\''.$equipment.'\' and examination_id=\''.$examination_id.'\'';
 	//echo $sql;
 	$result=run_query($link,$GLOBALS['database'],$sql);
 	$ar=get_single_row($result);
-	//echo '<pre>';print_r($ar);echo '</pre>';
+	echo '<pre>';print_r($ar);echo '</pre>';
 	if(isset($ar['examination_id']))
 	{
 		return $ar['code'];
@@ -79,11 +65,6 @@ function get_examination_codes($link,$equipment,$sample_id)
 
 function csv_to_sql($link,$file_data,$equipment)
 {
-	//$code_id_array=prepare_id_code_array($link,'XL_640');
-	//$result_array=get_result_of_sample_in_array($link,$sample_id);
-	
-	//print_r($code_id_array);
-	//echo '<pre>';print_r($file_data);echo '</pre>';2,4,5,8
 	$f=fopen($file_data['tmp_name'],'r');
 	while($ar=fgetcsv($f,'',"\t"))	// '\t' donot work, double-inverted-comma required to express escape sequence
 	{
@@ -91,8 +72,15 @@ function csv_to_sql($link,$file_data,$equipment)
 		
 		if(count($ar)>=8)
 		{
+			//only for given sample_id
 			$sample_code_to_ex=get_examination_codes($link,$equipment,$ar[2]);
-			echo '<pre>';print_r($sample_code_to_ex);echo '</pre>';
+			if(count($sample_code_to_ex)==0)
+			{
+				echo '<span class="text-success">No entry for sample_id='.$ar[2].'<br></span>';
+				continue;
+			}
+			
+			//echo '<pre>';print_r($sample_code_to_ex);echo '</pre>';
 			if(array_key_exists($ar[4],$sample_code_to_ex))
 			{
 				$examination_id=$sample_code_to_ex[$ar[4]];
@@ -121,7 +109,7 @@ function csv_to_sql($link,$file_data,$equipment)
 			}
 			else
 			{
-				echo '<span class="text-danger">('.$ar[4].') have no corresponding code in host_code table<br></span>';
+				echo '<span class="text-danger">('.$ar[2].')->('.$ar[4].') have no corresponding code in host_code table<br></span>';
 			}
 			
 		}
