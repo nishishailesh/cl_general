@@ -5,29 +5,53 @@ require_once('tcpdf/tcpdf.php');
 function main_menu()
 {
 	echo '
-		<form method=post class="form-group m-0 p-0">
-	
-	<div id=main_menu class="dropdown btn-group m-0 p-0">
-			<input type=hidden name=session_name value=\''.session_name().'\'>
-			<button class="btn btn-outline-primary m-0 p-0" formaction=new_general.php type=submit name=action value=new_general>New</button>
-			<button class="btn btn-outline-primary btn-block m-0 p-0" formaction=new_s1.php type=submit name=action value=direct>New Direct</button>
-			<button class="btn btn-outline-primary m-0 p-0" formaction=view_database_id.php type=submit name=action value=get_dbid>View Sample ID</button>			
-			<button class="btn btn-outline-primary m-0 p-0" formaction=search.php type=submit name=action value=get_search_condition>Search</button>			
-			<button class="btn btn-outline-primary m-0 p-0" formaction=view_database_id_from_to_for_print.php type=submit name=action value=get_from_to>Print From-To</button>			
-			<button class="btn btn-outline-primary m-0 p-0" formaction=search_and_print.php type=submit name=action value=get_search_condition>Search & Print</button>			
-			<button class="btn btn-outline-primary m-0 p-0" formaction=copy_prototype.php type=submit name=action value=copy_prototype>Copy Prototype</button>			
-			<button class="btn btn-outline-primary m-0 p-0" formaction=start.php type=submit name=action value=home><img src=img/home.jpeg height=20></button>			
-			
-			
-			<!--<button class="btn btn-outline-primary dropdown-toggle m-0 p-0" type="button" data-toggle="dropdown">New Specific</button>
-			<div class="dropdown-menu m-0 p-0">		
-					<button class="btn btn-outline-secondary btn-block m-0 p-0" formaction=new_s1.php type=submit name=action value=direct>Direct</button>
-					 <button class="btn btn-outline-secondary btn-block m-0 p-0" 
-					formaction=new_s2.php type=submit name=action value=new_s2>New S2</button> 
-			</div>-->
+	<form method=post class="form-group m-0 p-0">
+	<input type=hidden name=session_name value=\''.session_name().'\'>
+	<div class="btn-group">
+		<div class="dropdown m-0 p-0">
+			<button class="btn btn-outline-primary dropdown-toggle m-0 p-0" type="button" data-toggle="dropdown">New</button>
+			<div class="dropdown-menu m-0 p-0 ">
+				<div class="btn-group-vertical d-block">
+					<button class="btn btn-outline-primary m-0 p-0 " formaction=new_general.php type=submit name=action value=new_general>New</button>
+					<button class="btn btn-outline-primary m-0 p-0 " formaction=new_s1.php type=submit name=action value=direct>New Direct</button>
+				</div>
+			</div>
+		</div>
+		
+		<div class="dropdown m-0 p-0">
+			<button class="btn btn-outline-primary dropdown-toggle m-0 p-0" type="button" data-toggle="dropdown">View</button>
+				<div class="dropdown-menu m-0 p-0">
+					<div class="btn-group-vertical  d-block">
+						<button class="btn btn-outline-primary m-0 p-0" formaction=view_database_id.php type=submit name=action value=get_dbid>View Sample ID</button>			
+						<button class="btn btn-outline-primary m-0 p-0" formaction=search.php type=submit name=action value=get_search_condition>Search</button>			
+					</div>
+				</div>
+		</div>
+
+		<div class="dropdown m-0 p-0">
+			<button class="btn btn-outline-primary dropdown-toggle m-0 p-0" type="button" data-toggle="dropdown">Print</button>
+				<div class="dropdown-menu m-0 p-0">
+					<div class="btn-group-vertical  d-block">
+						<button class="btn btn-outline-primary m-0 p-0" formaction=view_database_id_from_to_for_print.php type=submit name=action value=get_from_to>Print From-To</button>			
+						<button class="btn btn-outline-primary m-0 p-0" formaction=search_and_print.php type=submit name=action value=get_search_condition>Search & Print</button>			
+					</div>
+				</div>
+		</div>
+
+		<div class="dropdown m-0 p-0">
+			<button class="btn btn-outline-primary dropdown-toggle m-0 p-0" type="button" data-toggle="dropdown">Import</button>
+				<div class="dropdown-menu m-0 p-0">
+					<div class="btn-group-vertical  d-block">
+						<button class="btn btn-outline-primary m-0 p-0" formaction=import_erba_xl_640_results.php type=submit name=action value=get_file>XL-640</button>					
+					</div>
+				</div>
+		</div>
+				
+		<button class="btn btn-outline-primary m-0 p-0" formaction=copy_prototype.php type=submit name=action value=copy_prototype>Copy Prototype</button>			
+		<button class="btn btn-outline-primary m-0 p-0" formaction=start.php type=submit name=action value=home><img src=img/home.jpeg height=20></button>
 	</div>
-		</form>
-	';		
+
+	</form>';		
 }
 
 function mk_select_from_array($name, $select_array,$disabled='',$default='')

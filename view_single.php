@@ -7,6 +7,7 @@ echo '		  <link rel="stylesheet" href="project_common.css">
 		  <script src="project_common.js"></script>';	
 $link=get_link($GLOBALS['main_user'],$GLOBALS['main_pass']);
 
+if(!isset($_SESSION['display_style'])){$_SESSION['display_style']='full';}
 $_SESSION['display_style']=isset($_POST['display_style'])?$_POST['display_style']:$_SESSION['display_style'];
 
 if($_SESSION['display_style']=='full')
