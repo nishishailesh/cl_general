@@ -11,6 +11,8 @@ $GLOBALS['application_name']='New Civil Hospital Surat Laboratory Services';
 $GLOBALS['database']='cl_general';
 $GLOBALS['mrd']=1001;
 $GLOBALS['sample_requirement']=1000;
+$GLOBALS['patient_name']=1002;
+
 $GLOBALS['max_non_ex_profile']=20;
 $GLOBALS['released_by']=1014;
 $GLOBALS['interim_released_by']=1019;

@@ -203,6 +203,7 @@ function show_all_buttons_for_sample($link,$sample_id)
 	$interim_released_by=get_one_ex_result($link,$sample_id,$GLOBALS['interim_released_by']);
 	if(strlen($released_by)==0 && strlen($interim_released_by)==0)		//no interim, no release, allow edit/delete no print
 	{
+		sample_id_barcode_button($sample_id);
 		sample_id_prev_button($sample_id);
 		sample_id_view_button($sample_id);
 		sample_id_next_button($sample_id);
@@ -213,6 +214,7 @@ function show_all_buttons_for_sample($link,$sample_id)
 	}
 	else if(strlen($released_by)==0 && strlen($interim_released_by)!=0)	//interim but not released, so allow edit,delete,print
 	{
+		sample_id_barcode_button($sample_id);		
 		sample_id_prev_button($sample_id);
 		sample_id_view_button($sample_id);
 		sample_id_next_button($sample_id);
@@ -224,6 +226,7 @@ function show_all_buttons_for_sample($link,$sample_id)
 	}	
 	else 																	//released with/without interim (so, edit/delete)
 	{
+		sample_id_barcode_button($sample_id);
 		//sample_id_edit_button($sample_id);
 		sample_id_prev_button($sample_id);
 		sample_id_view_button($sample_id);
@@ -657,6 +660,15 @@ function sample_id_edit_button($sample_id)
 	</form></div>';
 }
 
+
+function sample_id_barcode_button($sample_id)
+{
+	echo '<div class="d-inline-block" ><form method=post target=_blank action=print_single_barcode.php class=print_hide>
+	<button class="btn btn-outline-primary btn-sm" name=sample_id value=\''.$sample_id.'\' >|||||||</button>
+	<input type=hidden name=session_name value=\''.$_POST['session_name'].'\'>
+	<input type=hidden name=action value=print_barcode>
+	</form></div>';
+}
 
 function sample_id_calculate_button($sample_id)
 {
@@ -3483,5 +3495,129 @@ function show_examination_bin()
 	</div>';
 }
 //////////end of dashboard functions
+
+
+
+
+//////////Barcode Functions////////////
+
+function get_pdf_link_for_barcode()
+{
+	class MYPDF_BARCODE extends TCPDF 
+	{
+		public function Header() {}		//to prevent default header 
+		public function Footer() {}		//to prevent default footer
+	}
+
+
+
+	$pdf = new MYPDF_BARCODE('', 'mm', array("50","25"), true, 'UTF-8', false);
+	
+	$pdf->SetMargins(0,0, $right=-1, $keepmargins=true);
+	$pdf->setPrintFooter(false);
+	$pdf->setPrintHeader(false);
+	$pdf->SetAutoPageBreak(TRUE, 0);
+	$pdf->setCellPaddings(0,0,0,0);
+
+	return $pdf;	
+}
+
+function prepare_sample_barcode($link,$sample_id,$pdf)
+{
+		$style = array(
+		'position' => '',
+		'align' => 'C',
+		'stretch' => false,
+		'fitwidth' => true,
+		'cellfitalign' => '',
+		'border' => false,
+		'hpadding' => 'auto',
+		'vpadding' => '0',
+		'fgcolor' => array(0,0,0),
+		'bgcolor' => false, //array(255,255,255),
+		'text' => true,
+		'font' => 'helvetica',
+		'fontsize' => 10,
+		'stretchtext' => 4
+	);
+	
+		$sql='select * from result where sample_id=\''.$sample_id.'\'';
+		$result=run_query($link,$GLOBALS['database'],$sql);
+
+		$pdf->AddPage();
+		$pdf->write1DBarcode($sample_id, 'C128', 02, 5 , 30, 13, 0.4, $style, 'N');		
+		
+		$pdf->StartTransform();
+		$pdf->SetFont('helveticaB', '', 15);
+		$pdf->Rotate(90, 43, 18);
+		$pdf->SetXY(40,11);
+		$pdf->Cell(15,5,$sample_id,$border=0, $ln=0, $align='', $fill=false, $link='', $stretch=2, $ignore_min_height=false, $calign='T', $valign='M');	
+		$pdf->StopTransform();
+		
+		while($ar=get_single_row($result))
+		{
+			if($ar['examination_id']==$GLOBALS['sample_requirement'])
+			{
+				$sample_type=$ar['result'];	
+				$pdf->SetFont('helveticaB', '', 7);		
+				$pdf->SetXY(5,17);
+				$pdf->Cell(15,3,$sample_type,$border=0, $ln=0, $align='', $fill=false, $link='', $stretch=2, $ignore_min_height=false, $calign='T', $valign='M');	
+				
+				$pdf->StartTransform();
+				$pdf->SetFont('helveticaB', '', 8);
+				$pdf->Rotate(90, 43, 18);
+				$pdf->SetXY(40,16);
+				$pdf->Cell(15,5,$sample_type,$border=0, $ln=0, $align='', $fill=false, $link='', $stretch=2, $ignore_min_height=false, $calign='T', $valign='M');	
+				$pdf->StopTransform();
+			}
+			
+			else if($ar['examination_id']==$GLOBALS['patient_name'])
+			{
+				$patient_name=substr($ar['result'],0,10);	
+				$pdf->SetFont('helveticaB', '', 7);		
+				$pdf->SetXY(21,17);
+				$pdf->Cell(10,3,$patient_name,$border=0, $ln=0, $align='', $fill=false, $link='', $stretch=2, $ignore_min_height=false, $calign='T', $valign='M');	
+			}
+		}
+		
+			
+
+			
+			
+			// Start Transformation
+			//$pdf->SetFont('helveticaB', '', 13);
+			
+			//$pdf->StartTransform();
+			// Rotate 90 degrees counter-clockwise centered by (43,18) which is the lower left corner of the rectangle
+			//$pdf->Rotate(90, 43, 18);
+			
+			//$pdf->Text(39, 18, $tube.'-'.$return_array['sample_id'].'-'.$return_array['patient_name']);
+			//$pdf->SetXY(40,18);
+			//$tt1=substr($return_array['patient_name'],0,8);
+			//$tt2=$tube.'-'.$return_array['sample_id'];
+			
+			//$pdf->Cell(18,5,$tt1,$border=0, $ln=0, $align='', $fill=false, $link='', $stretch=2, $ignore_min_height=false, $calign='T', $valign='M');		
+			
+			//$pdf->SetXY(40,14);
+			
+			
+
+			// Stop Transformation
+			//$pdf->StopTransform();
+
+			//$pdf->SetFont('helveticaB', '', 13);		
+			//$pdf->SetXY(5,18);
+			//$pdf->Cell (25,5,$tt_below_barcode,$border=0, $ln=0, $align='', $fill=false, $link='', $stretch=2, $ignore_min_height=false, $calign='T', $valign='M');		
+	
+
+		
+}
+
+function print_pdf($pdf,$fname)
+{	
+	$filename='barcode.pdf';
+	$pdf->Output($filename, 'I');
+}
+
 
 ?>

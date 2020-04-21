@@ -35,6 +35,7 @@ function prepare_id_code_array($link,$equipment)
 	$sql='select * from host_code where equipment=\''.$equipment.'\'';
 	$result=run_query($link,$GLOBALS['database'],$sql);
 	$ret=array();
+	
 	while($ar=get_single_row($result))
 	{
 		$ret[$ar['examination_id']]=$ar['code'];
@@ -45,7 +46,7 @@ function prepare_id_code_array($link,$equipment)
 function csv_to_sql($link,$file_data)
 {
 	$code_id_array=prepare_id_code_array($link,'XL_640');
-	print_r($code_id_array);
+	//print_r($code_id_array);
 	//echo '<pre>';print_r($file_data);echo '</pre>';2,4,5,8
 	$f=fopen($file_data['tmp_name'],'r');
 	while($ar=fgetcsv($f,'',"\t"))	// '\t' donot work, double-inverted-comma required to express escape sequence
@@ -55,7 +56,17 @@ function csv_to_sql($link,$file_data)
 		if(count($ar)>=8)
 		{
 			//echo $ar[2];
-			if($examination_id=array_search($ar[4],$code_id_array))
+			$examination_id=FALSE;
+			foreach ($code_id_array as $id=>$code)
+			{
+				if($id==$code_id_array['examination_id']&& $code==$ar[4])
+				{
+					$examination_id=$id; 
+					break;
+				}
+			}
+			
+			if($examination_id!=FALSE)
 			{
 				if(ctype_digit($ar[2]))
 				{
@@ -65,16 +76,16 @@ function csv_to_sql($link,$file_data)
 								(\''.$ar[2].'\',\''.$examination_id.'\',\''.$ar[5].'\',\''.$ar[8].'\')
 							on duplicate key
 							update result=\''.$ar[5].'\'';							
-					echo $sql.'<br>';
+					//echo $sql.'<br>';
 					if($result=run_query($link,$GLOBALS['database'],$sql))
 					{
-						echo '<span class="text-success">Records updated='.rows_affected($link).'<br></span>';
+						echo '<span class="text-success">Records inserted/updated='.rows_affected($link).'<br></span>';
 					}
 				}
 			}
 			else
 			{
-				echo '<span class="text-danger">'.$ar[4].' have no corresponding code in host_code table<br></span>';
+				echo '<span class="text-danger">('.$ar[4].') have no corresponding code in host_code table<br></span>';
 			}
 			
 		}
