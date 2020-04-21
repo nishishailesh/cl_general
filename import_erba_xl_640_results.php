@@ -15,7 +15,7 @@ if($_POST['action']=='get_file')
 }
 else if($_POST['action']=='import')
 {
-	csv_to_sql($link,$_FILES['fvalue']);
+	csv_to_sql($link,$_FILES['fvalue'],'XL_640');
 }
 
 //echo '<pre>';print_r($_POST);echo '</pre>';
@@ -43,9 +43,45 @@ function prepare_id_code_array($link,$equipment)
 	return $ret;
 }
 
-function csv_to_sql($link,$file_data)
+
+function get_code_for_examination_id($link,$equipment,$examination_id)
 {
-	$code_id_array=prepare_id_code_array($link,'XL_640');
+	$sql='select * from host_code where equipment=\''.$equipment.'\' and examination_id=\''.$examination_id.'\'';
+	//echo $sql;
+	$result=run_query($link,$GLOBALS['database'],$sql);
+	$ar=get_single_row($result);
+	//echo '<pre>';print_r($ar);echo '</pre>';
+	if(isset($ar['examination_id']))
+	{
+		return $ar['code'];
+	}
+	else
+	{
+		return FALSE;
+	}
+}
+
+function get_examination_codes($link,$equipment,$sample_id)
+{
+	$result_array=get_result_of_sample_in_array($link,$sample_id);
+	$id_code_array=array();
+	foreach ($result_array as $examination_id=>$result)
+	{
+		$code=get_code_for_examination_id($link, $equipment, $examination_id);
+		if($code!==FALSE)
+		{
+			$id_code_array[$code]=$examination_id;
+		}
+	}
+	return $id_code_array;
+}
+
+
+function csv_to_sql($link,$file_data,$equipment)
+{
+	//$code_id_array=prepare_id_code_array($link,'XL_640');
+	//$result_array=get_result_of_sample_in_array($link,$sample_id);
+	
 	//print_r($code_id_array);
 	//echo '<pre>';print_r($file_data);echo '</pre>';2,4,5,8
 	$f=fopen($file_data['tmp_name'],'r');
@@ -55,15 +91,15 @@ function csv_to_sql($link,$file_data)
 		
 		if(count($ar)>=8)
 		{
-			//echo $ar[2];
-			$examination_id=FALSE;
-			foreach ($code_id_array as $id=>$code)
+			$sample_code_to_ex=get_examination_codes($link,$equipment,$ar[2]);
+			echo '<pre>';print_r($sample_code_to_ex);echo '</pre>';
+			if(array_key_exists($ar[4],$sample_code_to_ex))
 			{
-				if($id==$code_id_array['examination_id']&& $code==$ar[4])
-				{
-					$examination_id=$id; 
-					break;
-				}
+				$examination_id=$sample_code_to_ex[$ar[4]];
+			}
+			else
+			{
+				$examination_id=FALSE;
 			}
 			
 			if($examination_id!=FALSE)
