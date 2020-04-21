@@ -15,7 +15,7 @@ if($_POST['action']=='get_file')
 }
 else if($_POST['action']=='import')
 {
-	csv_to_sql($_FILES['fvalue']);
+	csv_to_sql($link,$_FILES['fvalue']);
 }
 
 //echo '<pre>';print_r($_POST);echo '</pre>';
@@ -30,27 +30,55 @@ function get_import_file()
 	echo'</form>';
 }
 
-function csv_to_sql($file_data)
+function prepare_id_code_array($link,$equipment)
 {
+	$sql='select * from host_code where equipment=\''.$equipment.'\'';
+	$result=run_query($link,$GLOBALS['database'],$sql);
+	$ret=array();
+	while($ar=get_single_row($result))
+	{
+		$ret[$ar['examination_id']]=$ar['code'];
+	}
+	return $ret;
+}
+
+function csv_to_sql($link,$file_data)
+{
+	$code_id_array=prepare_id_code_array($link,'XL_640');
+	print_r($code_id_array);
 	//echo '<pre>';print_r($file_data);echo '</pre>';2,4,5,8
 	$f=fopen($file_data['tmp_name'],'r');
-	while($ar=fgetcsv($f,'',"\t"))
+	while($ar=fgetcsv($f,'',"\t"))	// '\t' donot work, double-inverted-comma required to express escape sequence
 	{
 		//echo '<pre>';print_r($ar);echo '</pre>';
 		
 		if(count($ar)>=8)
 		{
 			//echo $ar[2];
-			if(ctype_digit($ar[2]))
+			if($examination_id=array_search($ar[4],$code_id_array))
 			{
-				$sql=	'insert into primary_result
-							(sample_id,ex_id,result,uniq)
-							values
-							(\''.$ar[2].'\',\''.$ar[4].'\',\''.$ar[5].'\',\''.$ar[8].'\')
-						on duplicate
-						set result=\''.$ar[5].'\'';
-				echo $sql.'<br>';
+				if(ctype_digit($ar[2]))
+				{
+					$sql=	'insert into primary_result
+								(sample_id,examination_id,result,uniq)
+								values
+								(\''.$ar[2].'\',\''.$examination_id.'\',\''.$ar[5].'\',\''.$ar[8].'\')
+							on duplicate key
+							update result=\''.$ar[5].'\'';							
+					echo $sql.'<br>';
+					if($result=run_query($link,$GLOBALS['database'],$sql))
+					{
+						echo '<span class="text-success">Records updated='.rows_affected($link).'<br></span>';
+					}
+				}
 			}
+			else
+			{
+				echo '<span class="text-danger">'.$ar[4].' have no corresponding code in host_code table<br></span>';
+			}
+			
 		}
+		flush();
 	}
 }
+
