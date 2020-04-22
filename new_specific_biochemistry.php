@@ -49,7 +49,7 @@ function get_data_specific($link)
 			get_one_field_for_insert($link,1004);	//Department
 			get_one_field_for_insert($link,1005);	//Unit
 			get_one_field_for_insert($link,1006);	//OPD/Ward
-			get_one_field_for_insert($link,5091);	//Sample Collection
+			get_one_field_for_insert($link,1023);	//Sample Collection
 			get_one_field_for_insert($link,1017);	//Received On
 			get_one_field_for_insert($link,1018);	//Recept Time
 			

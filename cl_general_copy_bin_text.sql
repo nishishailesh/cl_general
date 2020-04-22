@@ -2,7 +2,7 @@
 --
 -- Host: localhost    Database: cl_general
 -- ------------------------------------------------------
--- Server version	10.3.22-MariaDB-1
+-- Server version	10.3.22-MariaDB-0+deb10u1
 
 /*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
 /*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
@@ -27,7 +27,7 @@ CREATE TABLE `copy_bin_text` (
   `name` varchar(20) NOT NULL,
   `text` varchar(200) NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -36,7 +36,7 @@ CREATE TABLE `copy_bin_text` (
 
 LOCK TABLES `copy_bin_text` WRITE;
 /*!40000 ALTER TABLE `copy_bin_text` DISABLE KEYS */;
-INSERT INTO `copy_bin_text` VALUES (1,'CBC','Smear shows atypical WBC. Screening for Leukemia Adviced'),(2,'Thalassemia','Planty of target cells seen. Thalassemia screening is adviced');
+INSERT INTO `copy_bin_text` VALUES (1,'Absurd K+ EDTA','Absurd K+ may be due to EDTA contamination of Plain Blood. '),(3,'Absurd K+ Hemolysis','Sample Grossly Hemolysed. Absurd K+ may be due to Excess hemolysis');
 /*!40000 ALTER TABLE `copy_bin_text` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
@@ -49,4 +49,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2020-04-22  0:12:08
+-- Dump completed on 2020-04-22 12:04:01

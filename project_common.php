@@ -2459,14 +2459,15 @@ function find_next_sample_id($link)
 function find_next_sample_id($link,$sample_requirement)
 {
 	$sql='select * from sample_id_strategy where sample_requirement=\''.$sample_requirement.'\'';
-	//echo '<h5>'.$sql.'</h5>';
+	//echo '<h5>SQL:'.$sql.'</h5>';
+	//echo '<h5>SR:'.$sample_requirement.'</h5>';
 	$result=run_query($link,$GLOBALS['database'],$sql);
 	$ar=get_single_row($result);
 	$from=$ar['lowest_id'];
 	$to=$ar['highest_id'];	
 
 	$sqls='select ifnull(max(sample_id)+1,'.$from.') as next_sample_id from result where sample_id between '.$from.' and '.$to;
-	//echo $sqls;
+	//echo '<h3>'.$sqls.'</h3>';
 	$results=run_query($link,$GLOBALS['database'],$sqls);
 	$ars=get_single_row($results);
 	return $ars['next_sample_id'];
