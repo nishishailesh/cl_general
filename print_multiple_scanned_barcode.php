@@ -43,7 +43,7 @@ function get_dbid()
 	if(isset($_POST['sample_id']))
 	{
 			$received[] = $_POST['sample_id'];
-			print_r($received);
+			//print_r($received);
 
 			$serialized=base64_encode(serialize($received));	
 			
@@ -56,7 +56,7 @@ function get_dbid()
 	echo '<form method=post>';
 	echo '<div class="basic_form">';
 		echo '	<label class="my_label text-danger" for="mrd">Database ID</label>
-				<input type=number name=sample_id class="form-control text-danger" \>
+				<input type=number name=sample_id autofocus class="form-control text-danger" \>
 				<input type=hidden name=sample_id_array value=\''.$serialized.'\'>';
 				
 				

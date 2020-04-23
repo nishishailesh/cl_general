@@ -33,7 +33,7 @@ for ($i=$_POST['from'];$i<=$_POST['to'];$i++)
 }
 if($error===false)
 {
-	$pdf->Output('report-multi.pdf', 'I');
+	$pdf->Output('report.pdf', 'I');
 }
 //////////////user code ends////////////////
 //tail();

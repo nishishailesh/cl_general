@@ -33,7 +33,7 @@ $temp=unserialize(base64_decode($_POST['sample_id_array']));
 		
 		if($error===false)
 		{
-			$pdf->Output('report-multi.pdf', 'I');
+			$pdf->Output('report.pdf', 'I');
 		}
 	}
 	else

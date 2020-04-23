@@ -43,7 +43,7 @@ $link=get_link($GLOBALS['main_user'],$GLOBALS['main_pass']);
 		
 		if($error===false)
 		{
-			$pdf->Output('report-multi.pdf', 'I');
+			$pdf->Output('report.pdf', 'I');
 		}
 	}
 	else
