@@ -384,11 +384,12 @@ function view_sample_compact($link,$sample_id)
 	//print_r($rblob);
 	$result_plus_blob_requested=$ex_list+$rblob;
 	//print_r($result_plus_blob_requested);
-	echo '<div>';
+	echo '<div style="width:300px;">';
 		sample_id_prev_button($sample_id);
 		sample_id_next_button($sample_id);
 		$sr=get_one_ex_result($link,$sample_id,$GLOBALS['sample_requirement']);
-		echo '<span class="bg-warning">'.$sample_id.'---'.$sr.'</span>';
+		$opd_ward=get_one_ex_result($link,$sample_id,$GLOBALS['OPD/Ward']);
+		echo '<span class="bg-warning d-block">'.$sample_id.'--'.$sr.'--'.$opd_ward.'</span>';
 
 		if(count($result_plus_blob_requested)==0)
 		{
@@ -1335,6 +1336,9 @@ function edit_field($link,$examination_id,$result_array,$sample_id,$readonly='')
 				////
 				echo '<div class="d-inline-block  no-gutters">';	
 				
+				
+			//type=\''.$type.'\' changed to text
+
 			echo '
 					<input 
 						'.$readonly.'
@@ -1344,7 +1348,8 @@ function edit_field($link,$examination_id,$result_array,$sample_id,$readonly='')
 						data-sid="'.$sample_id.'" 
 						data-user="'.$_SESSION['login'].'" 
 						class="form-control autosave" 
-						type=\''.$type.'\' 
+						type=text 
+				
 						step=\''.$step.'\' 
 						value=\''.$result.'\'>';
 				echo '</div>';
@@ -1576,6 +1581,7 @@ function decide_alert($result,$interval_l,$cinterval_l,$ainterval_l,$interval_h,
 	if(strlen($interval_l)==0 && strlen($cinterval_l)==0 && strlen($ainterval_l)==0 &&
 	strlen($interval_h)==0 && strlen($cinterval_h)==0 && strlen($ainterval_h)==0){return '';}
 	if(strlen($result)==0){return '';}
+	if(!is_numeric($result)){return '';}
 		
 	if(is_numeric($ainterval_l))
 	{

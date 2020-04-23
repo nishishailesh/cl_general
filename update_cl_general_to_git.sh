@@ -5,7 +5,7 @@ read password
 
 mysqldump  -d -uroot cl_general -p$password > cl_general_blank.sql 
 
-for tname in examination profile report sample_id_strategy dashboard super_profile copy_bin_text view_info_data prototype prototype_data
+for tname in examination profile report sample_id_strategy dashboard super_profile copy_bin_text view_info_data prototype prototype_data host_code
 do
 	mysqldump  -uroot cl_general $tname -p$password > "cl_general_$tname.sql"
 done
