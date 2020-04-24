@@ -51,6 +51,20 @@ function select_super_profile_js(me,ex_id,list_id)
 	}
 }
 
+function toggle_color(me)
+{
+	if(me.classList.contains("btn-secondary"))
+	{
+		me.classList.remove('btn-secondary')
+		me.classList.add('btn-primary')
+	}
+	else
+	{
+		me.classList.add('btn-secondary')
+		me.classList.remove('btn-primary')
+	}
+}
+
 function copy_to_bin(me)
 {
 	//copy_bin=copy_bin+me.innerHTML
