@@ -41,10 +41,11 @@ function main_menu()
 		</div>
 
 		<div class="dropdown m-0 p-0">
-			<button class="btn btn-outline-primary dropdown-toggle m-0 p-0" type="button" data-toggle="dropdown">Import</button>
+			<button class="btn btn-outline-primary dropdown-toggle m-0 p-0" type="button" data-toggle="dropdown">Biochemistry</button>
 				<div class="dropdown-menu m-0 p-0">
 					<div class="btn-group-vertical  d-block">
-						<button class="btn btn-outline-primary m-0 p-0" formaction=import_erba_xl_640_results.php type=submit name=action value=get_file>XL-640</button>					
+						<button class="btn btn-outline-primary m-0 p-0" formaction=import_erba_xl_640_results.php type=submit name=action value=get_file>Import XL-640 Result</button>					
+						<button class="btn btn-outline-primary m-0 p-0" formaction=get_id_range_for_small_barcode.php type=submit name=action value=get_sample_id_range>Eppindorf Barcode</button>					
 					</div>
 				</div>
 		</div>
@@ -389,7 +390,14 @@ function view_sample_compact($link,$sample_id)
 		sample_id_next_button($sample_id);
 		$sr=get_one_ex_result($link,$sample_id,$GLOBALS['sample_requirement']);
 		$opd_ward=get_one_ex_result($link,$sample_id,$GLOBALS['OPD/Ward']);
-		echo '<span class="bg-warning d-block">'.$sample_id.'--'.$sr.'--'.$opd_ward.'</span>';
+		if($opd_ward=='OPD')
+		{
+			echo '<span class="bg-warning">'.$sample_id.'-'.$sr.'</span><h5 class="bg-primary">'.$opd_ward.'</h5>';
+		}
+		else
+		{
+			echo '<span class="bg-warning ">'.$sample_id.'-'.$sr.'</span><h5 class="bg-secondary">'.$opd_ward.'</h5>';
+		}
 
 		if(count($result_plus_blob_requested)==0)
 		{
@@ -4211,6 +4219,172 @@ function prepare_sample_barcode($link,$sample_id,$pdf)
 		
 }
 
+
+function prepare_small_sample_barcode($sample_id,$pdf)
+{
+		$style = array(
+		'position' => '',
+		'align' => 'C',
+		'stretch' => false,
+		'fitwidth' => true,
+		'cellfitalign' => '',
+		'border' => false,
+		'hpadding' => 'auto',
+		'vpadding' => '0',
+		'fgcolor' => array(0,0,0),
+		'bgcolor' => false, //array(255,255,255),
+		'text' => true,
+		'font' => 'helvetica',
+		'fontsize' => 7,
+		'stretchtext' => 4
+	);
+		
+		$pdf->AddPage();
+
+		$pdf->SetFont('helveticaB', '', 3);		
+		$pdf->StartTransform();
+		$pdf->Rotate(90,26.5,23.5);	
+		$pdf->write1DBarcode($sample_id, 'C128', 30, 5  , 15 , 5 ,  0.3, $style, 'N');		
+		$pdf->StopTransform();
+
+
+		$pdf->StartTransform();
+		$pdf->Rotate(90,30.5,19.5);	
+		$pdf->write1DBarcode($sample_id+1, 'C128', 30, 5  , 15 , 5 ,  0.3, $style, 'N');		
+		$pdf->StopTransform();
+
+		$pdf->StartTransform();
+		$pdf->Rotate(90,34.5,15.5);	
+		$pdf->write1DBarcode($sample_id+2, 'C128', 30, 5  , 15 , 5 ,  0.3, $style, 'N');		
+		$pdf->StopTransform();	
+
+		$pdf->StartTransform();
+		$pdf->Rotate(90,38.5,11.5);	
+		$pdf->write1DBarcode($sample_id+3, 'C128', 30, 5  , 15 , 5 ,  0.3, $style, 'N');		
+		$pdf->StopTransform();			
+		
+		$pdf->StartTransform();
+		$pdf->Rotate(90,42.5,7.5);	
+		$pdf->write1DBarcode($sample_id+4, 'C128', 30, 5  , 15 , 5 ,  0.3, $style, 'N');		
+		$pdf->StopTransform();			
+}
+
+
+
+/*
+
+		$pdf->SetFont('helveticaB', '', 3);		
+		$pdf->StartTransform();
+		$pdf->Rotate(90,25,25);	
+		$pdf->write1DBarcode($sample_id, 'C128', 30, 5  , 15 , 5 ,  0.3, $style, 'N');		
+		$pdf->StopTransform();
+
+
+		$pdf->StartTransform();
+		$pdf->Rotate(90,30,20);	
+		$pdf->write1DBarcode($sample_id, 'C128', 30, 5  , 15 , 5 ,  0.3, $style, 'N');		
+		$pdf->StopTransform();
+
+		$pdf->StartTransform();
+		$pdf->Rotate(90,35,15);	
+		$pdf->write1DBarcode($sample_id, 'C128', 30, 5  , 15 , 5 ,  0.3, $style, 'N');		
+		$pdf->StopTransform();	
+
+		$pdf->StartTransform();
+		$pdf->Rotate(90,40,10);	
+		$pdf->write1DBarcode($sample_id, 'C128', 30, 5  , 15 , 5 ,  0.3, $style, 'N');		
+		$pdf->StopTransform();
+
+
+		$pdf->SetXY(15,20);
+		$pdf->Cell(1,1,$pdf->GetX().','.$pdf->GetY(),$border=0);
+
+		$pdf->SetXY(30,20);
+		$pdf->Cell(1,1,$pdf->GetX().','.$pdf->GetY(),$border=0);
+
+		
+		$pdf->SetXY(45,20);
+		$pdf->Cell(1,1,$pdf->GetX().','.$pdf->GetY(),$border=0);
+
+
+		$pdf->SetXY(5,15);
+		$pdf->Cell(1,1,$pdf->GetX().','.$pdf->GetY(),$border=0);
+
+		$pdf->SetXY(10,15);
+		$pdf->Cell(1,1,$pdf->GetX().','.$pdf->GetY(),$border=0);
+
+		
+		$pdf->SetXY(15,15);
+		$pdf->Cell(1,1,$pdf->GetX().','.$pdf->GetY(),$border=0);
+
+		$pdf->SetXY(5,10);
+		$pdf->Cell(1,1,$pdf->GetX().','.$pdf->GetY(),$border=0);
+
+		$pdf->SetXY(10,10);
+		$pdf->Cell(1,1,$pdf->GetX().','.$pdf->GetY(),$border=0);
+
+		
+		$pdf->SetXY(15,10);
+		$pdf->Cell(1,1,$pdf->GetX().','.$pdf->GetY(),$border=0);	
+		
+		$pdf->SetXY(5,5);
+		$pdf->Cell(1,1,$pdf->GetX().','.$pdf->GetY(),$border=0);
+
+		$pdf->SetXY(10,5);
+		$pdf->Cell(1,1,$pdf->GetX().','.$pdf->GetY(),$border=0);
+
+		
+		$pdf->SetXY(15,5);
+		$pdf->Cell(1,1,$pdf->GetX().','.$pdf->GetY(),$border=0);	
+
+
+		$pdf->SetXY(15,0);
+		$pdf->Cell(1,1,$pdf->GetX().','.$pdf->GetY(),$border=0);		
+		
+		$pdf->SetXY(15,30);
+		$pdf->Cell(1,1,$pdf->GetX().','.$pdf->GetY(),$border=0);
+		*/
+		
+	/**
+	 * Rotate object.
+	 * @param $angle (float) angle in degrees for counter-clockwise rotation
+	 * @param $x (int) abscissa of the rotation center. Default is current x position
+	 * @param $y (int) ordinate of the rotation center. Default is current y position
+	 * @public
+	 * @since 2.1.000 (2008-01-07)
+	 * @see StartTransform(), StopTransform()
+	 * 
+	/**
+	 * Print a Linear Barcode.
+	 * @param $code (string) code to print
+	 * @param $type (string) type of barcode (see tcpdf_barcodes_1d.php for supported formats).
+	 * @param $x (int) x position in user units (empty string = current x position)
+	 * @param $y (int) y position in user units (empty string = current y position)
+	 * @param $w (int) width in user units (empty string = remaining page width)
+	 * @param $h (int) height in user units (empty string = remaining page height)
+	 * @param $xres (float) width of the smallest bar in user units (empty string = default value = 0.4mm)
+	 * @param $style (array) array of options:<ul>
+	 * <li>boolean $style['border'] if true prints a border</li>
+	 * <li>int $style['padding'] padding to leave around the barcode in user units (set to 'auto' for automatic padding)</li>
+	 * <li>int $style['hpadding'] horizontal padding in user units (set to 'auto' for automatic padding)</li>
+	 * <li>int $style['vpadding'] vertical padding in user units (set to 'auto' for automatic padding)</li>
+	 * <li>array $style['fgcolor'] color array for bars and text</li>
+	 * <li>mixed $style['bgcolor'] color array for background (set to false for transparent)</li>
+	 * <li>boolean $style['text'] if true prints text below the barcode</li>
+	 * <li>string $style['label'] override default label</li>
+	 * <li>string $style['font'] font name for text</li><li>int $style['fontsize'] font size for text</li>
+	 * <li>int $style['stretchtext']: 0 = disabled; 1 = horizontal scaling only if necessary; 2 = forced horizontal scaling; 3 = character spacing only if necessary; 4 = forced character spacing.</li>
+	 * <li>string $style['position'] horizontal position of the containing barcode cell on the page: L = left margin; C = center; R = right margin.</li>
+	 * <li>string $style['align'] horizontal position of the barcode on the containing rectangle: L = left; C = center; R = right.</li>
+	 * <li>string $style['stretch'] if true stretch the barcode to best fit the available width, otherwise uses $xres resolution for a single bar.</li>
+	 * <li>string $style['fitwidth'] if true reduce the width to fit the barcode width + padding. When this option is enabled the 'stretch' option is automatically disabled.</li>
+	 * <li>string $style['cellfitalign'] this option works only when 'fitwidth' is true and 'position' is unset or empty. Set the horizontal position of the containing barcode cell inside the specified rectangle: L = left; C = center; R = right.</li></ul>
+	 * @param $align (string) Indicates the alignment of the pointer next to barcode insertion relative to barcode height. The value can be:<ul><li>T: top-right for LTR or top-left for RTL</li><li>M: middle-right for LTR or middle-left for RTL</li><li>B: bottom-right for LTR or bottom-left for RTL</li><li>N: next line</li></ul>
+	 * @author Nicola Asuni
+	 * @since 3.1.000 (2008-06-09)
+	 * @public
+	 */
+	 
 function print_pdf($pdf,$fname)
 {	
 	$filename='barcode.pdf';
