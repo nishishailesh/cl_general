@@ -4238,35 +4238,46 @@ function prepare_small_sample_barcode($sample_id,$pdf)
 		'fontsize' => 7,
 		'stretchtext' => 4
 	);
+
+$style=array(
+		'fitwidth' => false,
+		'text' => true,
+		'font' => 'helvetica',
+		'fontsize' => 6
+);
+		
+		$w=20;
+		$h=7;
+		$rx=26.5;
+		$ry=23.5;
+		$delta=6;
+		//$code='C128';
+		$code='EAN8';
+		//$code='S25';
 		
 		$pdf->AddPage();
 
-		$pdf->SetFont('helveticaB', '', 3);		
 		$pdf->StartTransform();
-		$pdf->Rotate(90,26.5,23.5);	
-		$pdf->write1DBarcode($sample_id, 'C128', 27, 5  , 20 , 5 ,  0.4, $style, 'N');		
+		$pdf->Rotate(90,$rx,$ry);	
+		$pdf->write1DBarcode($sample_id, $code, 27, 1  , $w , $h ,  0.4, $style, 'N');		
 		$pdf->StopTransform();
 
 
 		$pdf->StartTransform();
-		$pdf->Rotate(90,30.5,19.5);	
-		$pdf->write1DBarcode($sample_id+1, 'C128', 27, 5  , 20 , 5 ,  0.4, $style, 'N');		
+		$pdf->Rotate(90,$rx+$delta,$ry-$delta);	
+		$pdf->write1DBarcode($sample_id, $code, 27, 1  , $w , $h ,  0.4, $style, 'N');		
 		$pdf->StopTransform();
 
 		$pdf->StartTransform();
-		$pdf->Rotate(90,34.5,15.5);	
-		$pdf->write1DBarcode($sample_id+2, 'C128', 27, 5  , 20 , 5 ,  0.4, $style, 'N');		
+		$pdf->Rotate(90,$rx + 2*$delta,$ry-2*$delta);	
+		$pdf->write1DBarcode($sample_id+2, $code, 27, 1  , $w , $h ,  0.4, $style, 'N');		
 		$pdf->StopTransform();	
 
 		$pdf->StartTransform();
-		$pdf->Rotate(90,38.5,11.5);	
-		$pdf->write1DBarcode($sample_id+3, 'C128', 27, 5  , 20 , 5 ,  0.4, $style, 'N');		
-		$pdf->StopTransform();			
+		$pdf->Rotate(90,$rx + 3*$delta,$ry-3*$delta);	
+		$pdf->write1DBarcode($sample_id+2, $code, 27, 1  , $w , $h ,  0.4, $style, 'N');		
+		$pdf->StopTransform();	
 		
-		$pdf->StartTransform();
-		$pdf->Rotate(90,42.5,7.5);	
-		$pdf->write1DBarcode($sample_id+4, 'C128', 27, 5  , 20 , 5 ,  0.4, $style, 'N');		
-		$pdf->StopTransform();			
 }
 
 
