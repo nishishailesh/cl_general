@@ -700,6 +700,14 @@ function sample_id_calculate_button($sample_id)
 	</form></div>';
 }
 
+function sample_id_verify_button($sample_id)
+{
+	echo '<div class="d-inline-block" ><form method=post action=edit_general.php class=print_hide>
+	<button class="btn btn-outline-primary btn-sm" name=sample_id value=\''.$sample_id.'\' >Verify</button>
+	<input type=hidden name=session_name value=\''.$_POST['session_name'].'\'>
+	<input type=hidden name=action value=verify>
+	</form></div>';
+}
 function sample_id_view_button($sample_id,$target='')
 {
 	echo '<div class="d-inline-block" ><form method=post action=view_single.php class=print_hide target=\''.$target.'\'>
@@ -898,6 +906,7 @@ function edit_sample($link,$sample_id)
 				sample_id_edit_button($sample_id);
 				sample_id_view_button($sample_id);
 				sample_id_calculate_button($sample_id);
+				sample_id_verify_button($sample_id);
 				sample_id_sync_all_button($sample_id);
 				//removed javascript based system
 				//echo '<button class="btn btn-sm btn-warning" onclick="sync_all()">Sync All</button>';
@@ -1112,6 +1121,8 @@ function show_calculate_button($link,$sample_id,$examination_id,$equation)
 				value=\''.$equation.'\'>'.$equation.'</button>';
 }
 
+
+//apt install apcalc
 function calculate_result($link,$equation,$ex_list,$sample_id,$decimal=0)
 {
 	//check devide by zero,  e is not allowed to have 0
@@ -1154,16 +1165,6 @@ function calculate_result($link,$equation,$ex_list,$sample_id,$decimal=0)
 	}
 	echo 'round('.$ret.','.$decimal.')<br>';
 	return trim(shell_exec('calc "round('.$ret.','.$decimal.')"'));
-	//$evaluator = new \Matex\Evaluator();
-	
-	//try
-	//{
-		//return round($evaluator->execute($ret),$decimal);
-	//}
-	//catch( \exception $e )
-	//{
-		//return $e->getMessage();
-	//}
 	
 }
 
@@ -3067,6 +3068,53 @@ function insert_one_examination_with_result($link,$sample_id,$examination_id,$re
 		return false;
 	}	else{return true;}
 }
+
+
+function insert_update_one_examination_with_result($link,$sample_id,$examination_id,$result)
+{
+	//recording_time=now(),recorded_by=\''.$_POST['user'].'\'
+				
+	$sql='insert into result (sample_id,examination_id,result,recording_time,recorded_by)
+			values ("'.$sample_id.'","'.$examination_id.'","'.my_safe_string($link,$result).'",now(),"'.$_SESSION['login'].'")
+			on duplicate key update
+			result=\''.my_safe_string($link,$result).'\' , 
+			recording_time=now() ,
+			recorded_by=\''.$_SESSION['login'].'\''; 
+			
+	//echo $sql.'(without)<br>';
+	if(!run_query($link,$GLOBALS['database'],$sql))
+	{
+		//echo $sql.'(without)<br>';
+		//echo 'Data not inserted(with)<br>'; 
+		return false;
+	}	else{return true;}
+}
+
+
+function update_one_examination_with_result($link,$sample_id,$examination_id,$result)
+{
+	
+	$sql='update result
+			set 
+				result=\''.my_safe_string($link,$result).'\',
+				recording_time=now(),
+				recorded_by=\''.$_SESSION['login'].'\'
+			where 
+				sample_id=\''.$sample_id.'\' 
+				and
+				examination_id=\''.$examination_id.'\'';
+	//echo $sql;
+	if(!$result=run_query($link,$GLOBALS['database'],$sql))
+	{
+		echo '<p>Data not updated</p>';
+	}
+	else
+	{
+		echo '<p>'.$sample_id.'|'.$examination_id.'|'.$result.'|Saved</p>';				
+	}
+}
+
+
 function insert_one_examination_blob_without_result($link,$sample_id,$examination_id)
 {
 	$sql='insert into result_blob (sample_id,examination_id)

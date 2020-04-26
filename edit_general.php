@@ -2,6 +2,7 @@
 //$GLOBALS['nojunk']='';
 require_once 'project_common.php';
 require_once 'base/verify_login.php';
+require_once 'verify.php';
 	////////User code below/////////////////////
 echo '	<link rel="stylesheet" href="project_common.css">
 		  <script src="project_common.js"></script>';	
@@ -52,6 +53,13 @@ if($_POST['action']=='sync_single')
 	}
 	edit_sample($link,$_POST['sample_id']);
 }
+
+if($_POST['action']=='verify')
+{
+	verify_sample($link,$_POST['sample_id']);
+	edit_sample($link,$_POST['sample_id']);
+}
+
 //////////////user code ends////////////////
 tail();
 
