@@ -903,38 +903,61 @@ function edit_sample($link,$sample_id)
 			<div>';
 				sample_id_prev_button_edit($sample_id);
 				sample_id_next_button_edit($sample_id);
-				sample_id_edit_button($sample_id);
+				
+				$released_by=get_one_ex_result($link,$sample_id,$GLOBALS['released_by']);
+				if(strlen($released_by)==0)		//no interim, no release, allow edit/delete no print
+				{
+					sample_id_edit_button($sample_id);
+					sample_id_calculate_button($sample_id);
+					sample_id_verify_button($sample_id);
+					sample_id_sync_all_button($sample_id);
+				}
+				
 				sample_id_view_button($sample_id);
-				sample_id_calculate_button($sample_id);
-				sample_id_verify_button($sample_id);
-				sample_id_sync_all_button($sample_id);
+
 				//removed javascript based system
 				//echo '<button class="btn btn-sm btn-warning" onclick="sync_all()">Sync All</button>';
 			echo '</div>
 			<div class=help>Unique Number to get this data</div>';
 	echo '</div>';	
+
+	if(strlen($released_by)>0)		//no interim, no release, allow edit/delete no print
+	{
+		echo '<h4 class="text-danger">Sample Report Released. Can not Edit</h4>';
+		return 0;
+	}	
 	
 	foreach($profile_wise_ex_list as $kp=>$vp)
 	{
 		$pinfo=get_profile_info($link,$kp);
-		echo '<h3>'.$pinfo['name'].'</h3><div></div><div></div>';
-		foreach($vp as $ex_id)
-		{
-			if($ex_id==$GLOBALS['mrd'] || $ex_id==$GLOBALS['sample_requirement'] ){$readonly='readonly';}else{$readonly='';}
+		$div_id=$pinfo['name'];
+		$profile_edit_specification=json_decode($pinfo['edit_specification'],true);
+		$showhide=isset($profile_edit_specification['showhide'])?$profile_edit_specification['showhide']:'show';		
+	
 
-				$examination_details=get_one_examination_details($link,$ex_id);
-				$edit_specification=json_decode($examination_details['edit_specification'],true);
-				$type=isset($edit_specification['type'])?$edit_specification['type']:'';
-								
-			if($type!='blob')
+		//echo '<img src="img/show_hide.png" height=32 data-toggle="collapse" class=sh href=\'#'.$div_id.'\' ><div></div><div></div>';
+		echo '<p data-toggle="collapse" class="sh bg-info d-inline" href=\'#'.$div_id.'\' >'.$pinfo['name'].'</p><div></div><div></div>';
+		echo '<div class="collapse '.$showhide.'" id=\''.$div_id.'\'>';
+
+			echo '<h3>'.$pinfo['name'].'</h3><div></div><div></div>';
+			foreach($vp as $ex_id)
 			{
-				edit_field($link,$ex_id,$ex_list,$sample_id,$readonly);	
+				if($ex_id==$GLOBALS['mrd'] || $ex_id==$GLOBALS['sample_requirement'] ){$readonly='readonly';}else{$readonly='';}
+
+					$examination_details=get_one_examination_details($link,$ex_id);
+					$edit_specification=json_decode($examination_details['edit_specification'],true);
+					$type=isset($edit_specification['type'])?$edit_specification['type']:'';
+									
+				if($type!='blob')
+				{
+					edit_field($link,$ex_id,$ex_list,$sample_id,$readonly);	
+				}
+				else
+				{
+					edit_blob_field($link,$ex_id,$sample_id);
+				}
 			}
-			else
-			{
-				edit_blob_field($link,$ex_id,$sample_id);
-			}
-		}
+		echo '</div>';
 	}
 
     add_get_data($link,$sample_id);
@@ -1252,6 +1275,8 @@ function edit_field($link,$examination_id,$result_array,$sample_id,$readonly='')
 	$placeholder=isset($edit_specification['placeholder'])?$edit_specification['placeholder']:'';
 	$step=isset($edit_specification['step'])?$edit_specification['step']:0;
 	$zoom=isset($edit_specification['zoom'])?$edit_specification['zoom']:'';
+	$minlength=isset($edit_specification['minlength'])?$edit_specification['minlength']:'';
+	$required=isset($edit_specification['required'])?$edit_specification['required']:'';
 	
 	
 	$element_id='r_id_'.$sample_id.'_'.$examination_id;
@@ -1504,6 +1529,40 @@ function edit_field($link,$examination_id,$result_array,$sample_id,$readonly='')
 			echo '<div class="help"><pre>'.$help.'</pre></div>';	
 		echo '</div>';
 	} 
+
+	elseif($type=='realtext')
+	{
+		//////
+		echo '<div class="basic_form  m-0 p-0 no-gutters">';
+			////
+			set_lable($_POST['session_name'],$_POST['sample_id'],$examination_details,$examination_id);
+			////
+			echo '<div class="m-0 p-0 no-gutters">';
+				////
+				echo '<div class="d-inline-block no-gutters">';
+				echo '<input 
+					'.$readonly.'
+					id="'.$element_id.'" 
+					name="'.$examination_id.'" 
+					data-exid="'.$examination_id.'" 
+					data-sid="'.$sample_id.'" 
+					data-user="'.$_SESSION['login'].'" 
+					pattern="'.$pattern.'" 
+					class="form-control autosave p-0 m-0 no-gutters '.$zoom.' " 
+					style="resize: both;"
+					minlength=\''.$minlength.'\'
+					required=\''.$required.'\'
+					type=text value=\''.
+					htmlspecialchars($result,ENT_QUOTES).'\'>';
+				echo '</div>';
+				echo '<div class="d-inline  no-gutters">';
+					get_primary_result($link,$sample_id,$examination_id);
+				echo '</div>';
+			echo '</div>';
+			echo '<div class="help"><pre>'.$help.'</pre></div>';	
+		echo '</div>';
+	} 
+
 	else  
 	{
 		//////
@@ -1524,6 +1583,8 @@ function edit_field($link,$examination_id,$result_array,$sample_id,$readonly='')
 					pattern="'.$pattern.'" 
 					class="form-control autosave p-0 m-0 no-gutters '.$zoom.' " 
 					style="resize: both;"
+					minlength=\''.$minlength.'\'
+					required=\''.$required.'\'
 					type=\''.$type.'\' >'.
 					htmlspecialchars($result,ENT_QUOTES).'</textarea>';
 				echo '</div>';
@@ -3687,10 +3748,14 @@ function get_profile_wise_ex_list($link,$sample_id)
 function dashboard($link)
 {
 	$sql='select * from dashboard order by priority desc';
-	echo '<h3>Dashboard</h3>';
+	
+	echo '<span data-toggle="collapse" class="sh badge badge-warning d-inline" href=#dashboard >DashBoard</span><div></div><div></div>';
+	//echo '<div class="collapse '.$showhide.'" id=\''.$div_id.'\'>';
+	
+	//echo '<h3>Dashboard</h3>';
 	$result=run_query($link,$GLOBALS['database'],$sql);
 	
-	echo '<ul>';
+	echo '<ul id=dashboard class="collapse show">';
 	while($ar=get_single_row($result))
 	{
 		echo '<li><pre>';
@@ -3788,8 +3853,11 @@ function get_sql($link)
 {
         if(!$result=run_query($link,$GLOBALS['database'],'select * from view_info_data')){return false;}
 
+		echo '<span data-toggle="collapse" 
+		class="sh badge badge-warning d-inline" href=#statistics >Statistics and Info</span>';
+
         echo '
-        <table border=1 class="table-striped table-hover"><tr><th colspan=20>Select the data to view</th></tr>';
+        <table border=1 id=statistics class="table-striped table-hover collapse show"><tr><th colspan=20>Select the data to view</th></tr>';
 
         $first_data='yes';
 
@@ -3845,7 +3913,7 @@ function prepare_result_from_view_data_id($link,$id)
 		 }
 		 else
 		 {
-			 echo '<h1>Success</h1>';
+			 //echo '<h1>Success</h1>';
 		 }
         $array_id=get_single_row($result_id);
 
@@ -3934,7 +4002,7 @@ function prepare_result_from_view_data_id($link,$id)
 		}
 		 else
 		 {
-			 //echo '<h1>Success</h1>';
+			 echo '<h1>'.$info.'</h1>';
 		 }
 
 

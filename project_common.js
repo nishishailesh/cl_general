@@ -155,6 +155,14 @@ $(document).ready
 			$(".autosave").change(
 								function()
 								{
+									//alert($(this).attr('minlength')+$(this).val().length)
+									
+									//if( $(this).attr('minlength') > $(this).val().length)
+									//{
+									//	alert("do")
+									//	focus($(this))
+									//	return false;
+									//}
 									
 									$.post(
 											"save_record.php",
