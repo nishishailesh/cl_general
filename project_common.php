@@ -15,6 +15,7 @@ function main_menu()
 					<button class="btn btn-outline-primary m-0 p-0 " formaction=new_general.php type=submit name=action value=new_general>New</button>
 					<button class="btn btn-outline-primary m-0 p-0 " formaction=new_s1.php type=submit name=action value=direct>New Direct(Patho)</button>
 					<button class="btn btn-outline-primary m-0 p-0 " formaction=new_specific_biochemistry.php type=submit name=action value=direct>New Direct(Bio)</button>
+					<button class="btn btn-outline-primary m-0 p-0 " formaction=new_covid_biochemistry.php type=submit name=action value=direct>New Covid(Bio)</button>
 				</div>
 			</div>
 		</div>
@@ -2365,6 +2366,7 @@ function show_sample_required($sar)
 
 function convert_super_profile_to_profile($link,$super_profile_csv)
 {
+	echo '<h5>sss</h5>';
 	$super_profile_requested=explode(',',$super_profile_csv);
 	$profile_requested_in_super_profile=array();
 	foreach($super_profile_requested as $sp)
@@ -2378,6 +2380,7 @@ function convert_super_profile_to_profile($link,$super_profile_csv)
 			$profile_requested_in_super_profile=array_merge($profile_requested_in_super_profile,$profile_requested);
 		}
 	}
+	print_r($profile_requested_in_super_profile);
 	return $profile_requested_in_super_profile;
 }
 
@@ -2523,7 +2526,7 @@ function save_insert_specific($link)
 	
 	$profile_requested_in_super_profile=convert_super_profile_to_profile($link,$_POST['list_of_selected_super_profile']);
 	$profile_requested=array_filter(array_unique(array_merge($profile_requested,$profile_requested_in_super_profile)));
-	//echo '<pre>following profiles are requested:<br>';print_r($profile_requested);echo '</pre>';
+	//echo '<pre>following profiles are requesteddddddd:<br>';print_r($profile_requested);echo '</pre>';
 
 	foreach($profile_requested as $value)
 	{

@@ -2,7 +2,7 @@
 --
 -- Host: localhost    Database: cl_general
 -- ------------------------------------------------------
--- Server version	10.3.22-MariaDB-1
+-- Server version	10.3.22-MariaDB-0+deb10u1
 
 /*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
 /*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
@@ -38,7 +38,7 @@ CREATE TABLE `super_profile` (
 
 LOCK TABLES `super_profile` WRITE;
 /*!40000 ALTER TABLE `super_profile` DISABLE KEYS */;
-INSERT INTO `super_profile` VALUES (1,'Blood Counts - Hb, TC, Platelet','21','',''),(2,'CBC (Routine)','21,23','',''),(3,'CBC MP (Routine)','21,23,26,27','',''),(4,'PSCM','21,23,25,26,27','',''),(5,'RC','30','',''),(6,'ESR','31','',''),(7,'PT','32','',''),(8,'Urine Routine','37','',''),(9,'Stool Routine','38','',''),(10,'CBC (Emergency)','21','',''),(11,'CBC MP (Emergency)','21,26,27','',''),(12,'PSCM Leukemia Panel','21,22,25,26,27','',''),(13,'Bone Marrow Examination Report','20,21,23,25,26,27,30,41','',''),(14,'Expert Level PSCM','21,23,25,26,27','',''),(15,'Fine Needle Aspiration Cytology Report','201,202','',''),(16,'RFT+Electrolyte','517,514','','{\"group\":\"BI\"}'),(17,'creatinine + eGFR','517,502','','{\"group\":\"BI\"}'),(18,'LRE','503,517,502','','{\"group\":\"BI\"}'),(19,'LRE+GLC','503,501,502,517','','{\"group\":\"BI\"}');
+INSERT INTO `super_profile` VALUES (1,'Blood Counts - Hb, TC, Platelet','21','',''),(2,'CBC (Routine)','21,23','',''),(3,'CBC MP (Routine)','21,23,26,27','',''),(4,'PSCM','21,23,25,26,27','',''),(5,'RC','30','',''),(6,'ESR','31','',''),(7,'PT','32','',''),(8,'Urine Routine','37','',''),(9,'Stool Routine','38','',''),(10,'CBC (Emergency)','21','',''),(11,'CBC MP (Emergency)','21,26,27','',''),(12,'PSCM Leukemia Panel','21,22,25,26,27','',''),(13,'Bone Marrow Examination Report','20,21,23,25,26,27,30,41','',''),(14,'Expert Level PSCM','21,23,25,26,27','',''),(15,'Fine Needle Aspiration Cytology Report','201,202','',''),(16,'RFT+Electrolyte','517,502','','{\"group\":\"BI\"}'),(17,'creatinine + eGFR','517,502','','{\"group\":\"BI\"}'),(18,'LRE','503,517,502','','{\"group\":\"BI\"}'),(19,'LRE+GLC','503,501,502,517','','{\"group\":\"BI\"}');
 /*!40000 ALTER TABLE `super_profile` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
@@ -51,4 +51,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2020-04-29  0:05:48
+-- Dump completed on 2020-04-29 12:55:54
