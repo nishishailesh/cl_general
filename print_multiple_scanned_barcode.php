@@ -42,15 +42,21 @@ function get_dbid()
 
 	if(isset($_POST['sample_id']))
 	{
-			$received[] = $_POST['sample_id'];
-			//print_r($received);
-
-			$serialized=base64_encode(serialize($received));	
-			
+		$k=array_search($_POST['sample_id'],$received);
+		if($k!==FALSE)
+		{
+			unset($received[$k]);
+			echo $k;
+		}
+		else
+		{
+			$received[] = $_POST['sample_id'];	
+		}
+		$serialized=base64_encode(serialize(array_filter($received)));		
 	}
 	else
 	{
-		$serialized=base64_encode(serialize($received));	
+		$serialized=base64_encode(serialize(array_filter($received)));	
 	}
 	
 	echo '<form method=post>';
@@ -61,16 +67,16 @@ function get_dbid()
 				
 				
 	echo '</div>';
-	echo '<button type=submit class="btn btn-primary form-control" name=action value=get_scan>Add Sample</button>';
+	echo '<button type=submit class="btn btn-primary form-control" name=action value=get_scan>Add/Remove Sample</button>';
 	echo '<button type=submit class="btn btn-secondary form-control" 
 				name=action formaction=print_report_barcode_scan.php
 				formtarget=_blank
 				value=print>Print</button>';
 	echo '<input type=hidden name=session_name value=\''.session_name().'\'>';
 	echo '</form>';
-	echo '<pre>';print_r($received);echo '</pre>';
+	echo '<h3 class=text-info>If any sample is in list ,it will be removed on rescan</h3>';
+	echo '<pre>';print_r(array_filter($received));echo '</pre>';
 
-	
 }
 
 

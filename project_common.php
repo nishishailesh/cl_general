@@ -2366,7 +2366,7 @@ function show_sample_required($sar)
 
 function convert_super_profile_to_profile($link,$super_profile_csv)
 {
-	echo '<h5>sss</h5>';
+	//echo '<h5>sss</h5>';
 	$super_profile_requested=explode(',',$super_profile_csv);
 	$profile_requested_in_super_profile=array();
 	foreach($super_profile_requested as $sp)
@@ -2380,10 +2380,11 @@ function convert_super_profile_to_profile($link,$super_profile_csv)
 			$profile_requested_in_super_profile=array_merge($profile_requested_in_super_profile,$profile_requested);
 		}
 	}
-	print_r($profile_requested_in_super_profile);
+	//print_r($profile_requested_in_super_profile);
 	return $profile_requested_in_super_profile;
 }
 
+//used nowhere
 function save_insert($link)
 {
 			//find list of super_profiles requested, merge with profiles requested,then..
@@ -2949,7 +2950,8 @@ function get_one_ex_result_blob($link,$sample_id,$examination_id)
 		return $ar['result'];
 }
 
-function add_new_examination_and_profile($link,$sample_id,$list_of_selected_examination='',$list_of_selected_profile='')
+function add_new_examination_and_profile($link,$sample_id,$list_of_selected_examination='',
+							$list_of_selected_profile='',$list_of_selected_super_profile='')
 {
 	$sample_requirement=get_one_ex_result($link,$sample_id,$GLOBALS['sample_requirement']);
 	$requested=array();
@@ -2959,6 +2961,10 @@ function add_new_examination_and_profile($link,$sample_id,$list_of_selected_exam
 	//print_r($requested);
 
 	$profile_requested=explode(',',$list_of_selected_profile);
+	
+	$profile_requested_in_super_profile=convert_super_profile_to_profile($link,$list_of_selected_super_profile);
+	$profile_requested=array_filter(array_unique(array_merge($profile_requested,$profile_requested_in_super_profile)));
+	
 	//print_r($profile_requested);
 	foreach($profile_requested as $value)
 	{
@@ -4372,8 +4378,9 @@ $style=array(
 		$delta=6;
 		//$code='C128';
 		//$code='EAN8';
-		$code='ITF';
-		//$code='S25';
+		//$code='EAN13';
+		//$code='C39';
+		$code='S25';
 		
 		$pdf->AddPage();
 
