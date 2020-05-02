@@ -4371,7 +4371,8 @@ $style=array(
 		$ry=23.5;
 		$delta=6;
 		//$code='C128';
-		$code='EAN8';
+		//$code='EAN8';
+		$code='ITF';
 		//$code='S25';
 		
 		$pdf->AddPage();
