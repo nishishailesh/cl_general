@@ -4408,6 +4408,53 @@ $style=array(
 }
 
 
+function prepare_small_sample_barcode_horizontal($sample_id,$pdf)
+{
+		$style = array(
+		'position' => '',
+		'align' => 'C',
+		'stretch' => false,
+		'fitwidth' => true,
+		'cellfitalign' => '',
+		'border' => false,
+		'hpadding' => 'auto',
+		'vpadding' => '0',
+		'fgcolor' => array(0,0,0),
+		'bgcolor' => false, //array(255,255,255),
+		'text' => true,
+		'font' => 'helvetica',
+		'fontsize' => 7,
+		'stretchtext' => 4
+	);
+
+$style=array(
+		'fitwidth' => false,
+		'text' => true,
+		'font' => 'helvetica',
+		'fontsize' => 6
+);
+		
+		$w=18;
+		$h=7;
+		$rx=26.5;
+		$ry=23.5;
+		$delta=6;
+		$code='C128';
+		//$code='EAN8';
+		//$code='EAN13';
+		//$code='C39';
+		//$code='S25';
+		
+		$pdf->AddPage();
+
+		$pdf->write1DBarcode($sample_id,   $code, 3, 3  , $w , $h ,  0.4, $style, 'N');
+		$pdf->write1DBarcode($sample_id+1, $code, 27,3   , $w , $h ,  0.4, $style, 'N');		
+		$pdf->write1DBarcode($sample_id+2, $code, 3, 15  , $w , $h ,  0.4, $style, 'N');		
+		$pdf->write1DBarcode($sample_id+2, $code, 27,15  , $w , $h ,  0.4, $style, 'N');		
+		
+}
+
+
 
 /*
 

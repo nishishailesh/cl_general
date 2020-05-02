@@ -13,7 +13,7 @@ require_once 'base/verify_login.php';
 $pdf=get_pdf_link_for_barcode();
 for($i=$_POST['from']; $i<$_POST['to']; $i=$i+5)
 {
-	prepare_small_sample_barcode($i,$pdf);
+	prepare_small_sample_barcode_horizontal($i,$pdf);
 }
 print_pdf($pdf,'barcode.pdf');
 
