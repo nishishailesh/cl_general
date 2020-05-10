@@ -18,7 +18,7 @@ for ($i=$_POST['from'];$i<=$_POST['to'];$i++)
 {
 	$released=get_one_ex_result($link,$i,$GLOBALS['released_by']);
 	//echo 'xxx'.$i.$released_by;
-	if(strlen($released)!=0)
+	if(strlen($released)!=0 && $released!==False)
 	{
 		print_sample($link,$i,$pdf);
 	}
