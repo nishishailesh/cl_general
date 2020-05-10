@@ -11,7 +11,7 @@ $link=get_link($GLOBALS['main_user'],$GLOBALS['main_pass']);
 //it is not by mrd
 //it is by databaase ID
 main_menu();
-echo '<h3>Print Reports between two sample_id</h3>';
+echo '<h3>Print OPD Reports between two sample_id</h3>';
 
 if($_POST['action']=='get_from_to')
 {
@@ -35,7 +35,7 @@ tail();
 function get_dbid()
 {
 
-echo '<form method=post action=print_from_to.php target=_blank>';
+echo '<form method=post action=print_from_to_opd.php target=_blank>';
 echo '<div class="basic_form">';
 	echo '	<label class="my_label text-danger" for="from">From Sample ID</label>
 			<input type=number size=13 id=from name=from class="form-control text-danger" required="required" \>

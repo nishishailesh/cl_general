@@ -21,7 +21,8 @@ $link=get_link($GLOBALS['main_user'],$GLOBALS['main_pass']);
 		$temp=get_sample_with_condition($link,$sk,$sv,$temp,$first);
 		$first=FALSE;
 	}
-	//print_r($temp);
+	print_r($temp);
+	exit(0);
 	if(count($temp)>0)
 	{
 		$pdf = new ACCOUNT1('P', 'mm', 'A4', true, 'UTF-8', false);

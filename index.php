@@ -17,10 +17,10 @@ echo '<form method=post action=get_database_id_no_login.php class="text-center j
 		<input type=hidden name=session_name value=\''.session_name().'\'>
 		</form>';
 */
-get_dbid();		
+mget_dbid();		
 tail();
 
-function get_dbid()
+function mget_dbid()
 {
 	$YY=strftime("%y");
 
@@ -33,7 +33,9 @@ echo '<div class="basic_form">';
 			<input type=number size=13 id=sid name=sample_id class="form-control text-danger" required="required" \>
 			<p class="help"><span class=text-danger>Must be</span> number</p>';
 echo '</div>';
-get_basic();
+//get_basic();
+get_basic_specific_no_restriction();    //MRD
+
 
 echo '<button type=submit class="btn btn-primary form-control" name=action value=view_dbid>Get Report (No login Required)</button>';
 echo '<input type=hidden name=session_name value=\''.session_name().'\'>';

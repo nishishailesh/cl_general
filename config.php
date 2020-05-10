@@ -58,5 +58,9 @@ $GLOBALS['HP']=array('name'=>'New Civil Hospital Surat Laboratory Services',
 						'address'=>'3nd Floor, GMC, Surat',
 						'phone'=>'0261 2244456 Ext. 317,366'
 						);
-												
+$GLOBALS['MI']=array('name'=>'New Civil Hospital Surat Laboratory Services',
+                                                'section'=>'VRDL Microbiology Section',
+                                                'address'=>'3nd Floor, GMC, Surat',
+                                                'phone'=>' '
+                                                );
 ?>

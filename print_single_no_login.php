@@ -2,7 +2,8 @@
 $GLOBALS['nojunk']='';
 require_once 'project_common.php';
 require_once 'base/common.php';
-require_once 'config.php';	
+require_once 'config.php';
+//echo $GLOBALS['mrd'].'<br>';
 require_once $GLOBALS['main_user_location'];
 	////////User code below/////////////////////
 require_once('tcpdf/tcpdf.php');
@@ -11,11 +12,10 @@ require_once('tcpdf/tcpdf.php');
 $GLOBALS['img_list']=array();
 
 $link=get_link($GLOBALS['main_user'],$GLOBALS['main_pass']);
+$mmrd=get_one_ex_result($link,$_POST['sample_id'],$GLOBALS['mrd']);
 
-$mrd=get_one_ex_result($link,$_POST['sample_id'],$GLOBALS['mrd']);
-
-if($mrd!=$_POST['mrd']){echo '<link rel="stylesheet" href="bootstrap/css/bootstrap.min.css">
-								<h3><span class="bg-warning">MRD and Sample ID donot match</span></h3>';exit(0);}
+if($mmrd!=$_POST['__ex__'.$GLOBALS['mrd']] ){echo '<link rel="stylesheet" href="bootstrap/css/bootstrap.min.css">
+						<h3><span class="bg-warning">MRD and Sample ID donot match</span></h3>';exit(0);}
 
 $released=get_one_ex_result($link,$_POST['sample_id'],$GLOBALS['released_by']);
 $interim_released=get_one_ex_result($link,$_POST['sample_id'],$GLOBALS['interim_released_by']);
@@ -69,7 +69,6 @@ $pdf->Output('report-'.$_POST['sample_id'].'.$pdf', 'I');
 //////////////user code ends////////////////
 //tail();
 
-echo '<pre>';print_r($_POST);echo '</pre>';
 
 
 ?>

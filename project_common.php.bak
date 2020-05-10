@@ -1974,9 +1974,9 @@ echo '<div id=basic class="tab-pane active">';
 echo '<div class="basic_form">';
 	echo '	<label class="my_label text-danger" for="mrd">MRD</label>
 			<input size=13 id=mrd name=mrd class="form-control text-danger" required="required" type=text pattern="SUR/[0-9][0-9]/[0-9]{8}" placeholder="MRD" value="SUR/'.$YY.'/"\>
-			<p class="help"><span class=text-danger>Must have</span> 8 digit after SUR/YY/</p>';
+			<p class="help"><span class=text-danger>Must have</span> 8 digit after SUR/YY/</p>';		
 echo '</div>';
-echo '</div>';
+echo '</div>';	
 
 }
 
@@ -1990,7 +1990,7 @@ echo '<div id=basic class="tab-pane active">';
 echo '<div class="basic_form">';
 	echo '	<label class="my_label text-danger" for="mrd">MRD</label>
 			<input size=13 id=mrd name=\'__ex__'.$GLOBALS['mrd'].'\' class="form-control text-danger" required="required" type=text pattern="SUR/[0-9][0-9]/[0-9]{8}" placeholder="MRD" value="SUR/'.$YY.'/"\>
-			<p class="help"><span class=text-danger>Must have</span> 8 digit after SUR/YY/</p>';
+			<p class="help"><span class=text-danger>Must have</span> 8 digit after SUR/YY/</p>';			
 echo '</div>';
 echo '</div>';
 }
@@ -1998,15 +1998,12 @@ echo '</div>';
 //not covered by pane
 function get_basic_specific_no_restriction()
 {
-	$YY=strftime("%y");
-
 echo '<div id=basic class="tab-pane active">';
 
 echo '<div class="basic_form">';
-        echo '  <label class="my_label text-danger" for="mrd">MRD</label>
-			<input size=13 id=mrd name=__ex__'.$GLOBALS['mrd'].' class="form-control text-danger" required="required" 
-				type=text placeholder="MRD" value="SUR/'.$YY.'/" \>
-                        <p class="help"><span class=text-danger> </span</p>';
+        echo '  <label class="my_label text-danger" for="mrd">MRD(Manual)</label>
+			<input size=13 id=mrd name=\'__ex__'.$GLOBALS['mrd'].'\' class="form-control text-danger" required="required" type=text placeholder="Manual MRD" \>
+                        <p class="help"><span class=text-danger>Only for COVID Hospital, Manual MRD</span</p>';
 echo '</div>';
 echo '</div>';
 }
@@ -2144,7 +2141,6 @@ function get_examination_data($link)
 					<li><button class="btn btn-secondary" onclick="toggle_color(this)" type=button  data-toggle="collapse" data-target=".CP">CP</button></li>
 					<li><button class="btn btn-secondary" onclick="toggle_color(this)" type=button  data-toggle="collapse" data-target=".HP">HP</button></li>
 					<li><button class="btn btn-secondary" onclick="toggle_color(this)" type=button  data-toggle="collapse" data-target=".CY">CY</button></li>
-					<li><button class="btn btn-secondary" onclick="toggle_color(this)" type=button  data-toggle="collapse" data-target=".MI">MI</button></li>
 				</ul>';
 			//internal tab menu end
 				
@@ -2942,15 +2938,13 @@ function get_one_field_for_insert($link,$examination_id)
 function get_one_ex_result($link,$sample_id,$examination_id)
 {
 		$sql='select * from result where sample_id=\''.$sample_id.'\' and examination_id=\''.$examination_id.'\'';
-		//echo 'xxx'.$sql.'<br>';
+		//echo 'xxx'.$sql;
 		$result=run_query($link,$GLOBALS['database'],$sql);
 		//if(!$result){return false;}
 		$ar=get_single_row($result);
-		//print_r($ar);
 		//echo  '<h4>'.$ar['result'].'</h4>';
 		if(isset($ar['result']))
 		{
-			//echo $GLOBALS['mrd'].'--middle<br>';
 			return $ar['result'];
 		}
 		else
@@ -4323,11 +4317,9 @@ function prepare_sample_barcode($link,$sample_id,$pdf)
 			}
 			
 			else if($ar['examination_id']==$GLOBALS['patient_name'])
-			//else if($ar['examination_id']==$GLOBALS['mrd'])
 			{
-				$patient_name=substr($ar['result'],0,10);
-				//$patient_name=$ar['result'];
-				$pdf->SetFont('helveticaB', '', 7);
+				$patient_name=substr($ar['result'],0,10);	
+				$pdf->SetFont('helveticaB', '', 7);		
 				$pdf->SetXY(21,17);
 				$pdf->Cell(10,3,$patient_name,$border=0, $ln=0, $align='', $fill=false, $link='', $stretch=2, $ignore_min_height=false, $calign='T', $valign='M');	
 			}
