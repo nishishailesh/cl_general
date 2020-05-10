@@ -9,6 +9,10 @@ echo '		  <link rel="stylesheet" href="project_common.css">
 $link=get_link($GLOBALS['main_user'],$GLOBALS['main_pass']);
 
 main_menu();
+
+//echo '<pre>';print_r($_POST);
+//echo '</pre>';
+
 echo '<div id=response></div>';
 
 if($_POST['action']=='get_search_condition')
@@ -28,7 +32,9 @@ elseif($_POST['action']=='search')
 	$temp=array();
 	foreach ($search_array as $sk=>$sv)
 	{
+	//print_r($temp);
 		$temp=get_sample_with_condition($link,$sk,$sv,$temp,$first);
+	//print_r($temp);
 		$first=FALSE;
 	}
 	//print_r($temp);

@@ -13,15 +13,14 @@ function main_menu()
 			<div class="dropdown-menu m-0 p-0 ">
 				<div class="btn-group-vertical d-block">
 					<button class="btn btn-outline-primary m-0 p-0 " formaction=new_general.php type=submit name=action value=new_general>New</button>
-<div class="text-center">--Patho--</div>
+					<div class="text-center">--Patho--</div>
 					<button class="btn btn-outline-primary m-0 p-0 " formaction=new_s1.php type=submit name=action value=direct>New Direct(Patho)</button>
-<button class="btn btn-outline-primary m-0 p-0 " formaction=new_covid_patho_stem.php type=submit name=action value=direct>New Covid(Stem) Patho</button>
+					<button class="btn btn-outline-primary m-0 p-0 " formaction=new_covid_patho_stem.php type=submit name=action value=direct>New Covid(Stem) Patho</button>
 
-<!--					
-<button class="btn btn-outline-primary m-0 p-0 " formaction=new_specific_biochemistry.php type=submit name=action value=direct>New Direct(Age/Sex)</button>
-<button class="btn btn-outline-primary m-0 p-0 " formaction=new_covid_biochemistry.php type=submit name=action value=direct>New Covid(MRD)</button>
-<button class="btn btn-outline-primary m-0 p-0 " formaction=new_covid_biochemistry_stem.php type=submit name=action value=direct>New Covid(Stem)</button>
--->
+					<div class="text-center">--Bio-</div>
+					<button class="btn btn-outline-primary m-0 p-0 " formaction=new_specific_biochemistry.php type=submit name=action value=direct>New Direct(Age/Sex)</button>
+					<button class="btn btn-outline-primary m-0 p-0 " formaction=new_covid_biochemistry.php type=submit name=action value=direct>New Covid(MRD)</button>
+					<button class="btn btn-outline-primary m-0 p-0 " formaction=new_covid_biochemistry_stem.php type=submit name=action value=direct>New Covid(Stem)</button>
 				</div>
 			</div>
 		</div>
@@ -48,7 +47,7 @@ function main_menu()
 				</div>
 		</div>
 
-<!--
+
 		<div class="dropdown m-0 p-0">
 			<button class="btn btn-outline-primary dropdown-toggle m-0 p-0" type="button" data-toggle="dropdown">Biochemistry</button>
 				<div class="dropdown-menu m-0 p-0">
@@ -58,7 +57,7 @@ function main_menu()
 					</div>
 				</div>
 		</div>
--->				
+				
 		<button class="btn btn-outline-primary m-0 p-0" formaction=copy_prototype.php type=submit name=action value=copy_prototype>Copy Prototype</button>			
 		<button class="btn btn-outline-primary m-0 p-0" formaction=start.php type=submit name=action value=home><img src=img/home.jpeg height=20></button>
 	</div>
@@ -3312,7 +3311,7 @@ function get_sample_with_condition($link,$exid,$ex_result,$sid_array=array(),$fi
 				where 
 					examination_id=\''.$exid.'\' and 
 					result like \'%'.$ex_result.'%\' limit 50';
-		echo $sql.'<br>';
+		//echo $sql.'<br>';
 		$result=run_query($link,$GLOBALS['database'],$sql);
 		while($ar=get_single_row($result))
 		{
@@ -3329,7 +3328,7 @@ function get_sample_with_condition($link,$exid,$ex_result,$sid_array=array(),$fi
 					examination_id=\''.$exid.'\' and 
 					result like \'%'.$ex_result.'%\' and
 					sample_id=\''.$v.'\' limit 50';
-		echo $sql.'<br>';
+		//echo $sql.'<br>';
 		$result=run_query($link,$GLOBALS['database'],$sql);
 		if(get_row_count($result)>0)
 		{

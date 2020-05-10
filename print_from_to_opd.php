@@ -8,6 +8,7 @@ require_once('tcpdf/tcpdf.php');
 
 $GLOBALS['img_list']=array();
 $error=false;
+$at_least_one_sample=false;
 
 $link=get_link($GLOBALS['main_user'],$GLOBALS['main_pass']);
 //echo '<pre>';print_r($_POST);echo '</pre>';
@@ -25,6 +26,7 @@ for ($i=$_POST['from'];$i<=$_POST['to'];$i++)
 	{
 		if(strlen($released)!=0 || strlen($interim_released)!=0 )
 		{
+			$at_least_one_sample=true;
 			print_sample($link,$i,$pdf);
 		}
 		else
@@ -38,11 +40,14 @@ for ($i=$_POST['from'];$i<=$_POST['to'];$i++)
 	}
 }
 
-if($error===false)
+if($error===false  && $at_least_one_sample!==false)
 {
 	$pdf->Output('report.pdf', 'I');
 }
-
+else
+{
+	echo 'nothing to print. Can I go Home? Sir/Madam?';
+}
 //////////////user code ends////////////////
 //tail();
 

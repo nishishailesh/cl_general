@@ -7,19 +7,28 @@ require_once 'base/verify_login.php';
 require_once('tcpdf/tcpdf.php');
 
 $GLOBALS['img_list']=array();
+
 $error=false;
+$at_least_one_sample=false;
 
 $link=get_link($GLOBALS['main_user'],$GLOBALS['main_pass']);
 //echo '<pre>';print_r($_POST);echo '</pre>';
 
 $pdf = new ACCOUNT1('P', 'mm', 'A4', true, 'UTF-8', false);
 //$pdf = new ACCOUNT1(PDF_PAGE_ORIENTATION, PDF_UNIT, PDF_PAGE_FORMAT, true, 'UTF-8', false);
+
+
+
 for ($i=$_POST['from'];$i<=$_POST['to'];$i++)
 {
+	//echo 'entered';
 	$released=get_one_ex_result($link,$i,$GLOBALS['released_by']);
+	$interim_released=get_one_ex_result($link,$i,$GLOBALS['interim_released_by']);
+
 	//echo 'xxx'.$i.$released_by;
-	if(strlen($released)!=0 && $released!==False)
+	if(strlen($released)!=0 || strlen($interim_released)!=0 )
 	{
+		$at_least_one_sample=true;
 		print_sample($link,$i,$pdf);
 	}
 	else
@@ -31,9 +40,14 @@ for ($i=$_POST['from'];$i<=$_POST['to'];$i++)
 		$error=true;
 	}
 }
-if($error===false)
+
+if($error===false && $at_least_one_sample!==false)
 {
 	$pdf->Output('report.pdf', 'I');
+}
+else
+{
+	echo 'nothing to print. Can I go Home? Sir/Madam?';
 }
 //////////////user code ends////////////////
 //tail();

@@ -14,6 +14,7 @@ $link=get_link($GLOBALS['main_user'],$GLOBALS['main_pass']);
 	//echo '</pre>';
 	$first=TRUE;
 	$error=false;
+	$at_least_one_sample=false;
 
 	$temp=array();
 	foreach ($search_array as $sk=>$sv)
@@ -21,17 +22,20 @@ $link=get_link($GLOBALS['main_user'],$GLOBALS['main_pass']);
 		$temp=get_sample_with_condition($link,$sk,$sv,$temp,$first);
 		$first=FALSE;
 	}
-	print_r($temp);
-	exit(0);
+	//print_r($temp);
+	//exit(0);
 	if(count($temp)>0)
 	{
 		$pdf = new ACCOUNT1('P', 'mm', 'A4', true, 'UTF-8', false);
 		foreach ($temp as $sid)
 		{
 			$released=get_one_ex_result($link,$sid,$GLOBALS['released_by']);
+			$interim_released=get_one_ex_result($link,$sid,$GLOBALS['interim_released_by']);
+
 			//echo 'xxx'.$i.$released_by;
-			if(strlen($released)!=0)
+			if(strlen($released)!=0 || strlen($interim_released)!=0 )
 			{
+				$at_least_one_sample=true;
 				print_sample($link,$sid,$pdf);
 			}
 			else
@@ -42,9 +46,13 @@ $link=get_link($GLOBALS['main_user'],$GLOBALS['main_pass']);
 			}
 		}
 		
-		if($error===false)
+		if($error===false && $at_least_one_sample!==false)
 		{
 			$pdf->Output('report.pdf', 'I');
+		}
+		else
+		{
+			echo 'nothing to print. Can I go Home? Sir/Madam?';
 		}
 	}
 	else
