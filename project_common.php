@@ -2010,8 +2010,8 @@ echo '<div id=basic class="tab-pane active">';
 echo '<div class="basic_form">';
         echo '  <label class="my_label text-danger" for="mrd">MRD</label>
 			<input size=13 id=mrd name=__ex__'.$GLOBALS['mrd'].' class="form-control text-danger" required="required" 
-				type=text placeholder="MRD" value="SUR/'.$YY.'/" \>
-                        <p class="help"><span class=text-danger> </span</p>';
+				type=text placeholder=""  \>
+                        <p class="help">MRD Example -> SUR/20/00123456 <br>COVID Example -> 05/123</span</p>';
 echo '</div>';
 echo '</div>';
 }
