@@ -232,10 +232,11 @@ function show_all_buttons_for_sample($link,$sample_id)
 		sample_id_release_button($sample_id);	
 		sample_id_interim_release_button($sample_id);					//allow new interim release too
 		sample_id_print_button($sample_id);			
+		sample_id_email_button($sample_id);
 		sample_id_edit_button($sample_id);
 		sample_id_delete_button($sample_id);
 	}	
-	else 																	//released with/without interim (so, edit/delete)
+	else 																//released with/without interim (no, edit/delete)
 	{
 		sample_id_barcode_button($sample_id);
 		//sample_id_edit_button($sample_id);
@@ -245,6 +246,7 @@ function show_all_buttons_for_sample($link,$sample_id)
 		//sample_id_delete_button($sample_id);
 		sample_id_unrelease_button($sample_id);			
 		sample_id_print_button($sample_id);			
+		sample_id_email_button($sample_id);
 	}
 }
 
@@ -742,7 +744,15 @@ function sample_id_print_button($sample_id)
 	<input type=hidden name=action value=print_single>
 	</form></div>';
 }
-
+		
+function sample_id_email_button($sample_id)			
+{
+	echo '<div class="d-inline-block" ><form method=post action=email_single.php target=_blank class=print_hide>
+	<button class="btn btn-outline-success btn-sm" name=sample_id value=\''.$sample_id.'\' >Email</button>
+	<input type=hidden name=session_name value=\''.$_POST['session_name'].'\'>
+	<input type=hidden name=action value=email_single>
+	</form></div>';
+}
 
 function sample_id_next_button($sample_id)
 {

@@ -89,7 +89,7 @@ function get_remote_link($ip,$u,$p)
 function run_query($link,$db,$sql)
 {
 	$db_success=mysqli_select_db($link,$db);
-	
+	//echo $sql;
 	if(!$db_success)
 	{
 		echo 'error2:'.mysqli_error($link); return false;
