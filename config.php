@@ -16,6 +16,7 @@ $GLOBALS['patient_name']=1002;
 $GLOBALS['released_by']=1014;
 $GLOBALS['OPD/Ward']=1006;
 $GLOBALS['interim_released_by']=1019;
+$GLOBALS['email']=1024;
 
 $GLOBALS['pid_profile']=1;
 

@@ -53,7 +53,35 @@ foreach($png as $v)
 //$pdf->Output('report-'.$_POST['sample_id'].'.pdf', 'I');
 $output=$pdf->Output('report.pdf', 'S');
 //echo 'xxx';
-run_query($link,'email','update email set att=\''.my_safe_string($link,$output).'\' where id=1');
+
+$rlink=get_remote_link('11.207.1.1',$GLOBALS['email_user'],$GLOBALS['email_pass']);
+//run_query($rlink,'email','update email set att=\''.my_safe_string($link,$output).'\' where id=1');
+
+$email=get_one_ex_result($link,$_POST['sample_id'],$GLOBALS['email']);
+echo 'Result will sent to ('.$email.')<br>';
+if(strlen($email)==0)
+{
+  echo 'email address not available';
+  exit(0);
+}
+
+$subject='Biochemistry_Sample_ID_'.$_POST['sample_id'];
+$content='<h5>Please Find the report attached herewith</h5>';
+
+//run_query($rlink,'email','update email set att=\''.my_safe_string($link,$output).'\' where id=1');
+
+$mail_sql='insert into email (`to`,subject,content,sent,att,att_name) 
+		values(\''.$email.'\',\''.$subject.'\',\''.$content.'\',0,\''.my_safe_string($rlink,$output).'\',\''.$subject.'.pdf\')';
+//echo $mail_sql;
+
+if(run_query($rlink,'email',$mail_sql))
+{
+  echo 'email sent to main server. It may reach destination after 5-30 minutes, depending on main server configuration<br>';
+}
+else
+{
+  echo 'email can not be sent to main server.';
+}
 //////////////user code ends////////////////
 //tail();
 
