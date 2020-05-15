@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 -- MySQL dump 10.17  Distrib 10.3.22-MariaDB, for debian-linux-gnu (x86_64)
 --
 -- Host: localhost    Database: cl_general
@@ -51,3 +52,5 @@ UNLOCK TABLES;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
 -- Dump completed on 2020-05-15 21:42:50
+=======
+>>>>>>> f8f6a56d42ef6f107fe775c2e0fc9a4e83cf6b92

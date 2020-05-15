@@ -16,26 +16,15 @@ $GLOBALS['patient_name']=1002;
 $GLOBALS['released_by']=1014;
 $GLOBALS['OPD/Ward']=1006;
 $GLOBALS['interim_released_by']=1019;
+
 $GLOBALS['email']=1024;
+// in /var/gmcs_config/staff.conf $GLOBALS['email_db_server']='11.207.1.1';
 
 $GLOBALS['pid_profile']=1;
 
 $GLOBALS['print_side_or_below']=100;
 $GLOBALS['max_non_ex_profile']=20;
 
-$GLOBALS['advice']='
-						Nothing
-					';
-
-$GLOBALS['advice']='
-							<p id=cb_4 onclick="clear_bin()" class="bg-danger d-inline">clear bin</p>
-							<p id=cb_5 onclick="copy_binn()" class="bg-warning d-inline">copy</p>
-							<span class="d-block" id=cb_1 onclick="copy_to_bin(this)">A for apple.&#13;</span>
-							<span class="d-block" id=cb_2 onclick="copy_to_bin(this)">B for Big apple.&#13;</span>
-							<span class="d-block"  id=cb_3 onclick="copy_to_bin(this)">C for Chota apple.&#13;</span>
-							<textarea id=cb_ta cols=50></textarea>
-						';
-						
 $GLOBALS['HI']=array('name'=>'New Civil Hospital Surat Laboratory Services',
 						'section'=>'Hematology and Immunology Section',
 						'address'=>'OPD-10, NCHS, Surat',
@@ -64,4 +53,17 @@ $GLOBALS['MI']=array('name'=>'New Civil Hospital Surat Laboratory Services',
                                                 'address'=>'3nd Floor, GMC, Surat',
                                                 'phone'=>' '
                                                 );
+
+
+//example configutation file for passwords
+/*
+<?php
+//$GLOBALS['main_user']='xyz';
+//$GLOBALS['main_pass']='xyz';
+//$GLOBALS['main_server_main_user']='xyz';
+//$GLOBALS['main_server_main_pass']='xyz';
+//$GLOBALS['email_db_server']='127.0.0.1';
+?>
+*/
+
 ?>
