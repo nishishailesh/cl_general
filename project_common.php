@@ -747,7 +747,7 @@ function sample_id_print_button($sample_id)
 		
 function sample_id_email_button($sample_id)			
 {
-	echo '<div class="d-inline-block" ><form method=post action=email_single.php target=_blank class=print_hide>
+	echo '<div class="d-inline-block" ><form method=post action=email_single.php class=print_hide>
 	<button class="btn btn-outline-success btn-sm" name=sample_id value=\''.$sample_id.'\' >Email</button>
 	<input type=hidden name=session_name value=\''.$_POST['session_name'].'\'>
 	<input type=hidden name=action value=email_single>

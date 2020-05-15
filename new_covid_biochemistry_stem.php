@@ -52,6 +52,7 @@ function get_data_specific($link)
 			get_one_field_for_insert($link,1023);	//Sample Collection
 			get_one_field_for_insert($link,1017);	//Received On
 			get_one_field_for_insert($link,1018);	//Recept Time
+                        get_one_field_for_insert($link,1024);   //Recept Time
 			
 			//get_one_field_for_insert($link,1008);	//Sex		
 			//get_one_field_for_insert($link,1007);	//Age Y
