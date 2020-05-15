@@ -17,7 +17,7 @@ print_sample($link,$_POST['sample_id'],$pdf);
 
 $output=$pdf->Output('report.pdf', 'S');
 
-$rlink=get_remote_link($GLOBALS['email_db_server'],$GLOBALS['email_user'],$GLOBALS['email_pass']);
+$rlink=get_remote_link('11.207.1.1',$GLOBALS['email_user'],$GLOBALS['email_pass']);
 //run_query($rlink,'email','update email set att=\''.my_safe_string($link,$output).'\' where id=1');
 
 $email=get_one_ex_result($link,$_POST['sample_id'],$GLOBALS['email']);
