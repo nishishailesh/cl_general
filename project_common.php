@@ -4347,38 +4347,7 @@ function prepare_sample_barcode($link,$sample_id,$pdf)
 				$pdf->Cell(10,3,$patient_name,$border=0, $ln=0, $align='', $fill=false, $link='', $stretch=2, $ignore_min_height=false, $calign='T', $valign='M');	
 			}
 		}
-		
-			
-
-			
-			
-			// Start Transformation
-			//$pdf->SetFont('helveticaB', '', 13);
-			
-			//$pdf->StartTransform();
-			// Rotate 90 degrees counter-clockwise centered by (43,18) which is the lower left corner of the rectangle
-			//$pdf->Rotate(90, 43, 18);
-			
-			//$pdf->Text(39, 18, $tube.'-'.$return_array['sample_id'].'-'.$return_array['patient_name']);
-			//$pdf->SetXY(40,18);
-			//$tt1=substr($return_array['patient_name'],0,8);
-			//$tt2=$tube.'-'.$return_array['sample_id'];
-			
-			//$pdf->Cell(18,5,$tt1,$border=0, $ln=0, $align='', $fill=false, $link='', $stretch=2, $ignore_min_height=false, $calign='T', $valign='M');		
-			
-			//$pdf->SetXY(40,14);
-			
-			
-
-			// Stop Transformation
-			//$pdf->StopTransform();
-
-			//$pdf->SetFont('helveticaB', '', 13);		
-			//$pdf->SetXY(5,18);
-			//$pdf->Cell (25,5,$tt_below_barcode,$border=0, $ln=0, $align='', $fill=false, $link='', $stretch=2, $ignore_min_height=false, $calign='T', $valign='M');		
-	
-
-		
+				
 }
 
 
@@ -4491,127 +4460,13 @@ $style=array(
 		
 }
 
-
-
-/*
-
-		$pdf->SetFont('helveticaB', '', 3);		
-		$pdf->StartTransform();
-		$pdf->Rotate(90,25,25);	
-		$pdf->write1DBarcode($sample_id, 'C128', 30, 5  , 15 , 5 ,  0.3, $style, 'N');		
-		$pdf->StopTransform();
-
-
-		$pdf->StartTransform();
-		$pdf->Rotate(90,30,20);	
-		$pdf->write1DBarcode($sample_id, 'C128', 30, 5  , 15 , 5 ,  0.3, $style, 'N');		
-		$pdf->StopTransform();
-
-		$pdf->StartTransform();
-		$pdf->Rotate(90,35,15);	
-		$pdf->write1DBarcode($sample_id, 'C128', 30, 5  , 15 , 5 ,  0.3, $style, 'N');		
-		$pdf->StopTransform();	
-
-		$pdf->StartTransform();
-		$pdf->Rotate(90,40,10);	
-		$pdf->write1DBarcode($sample_id, 'C128', 30, 5  , 15 , 5 ,  0.3, $style, 'N');		
-		$pdf->StopTransform();
-
-
-		$pdf->SetXY(15,20);
-		$pdf->Cell(1,1,$pdf->GetX().','.$pdf->GetY(),$border=0);
-
-		$pdf->SetXY(30,20);
-		$pdf->Cell(1,1,$pdf->GetX().','.$pdf->GetY(),$border=0);
-
-		
-		$pdf->SetXY(45,20);
-		$pdf->Cell(1,1,$pdf->GetX().','.$pdf->GetY(),$border=0);
-
-
-		$pdf->SetXY(5,15);
-		$pdf->Cell(1,1,$pdf->GetX().','.$pdf->GetY(),$border=0);
-
-		$pdf->SetXY(10,15);
-		$pdf->Cell(1,1,$pdf->GetX().','.$pdf->GetY(),$border=0);
-
-		
-		$pdf->SetXY(15,15);
-		$pdf->Cell(1,1,$pdf->GetX().','.$pdf->GetY(),$border=0);
-
-		$pdf->SetXY(5,10);
-		$pdf->Cell(1,1,$pdf->GetX().','.$pdf->GetY(),$border=0);
-
-		$pdf->SetXY(10,10);
-		$pdf->Cell(1,1,$pdf->GetX().','.$pdf->GetY(),$border=0);
-
-		
-		$pdf->SetXY(15,10);
-		$pdf->Cell(1,1,$pdf->GetX().','.$pdf->GetY(),$border=0);	
-		
-		$pdf->SetXY(5,5);
-		$pdf->Cell(1,1,$pdf->GetX().','.$pdf->GetY(),$border=0);
-
-		$pdf->SetXY(10,5);
-		$pdf->Cell(1,1,$pdf->GetX().','.$pdf->GetY(),$border=0);
-
-		
-		$pdf->SetXY(15,5);
-		$pdf->Cell(1,1,$pdf->GetX().','.$pdf->GetY(),$border=0);	
-
-
-		$pdf->SetXY(15,0);
-		$pdf->Cell(1,1,$pdf->GetX().','.$pdf->GetY(),$border=0);		
-		
-		$pdf->SetXY(15,30);
-		$pdf->Cell(1,1,$pdf->GetX().','.$pdf->GetY(),$border=0);
-		*/
-		
-	/**
-	 * Rotate object.
-	 * @param $angle (float) angle in degrees for counter-clockwise rotation
-	 * @param $x (int) abscissa of the rotation center. Default is current x position
-	 * @param $y (int) ordinate of the rotation center. Default is current y position
-	 * @public
-	 * @since 2.1.000 (2008-01-07)
-	 * @see StartTransform(), StopTransform()
-	 * 
-	/**
-	 * Print a Linear Barcode.
-	 * @param $code (string) code to print
-	 * @param $type (string) type of barcode (see tcpdf_barcodes_1d.php for supported formats).
-	 * @param $x (int) x position in user units (empty string = current x position)
-	 * @param $y (int) y position in user units (empty string = current y position)
-	 * @param $w (int) width in user units (empty string = remaining page width)
-	 * @param $h (int) height in user units (empty string = remaining page height)
-	 * @param $xres (float) width of the smallest bar in user units (empty string = default value = 0.4mm)
-	 * @param $style (array) array of options:<ul>
-	 * <li>boolean $style['border'] if true prints a border</li>
-	 * <li>int $style['padding'] padding to leave around the barcode in user units (set to 'auto' for automatic padding)</li>
-	 * <li>int $style['hpadding'] horizontal padding in user units (set to 'auto' for automatic padding)</li>
-	 * <li>int $style['vpadding'] vertical padding in user units (set to 'auto' for automatic padding)</li>
-	 * <li>array $style['fgcolor'] color array for bars and text</li>
-	 * <li>mixed $style['bgcolor'] color array for background (set to false for transparent)</li>
-	 * <li>boolean $style['text'] if true prints text below the barcode</li>
-	 * <li>string $style['label'] override default label</li>
-	 * <li>string $style['font'] font name for text</li><li>int $style['fontsize'] font size for text</li>
-	 * <li>int $style['stretchtext']: 0 = disabled; 1 = horizontal scaling only if necessary; 2 = forced horizontal scaling; 3 = character spacing only if necessary; 4 = forced character spacing.</li>
-	 * <li>string $style['position'] horizontal position of the containing barcode cell on the page: L = left margin; C = center; R = right margin.</li>
-	 * <li>string $style['align'] horizontal position of the barcode on the containing rectangle: L = left; C = center; R = right.</li>
-	 * <li>string $style['stretch'] if true stretch the barcode to best fit the available width, otherwise uses $xres resolution for a single bar.</li>
-	 * <li>string $style['fitwidth'] if true reduce the width to fit the barcode width + padding. When this option is enabled the 'stretch' option is automatically disabled.</li>
-	 * <li>string $style['cellfitalign'] this option works only when 'fitwidth' is true and 'position' is unset or empty. Set the horizontal position of the containing barcode cell inside the specified rectangle: L = left; C = center; R = right.</li></ul>
-	 * @param $align (string) Indicates the alignment of the pointer next to barcode insertion relative to barcode height. The value can be:<ul><li>T: top-right for LTR or top-left for RTL</li><li>M: middle-right for LTR or middle-left for RTL</li><li>B: bottom-right for LTR or bottom-left for RTL</li><li>N: next line</li></ul>
-	 * @author Nicola Asuni
-	 * @since 3.1.000 (2008-06-09)
-	 * @public
-	 */
 	 
 function print_pdf($pdf,$fname)
 {	
 	$filename='barcode.pdf';
 	$pdf->Output($filename, 'I');
 }
+
 
 
 ?>

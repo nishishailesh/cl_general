@@ -38,11 +38,17 @@ function get_dbid()
 echo '<form method=post action=print_small_barcode.php target=_blank>';
 echo '<div class="basic_form">';
 	echo '	<label class="my_label text-danger" for="from">From Sample ID</label>
-			<input type=number size=13 id=from name=from class="form-control text-danger" required="required" \>
+			<input type=text size=13 id=from name=from class="form-control text-danger" required="required" \>
 			<p class="help"><span class=text-danger>Must be</span> number</p>';
 	echo '	<label class="my_label text-danger" for="to">To Sample ID</label>
-			<input type=number size=13 id=from name=to class="form-control text-danger" required="required" \>
+			<input type=text size=13 id=from name=to class="form-control text-danger" required="required" \>
 			<p class="help"><span class=text-danger>Must be</span> number</p>';
+	echo '	<label class="my_label text-danger" for="codetype">Code Type</label>
+			<input type=text  size=13 id=codetpye name=code_type class="form-control text-danger" required="required" \>
+			<p class="help"><span class=text-danger>C128 C39 i25</span></p>';
+	echo '	<label class="my_label text-danger" for="append">append</label>
+			<input type=text  size=13 id=append name=append class="form-control text-danger" \>
+			<p class="help"><span class=text-danger>any text to append</span></p>';
 echo '</div>';
 echo '<button type=submit class="btn btn-primary form-control" name=action value=view_dbid>Print small barcode</button>';
 echo '<input type=hidden name=session_name value=\''.session_name().'\'>';
