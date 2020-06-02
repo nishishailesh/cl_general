@@ -2,7 +2,7 @@
 --
 -- Host: localhost    Database: cl_general
 -- ------------------------------------------------------
--- Server version	10.3.22-MariaDB-1
+-- Server version	10.3.22-MariaDB-0+deb10u1
 
 /*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
 /*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
@@ -36,7 +36,7 @@ CREATE TABLE `copy_bin_text` (
 
 LOCK TABLES `copy_bin_text` WRITE;
 /*!40000 ALTER TABLE `copy_bin_text` DISABLE KEYS */;
-INSERT INTO `copy_bin_text` VALUES (1,'Absurd K+ EDTA','Absurd K+ may be due to EDTA contamination of Plain Blood. '),(2,'Thalassemia','Planty of target cells seen. Thalassemia screening is adviced'),(3,'Absurd K+ Hemolysis','Sample Grossly Hemolysed. Absurd K+ may be due to Excess hemolysis'),(4,'High DBIL','Majority of bilirubin is of conjugated bilirubin(Direct), disregard total bilirubin.'),(5,'QNS','Test is not done as sample is inadequate'),(6,'Missing sample','Test is not done as sample is not received'),(7,'Bilirubin interfence','Very High bilirubin has negative interferance in creatinine estimation  '),(8,'Lipemic sample','Test is not done as sample is lipemic'),(9,'Viscous sample','Test is not done as sample is highly viscous'),(10,'CBC','Smear shows atypical WBC. Screening for Leukemia Adviced');
+INSERT INTO `copy_bin_text` VALUES (1,'Absurd K+ EDTA','Absurd K+ may be due to EDTA contamination of Plain Blood. '),(3,'Absurd K+ Hemolysis','Sample Grossly Hemolysed. Absurd K+ may be due to Excess hemolysis'),(4,'High DBIL','Majority of bilirubin is of conjugated bilirubin(Direct), disregard total bilirubin.'),(5,'QNS','Test is not done as sample is inadequate'),(6,'Missing sample','Test is not done as sample is not received'),(7,'Bilirubin interfence','Very High bilirubin has negative interferance in creatinine estimation  '),(8,'Lipemic sample','Test is not done as sample is lipemic'),(9,'Viscous sample','Test is not done as sample is highly viscous'),(10,'email for COVID-19','suratcv19@gmail.com');
 /*!40000 ALTER TABLE `copy_bin_text` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
@@ -49,4 +49,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2020-05-28 23:52:21
+-- Dump completed on 2020-06-02 23:44:46

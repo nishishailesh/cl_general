@@ -42,7 +42,7 @@ function prepare_sample_barcode_code_type($sample_id,$pdf,$code_type)
 	);
 		
 		$pdf->AddPage();
-		$pdf->write1DBarcode($_POST['append'].$sample_id, $code_type, 02, 5 , 45, 17, 0.4, $style, 'N');		
+		$pdf->write1DBarcode($_POST['append'].$sample_id, $code_type, 04, 7 , 42, 15, 0.4, $style, 'N');		
 				
 }
 	/**
