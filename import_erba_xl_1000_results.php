@@ -8,7 +8,7 @@ echo '		  <link rel="stylesheet" href="project_common.css">
 $link=get_link($GLOBALS['main_user'],$GLOBALS['main_pass']);
 
 main_menu();
-echo '<h2 class="bg-success">Import XL-640 Results</h2>';
+echo '<h2 class="bg-danger">Import XL-1000 Results</h2>';
 
 if($_POST['action']=='get_file')
 {
@@ -16,7 +16,7 @@ if($_POST['action']=='get_file')
 }
 else if($_POST['action']=='import')
 {
-	csv_to_sql($link,$_FILES['fvalue'],'XL_640');
+	csv_to_sql($link,$_FILES['fvalue'],'XL_1000');
 }
 
 //echo '<pre>';print_r($_POST);echo '</pre>';
@@ -27,7 +27,7 @@ function get_import_file()
 	echo '<form method=post class="d-inline" enctype="multipart/form-data">';
 	echo '<input type=hidden name=session_name value=\''.$_POST['session_name'].'\'>';
 	echo '<input type=file name=fvalue >';
-	echo '<button  class="btn btn-success" type=submit name=action value=import>Import from XL-640</button>';
+	echo '<button  class="btn btn-danger" type=submit name=action value=import>Import from XL-1000</button>';
 	echo'</form>';
 }
 
@@ -37,7 +37,7 @@ function get_code_for_examination_id($link,$equipment,$examination_id)
 	//echo $sql;
 	$result=run_query($link,$GLOBALS['database'],$sql);
 	$ar=get_single_row($result);
-	echo '<pre>';print_r($ar);echo '</pre>';
+	//echo '<pre>';print_r($ar);echo '</pre>';
 	if(isset($ar['examination_id']))
 	{
 		return $ar['code'];
@@ -67,24 +67,53 @@ function get_examination_codes($link,$equipment,$sample_id)
 function csv_to_sql($link,$file_data,$equipment)
 {
 	$f=fopen($file_data['tmp_name'],'r');
-	while($ar=fgetcsv($f,'',"\t"))	// '\t' donot work, double-inverted-comma required to express escape sequence
+	
+	$f_data=fread($f,$file_data['size']);
+	$f_data_final=substr($f_data,2);							//remove byte-order-mark FF FE
+	$f_data_final_ascii=iconv('UTF16LE','ASCII',$f_data_final);	//convert to ascii
+	//echo $f_data_final_ascii;
+	//return;
+	$lines = explode(PHP_EOL, $f_data_final_ascii);
+	
+	foreach($lines as $each_line)
 	{
+		$ar=str_getcsv
+						(
+							$each_line,	//input
+							"\t"					//delimiter, in double inveted comma only
+						);
+
 		//echo '<pre>';print_r($ar);echo '</pre>';
+				/*
+				Array
+				(
+					[0] => 1
+					[1] => 1007149
+					[2] => 
+					[3] => ALTT
+					[4] => -0.0001
+					[5] => U/L
+					[6] => N!
+					[7] => 05/29/2020 10:29:59
+					[8] => 637
+					[9] => 
+				)
+				*/
 		
 		if(count($ar)>=8)
 		{
 			//only for given sample_id
-			$sample_code_to_ex=get_examination_codes($link,$equipment,$ar[2]);
+			$sample_code_to_ex=get_examination_codes($link,$equipment,$ar[1]);
 			if(count($sample_code_to_ex)==0)
 			{
-				echo '<span class="text-success">No entry for sample_id='.$ar[2].'<br></span>';
+				echo '<span class="text-success">No entry for sample_id='.$ar[1].'<br></span>';
 				continue;
 			}
 			
 			//echo '<pre>';print_r($sample_code_to_ex);echo '</pre>';
-			if(array_key_exists($ar[4],$sample_code_to_ex))
+			if(array_key_exists($ar[3],$sample_code_to_ex))
 			{
-				$examination_id=$sample_code_to_ex[$ar[4]];
+				$examination_id=$sample_code_to_ex[$ar[3]];
 			}
 			else
 			{
@@ -93,14 +122,14 @@ function csv_to_sql($link,$file_data,$equipment)
 			
 			if($examination_id!=FALSE)
 			{
-				if(ctype_digit($ar[2]))
+				if(ctype_digit($ar[1]))
 				{
 					$sql=	'insert into primary_result
 								(sample_id,examination_id,result,uniq)
 								values
-								(\''.$ar[2].'\',\''.$examination_id.'\',\''.$ar[5].'\',\''.$ar[8].'\')
+								(\''.$ar[1].'\',\''.$examination_id.'\',\''.$ar[4].'\',\''.$ar[7].'\')
 							on duplicate key
-							update result=\''.$ar[5].'\'';							
+							update result=\''.$ar[4].'\'';							
 					//echo $sql.'<br>';
 					if($result=run_query($link,$GLOBALS['database'],$sql))
 					{
@@ -110,11 +139,31 @@ function csv_to_sql($link,$file_data,$equipment)
 			}
 			else
 			{
-				echo '<span class="text-danger">('.$ar[2].')->('.$ar[4].') have no corresponding code in host_code table<br></span>';
+				echo '<span class="text-danger">('.$ar[1].')->('.$ar[3].') have no corresponding code in host_code table<br></span>';
 			}
 			
 		}
+		
 		flush();
+
 	}
+
 }
 
+/*
+Byte order mark 	Description
+EF BB BF 			UTF-8
+FF FE 				UTF-16, little endian
+FE FF 				UTF-16, big endian
+FF FE 00 00 		UTF-32, little endian
+00 00 FE FF 		UTF-32, big-endian
+
+to convert XL1000 exported file on command line
+	remove first tow byte (morder mark)
+	then convert
+	
+	dd bs=2 skip=1 if=x.txt of=trimmed.txt
+	iconv -f UTF16LE -t ASCII trimmed.txt >simple.txt
+*/
+
+?>

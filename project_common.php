@@ -53,6 +53,7 @@ function main_menu()
 				<div class="dropdown-menu m-0 p-0">
 					<div class="btn-group-vertical  d-block">
 						<button class="btn btn-outline-primary m-0 p-0" formaction=import_erba_xl_640_results.php type=submit name=action value=get_file>Import XL-640 Result</button>					
+						<button class="btn btn-outline-primary m-0 p-0" formaction=import_erba_xl_1000_results.php type=submit name=action value=get_file>Import XL-1000 Result</button>											
 						<button class="btn btn-outline-primary m-0 p-0" formaction=get_id_range_for_small_barcode.php type=submit name=action value=get_sample_id_range>Eppindorf Barcode</button>					
 					</div>
 				</div>
