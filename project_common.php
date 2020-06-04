@@ -4468,5 +4468,26 @@ function print_pdf($pdf,$fname)
 }
 
 
-
+function prepare_sample_barcode_for_tube($sample_id,$pdf)
+{
+		$style = array(
+		'position' => '',
+		'align' => 'C',
+		'stretch' => true,
+		'cellfitalign' => '',
+		'border' => false,
+		'hpadding' => 'auto',
+		'vpadding' => '0',
+		'fgcolor' => array(0,0,0),
+		'bgcolor' => false, //array(255,255,255),
+		'text' => true,
+		'font' => 'helvetica',
+		'fontsize' => 10,
+		'stretchtext' => 4
+	);
+		
+		$pdf->AddPage();
+		$pdf->write1DBarcode($sample_id, 'C128', 02, 5 , 45, 17, 0.4, $style, 'N');		
+				
+}
 ?>
