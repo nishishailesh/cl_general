@@ -4488,7 +4488,6 @@ function prepare_sample_barcode_for_tube($sample_id,$pdf)
 	);
 		
 		$pdf->AddPage();
-		$pdf->write1DBarcode($sample_id, 'C128', 02, 5 , 45, 17, 0.4, $style, 'N');		
-				
+		$pdf->write1DBarcode($sample_id, 'C128', 03, 6 , 43, 15, 0.4, $style, 'N');
 }
 ?>
