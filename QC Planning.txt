@@ -1,0 +1,12 @@
+QC result
+	Sample_id
+		Examination ID (ex_id, qc_id,analysis id)
+		Result
+		recorded_by
+		recording_time
+	
+QC Sample
+	QC_ID
+	short description
+	long description
+	
