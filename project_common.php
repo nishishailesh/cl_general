@@ -136,9 +136,13 @@ function mk_select_from_sql($link,$sql,$field_name,$select_name,$select_id,$disa
 }
 
 
-function mk_select_from_sql_kv($link,$sql,$field_name_k,$field_name_v,$select_name,$select_id,$disabled='',$default='')
+function mk_select_from_sql_kv($link,$sql,$field_name_k,$field_name_v,$select_name,$select_id,$disabled='',$default='',$blank='no')
 {
 	$ar=mk_array_from_sql_kv($link,$sql,$field_name_k,$field_name_v);
+	if($blank=='yes')
+	{
+		array_unshift($ar,"");
+	}
 	mk_select_from_array_kv($select_name,$ar,$disabled,$default);
 }
 
@@ -3576,8 +3580,8 @@ function view_sample_p($link,$sample_id,$profile_wise_ex_list)
 				$examination_details=get_one_examination_details($link,$ex_id);
 				$edit_specification=json_decode($examination_details['edit_specification'],true);
 				$type=isset($edit_specification['type'])?$edit_specification['type']:'';
-								
-				if($type!='blob')
+				$hide=isset($edit_specification['hide'])?$edit_specification['hide']:'';				
+				if($type!='blob'  && $hide!='yes')
 				{
 					view_field_p($link,$ex_id,$ex_list[$ex_id]);	
 				}

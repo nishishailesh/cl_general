@@ -83,6 +83,28 @@ CREATE TABLE `host_code` (
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
+-- Table structure for table `lab_reference_value`
+--
+
+DROP TABLE IF EXISTS `lab_reference_value`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `lab_reference_value` (
+  `lab_reference_value_id` int(11) NOT NULL,
+  `mrd` varchar(5000) NOT NULL,
+  `examination_id` int(11) NOT NULL,
+  `start_date` date DEFAULT NULL,
+  `start_time` time DEFAULT NULL,
+  `end_date` date DEFAULT NULL,
+  `end_time` time DEFAULT NULL,
+  `mean` decimal(10,4) NOT NULL,
+  `sd` decimal(10,4) NOT NULL,
+  `remark` varchar(100) NOT NULL,
+  PRIMARY KEY (`lab_reference_value_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
 -- Table structure for table `primary_result`
 --
 
@@ -297,4 +319,4 @@ CREATE TABLE `view_info_data` (
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2020-06-06 10:20:01
+-- Dump completed on 2020-06-08 10:39:11
