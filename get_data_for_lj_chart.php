@@ -107,7 +107,7 @@ function get_lab_reference_value($link,$mrd_num,$examination_id,$dt,$tm)
 	$result=run_query($link,$GLOBALS['database'],$sql);
 	if(rows_affected($link)!=1)
 	{
-		//echo 'exact one raw for lab_reference_value is required. got 0 or more than 1<br>';
+		//echo 'exact one raw for lab_reference_value is required. got (('.rows_affected($link).'))<br>';
 		return false;
 	}
 	$ar=get_single_row($result);
@@ -150,6 +150,16 @@ function display_one_qc($link,$sample_id)
 			echo '<td>'.$ar['examination_id'].'-'.get_name_of_ex_id($link,$ar['examination_id']).'</td>';
 			echo '<td>'.$ar['result'].'</td>';
 
+			//if($lab_ref_val!=false && is_numeric($ar['result']))
+			if(!is_numeric($ar['result']))
+			{
+				//echo $ar['result'].' not numeric<br>';
+			}
+			if(!$lab_ref_val!=false)
+			{
+				//echo $ar['result'].' reference value not found<br>';
+			}
+			
 			if($lab_ref_val!=false && is_numeric($ar['result']))
 			{
 				$sdi=round((($ar['result']-$lab_ref_val['mean'])/$lab_ref_val['sd']),1);
@@ -184,6 +194,20 @@ function display_one_qc($link,$sample_id)
 				echo '<td>'.$sdi.'</td>';
 				echo '<td>'.$lab_ref_val['mean'].'</td>';
 				echo '<td>'.$lab_ref_val['sd'].'</td>';				
+				echo '<td>'.$date.'</td>';
+				echo '<td>'.$time.'</td>';
+				echo '<td>'.$equipment.'</td>';
+				echo '<td>'.$mrd_num.'</td>';
+				echo '<td>'.$sample_requirement.'</td>';
+			}
+			else
+			{
+				echo '<td class="p-0 m-0"><pre></pre></td>';
+				echo '<td></td>';
+				echo '<td></td>';
+				echo '<td></td>';				
+
+				
 				echo '<td>'.$date.'</td>';
 				echo '<td>'.$time.'</td>';
 				echo '<td>'.$equipment.'</td>';
