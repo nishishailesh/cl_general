@@ -21,6 +21,7 @@ function main_menu()
 					<button class="btn btn-outline-primary m-0 p-0 " formaction=new_specific_biochemistry.php type=submit name=action value=direct>New Direct(Age/Sex)</button>
 					<button class="btn btn-outline-primary m-0 p-0 " formaction=new_covid_biochemistry.php type=submit name=action value=direct>New Covid(MRD)</button>
 					<button class="btn btn-outline-primary m-0 p-0 " formaction=new_covid_biochemistry_stem.php type=submit name=action value=direct>New Covid(Stem)</button>
+					<button class="btn btn-outline-primary m-0 p-0 " formaction=new_qc_biochemistry.php type=submit name=action value=qc>New QC</button>
 				</div>
 			</div>
 		</div>
@@ -2726,7 +2727,7 @@ function get_one_field_for_insert($link,$examination_id)
 								>'.$result.'
 					</button>';
 			echo '</div>';
-			echo '<p class="help">'.$help.'</p>';	
+			echo '<p class="help">'.nl2br(htmlspecialchars($help)).'</p>';	
 		echo '</div>';
 	}
 	else if($type=='select')
@@ -2954,7 +2955,7 @@ function get_one_field_for_insert($link,$examination_id)
 					echo '</div>';
 				echo '</div>';
 			////
-			echo '<p class="help">'.$help.'</p>';	
+			echo '<p class="help">'.nl2br(htmlspecialchars($help)).'</p>';	
 		echo '</div>';
 	} 
 }

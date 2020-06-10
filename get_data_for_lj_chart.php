@@ -120,7 +120,7 @@ function show_lj($link,$parameters)
 {
 	$sample_id_array=get_qc_sample_id_from_parameters($link,$parameters);
 	//echo '<pre>';print_r($sample_id_array);echo '</pre>';
-	
+
 	echo '<table class="table table-striped table-sm">';
 	foreach($sample_id_array as $sample_id)
 	{
@@ -131,31 +131,32 @@ function show_lj($link,$parameters)
 
 function display_one_qc($link,$sample_id)
 {
-	
+
 	$mrd_num=get_one_ex_result($link,$sample_id,$GLOBALS['mrd']);
 	$sample_requirement=get_one_ex_result($link,$sample_id,$GLOBALS['sample_requirement']);
 	$date=get_one_ex_result($link,$sample_id,$GLOBALS['Collection_Date']);
 	$time=get_one_ex_result($link,$sample_id,$GLOBALS['Collection_Time']);
 	$equipment=get_one_ex_result($link,$sample_id,$GLOBALS['qc_eqipment_ex_id']);
-	
+
 	$sql='select * from primary_result where sample_id=\''.$sample_id.'\'';
 	$result=run_query($link,$GLOBALS['database'],$sql);
-	
+
 	while($ar=get_single_row($result))
 	{
 		$lab_ref_val=get_lab_reference_value($link,$mrd_num,$ar['examination_id'],$date,$time);
-		
+
 		echo '<tr>';
 			echo '<td>'.$sample_id.'</td>';
 			echo '<td>'.$ar['examination_id'].'-'.get_name_of_ex_id($link,$ar['examination_id']).'</td>';
 			echo '<td>'.$ar['result'].'</td>';
-			if($lab_ref_val!=false)
+
+			if($lab_ref_val!=false && is_numeric($ar['result']))
 			{
 				$sdi=round((($ar['result']-$lab_ref_val['mean'])/$lab_ref_val['sd']),1);
 				//012345678901234567890123456789012345678901234567890123456789012345678901234567890
 				//|         |         |         |         |         |         |         |         |
 				$lj_str=str_repeat(' ',81);
-				$lj_str=substr_replace($lj_str,'.',40,1);
+				$lj_str=substr_replace($lj_str,':',40,1);
 				$lj_str=substr_replace($lj_str,'|',40+10,1);
 				$lj_str=substr_replace($lj_str,'|',40+20,1);
 				$lj_str=substr_replace($lj_str,'|',40+30,1);
@@ -168,7 +169,7 @@ function display_one_qc($link,$sample_id)
 				$x=max($x,0);
 				if($x>=20 && $x<=60)
 				{
-					$lj_str=substr_replace($lj_str,'<span class="text-success">X</span>',$x,1);
+					$lj_str=substr_replace($lj_str,'<span class="bg-success">X</span>',$x,1);
 				}
 				elseif($x>=10 && $x<=70)
 				{
