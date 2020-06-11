@@ -2704,6 +2704,7 @@ function get_one_field_for_insert($link,$examination_id)
 	$readonly=isset($edit_specification['readonly'])?$edit_specification['readonly']:'';
 	$help=isset($edit_specification['help'])?$edit_specification['help']:'';
 	$pattern=isset($edit_specification['pattern'])?$edit_specification['pattern']:'';
+	$required=isset($edit_specification['required'])?$edit_specification['required']:'';
 	$placeholder=isset($edit_specification['placeholder'])?$edit_specification['placeholder']:'';
 	
 	$element_id='r_id_'.$examination_id;
@@ -2942,12 +2943,12 @@ function get_one_field_for_insert($link,$examination_id)
 					echo '<div class="d-inline-block no-gutters">';
 					echo '<textarea rows=1
 						
-						id="'.$element_id.'" 
-						name="__ex__'.$examination_id.'" 
-						data-exid="'.$examination_id.'" 
-						
-						pattern="'.$pattern.'" 
-						class="form-control autosave p-0 m-0 no-gutters" 
+						id="'.$element_id.'"
+						name="__ex__'.$examination_id.'"
+						data-exid="'.$examination_id.'"
+						required=\''.$required.'\'
+						pattern="'.$pattern.'"
+						class="form-control autosave p-0 m-0 no-gutters"
 						type=\''.$type.'\' ></textarea>';
 					echo '</div>';
 					echo '<div class="d-inline  no-gutters">';
@@ -2955,9 +2956,9 @@ function get_one_field_for_insert($link,$examination_id)
 					echo '</div>';
 				echo '</div>';
 			////
-			echo '<p class="help">'.nl2br(htmlspecialchars($help)).'</p>';	
+			echo '<p class="help">'.nl2br(htmlspecialchars($help)).'</p>';
 		echo '</div>';
-	} 
+	}
 }
 
 

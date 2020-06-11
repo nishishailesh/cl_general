@@ -59,7 +59,7 @@ function get_lj_display_parameter_date_time($link,$qc_levels)
 		echo '<input type=date name=to_date>';
 		echo '<input type=time name=to_time>';
 		get_examination_names($link);
-		echo '<input type=submit name=show_lj value="Show LJ">';	
+		echo '<input type=submit name=show_lj value="Show LJ">';
 	echo '</form>';
 }
 
