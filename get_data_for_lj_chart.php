@@ -86,7 +86,7 @@ function get_name_of_ex_id($link,$examination_id)
 	return $ar['name'];
 }
 
-function get_lab_reference_value($link,$mrd_num,$examination_id,$dt,$tm)
+function get_lab_reference_value($link,$mrd_num,$examination_id,$dt,$tm,$equipment)
 {
 	$str_datetime=$dt.' '.$tm;
 	//2020-06-01 14:36:40
@@ -102,7 +102,10 @@ function get_lab_reference_value($link,$mrd_num,$examination_id,$dt,$tm)
 								and
 							str_to_date(concat(end_date," ",end_time),\'%Y-%m-%d %H:%i:%s\') 
 						)
+				and
+			equipment=\''.$equipment.'\'
 			';
+			
 	//echo $sql.'<br>';
 	$result=run_query($link,$GLOBALS['database'],$sql);
 	if(rows_affected($link)!=1)
@@ -143,7 +146,7 @@ function display_one_qc($link,$sample_id)
 
 	while($ar=get_single_row($result))
 	{
-		$lab_ref_val=get_lab_reference_value($link,$mrd_num,$ar['examination_id'],$date,$time);
+		$lab_ref_val=get_lab_reference_value($link,$mrd_num,$ar['examination_id'],$date,$time,$equipment);
 
 		echo '<tr>';
 			echo '<td>'.$sample_id.'</td>';
