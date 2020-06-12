@@ -141,7 +141,7 @@ function display_one_qc($link,$sample_id)
 	$time=get_one_ex_result($link,$sample_id,$GLOBALS['Collection_Time']);
 	$equipment=get_one_ex_result($link,$sample_id,$GLOBALS['qc_eqipment_ex_id']);
 
-	$sql='select * from primary_result where sample_id=\''.$sample_id.'\'';
+	$sql='select * from primary_result where sample_id=\''.$sample_id.'\' order by uniq';
 	$result=run_query($link,$GLOBALS['database'],$sql);
 
 	while($ar=get_single_row($result))
@@ -201,7 +201,9 @@ function display_one_qc($link,$sample_id)
 				echo '<td>'.$time.'</td>';
 				echo '<td>'.$equipment.'</td>';
 				echo '<td>'.$mrd_num.'</td>';
-				echo '<td>'.$sample_requirement.'</td>';
+				//echo '<td>'.$sample_requirement.'</td>';
+				echo '<td>'.$ar['uniq'].'</td>';
+				
 			}
 			else
 			{
@@ -215,7 +217,8 @@ function display_one_qc($link,$sample_id)
 				echo '<td>'.$time.'</td>';
 				echo '<td>'.$equipment.'</td>';
 				echo '<td>'.$mrd_num.'</td>';
-				echo '<td>'.$sample_requirement.'</td>';
+				//echo '<td>'.$sample_requirement.'</td>';
+				echo '<td>'.$ar['uniq'].'</td>';
 			}
 		echo '</tr>';		
 	}
