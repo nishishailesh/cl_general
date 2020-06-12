@@ -147,6 +147,93 @@ function set_print_class(jsn)
 	
 				)
 }
+
+
+function my_sort(me,col_index,my_table)
+{
+	cur_val=me.getAttribute("data-sorting")
+	//alert(col_index + ' ' + cur_val);
+	me.setAttribute("data-sorting",cur_val*-1);
+	//alert(col_index);
+	
+	done_something=true
+	while(done_something==true)
+	{
+        done_something=false
+        tbl=document.getElementById(my_table)
+        all_rows = tbl.rows
+        for (i = 1; i < (all_rows.length - 1); i++)	//omit header row
+        {
+            //alert(all_rows[i].getElementsByTagName("TD")[col_index].innerHTML)
+            //first = all_rows[i].getElementsByTagName("TD")[col_index].innerHTML.toLowerCase();
+            //second = all_rows[i+1].getElementsByTagName("TD")[col_index].innerHTML.toLowerCase();
+            first = all_rows[i].getElementsByTagName("TD")[col_index].innerHTML
+            second = all_rows[i+1].getElementsByTagName("TD")[col_index].innerHTML
+
+            if(cur_val==1)
+            {
+                if ( first > second ) 
+                {
+                    all_rows[i].parentNode.insertBefore(all_rows[i + 1], all_rows[i]);
+                    done_something=true
+                }
+            }
+            else
+            {
+                 if ( first < second ) 
+                {
+                    all_rows[i].parentNode.insertBefore(all_rows[i + 1], all_rows[i]);
+                    done_something=true
+                }           
+            
+            }
+        }
+    }
+}
+
+function my_sort_float(me,col_index,my_table)
+{
+	cur_val=me.getAttribute("data-sorting")
+	//alert(col_index + ' ' + cur_val);
+	me.setAttribute("data-sorting",cur_val*-1);
+	//alert(col_index);
+	
+	done_something=true
+	while(done_something==true)
+	{
+        done_something=false
+        tbl=document.getElementById(my_table)
+        all_rows = tbl.rows
+        for (i = 1; i < (all_rows.length - 1); i++)	//omit header row
+        {
+            //alert(all_rows[i].getElementsByTagName("TD")[col_index].innerHTML)
+            //first = all_rows[i].getElementsByTagName("TD")[col_index].innerHTML.toLowerCase();
+            //second = all_rows[i+1].getElementsByTagName("TD")[col_index].innerHTML.toLowerCase();
+            first = parseFloat(all_rows[i].getElementsByTagName("TD")[col_index].innerHTML)
+            second = parseFloat(all_rows[i+1].getElementsByTagName("TD")[col_index].innerHTML)
+
+            if(cur_val==1)
+            {
+                if ( first > second ) 
+                {
+                    all_rows[i].parentNode.insertBefore(all_rows[i + 1], all_rows[i]);
+                    done_something=true
+                }
+            }
+            else
+            {
+                 if ( first < second ) 
+                {
+                    all_rows[i].parentNode.insertBefore(all_rows[i + 1], all_rows[i]);
+                    done_something=true
+                }           
+            
+            }
+        }
+    }
+}
+
+
 $(document).ready
 	(
 		function()
@@ -259,3 +346,5 @@ $(document).ready
 							
 		}
 	);
+
+

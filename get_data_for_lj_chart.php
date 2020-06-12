@@ -18,12 +18,25 @@ $GLOBALS['Collection_Date']=1015;
 $GLOBALS['Collection_Time']=1016;
 
 echo '<h2>QC</h2>';
-get_lj_display_parameter_sample_id($link,$qc_levels);
-get_lj_display_parameter_date_time($link,$qc_levels);
+echo '<div>';
+	echo '<div class="d-inline">';
+		get_lj_display_parameter_sample_id($link,$qc_levels);
+	echo '</div>';
+	echo '<div class="d-inline">';
+		//get_lj_display_parameter_date_time($link,$qc_levels);
+		get_lj_display_parameter_today($link);
+	echo '</div>';
+echo '</div>';
 
 if(isset($_POST['show_lj']))
 {
 	show_lj($link,$_POST);
+}
+
+if(isset($_POST['show_today_lj']))
+{
+	echo '<h2>'.strftime("%Y-%m-%d").'</h2>';
+	show_lj_today($link);
 }
 
 //////////////user code ends////////////////
@@ -38,11 +51,11 @@ function get_lj_display_parameter_sample_id($link,$qc_levels)
 {
 	echo '<form method=post>';
 		echo '<input type=hidden name=session_name value=\''.$_POST['session_name'].'\'>';
-		read_checkbox($qc_levels);
+		//read_checkbox($qc_levels);
 		echo '<input type=text name=qc_equipment placeholder="QC Equipment">';
 		echo '<input type=number name=from_sample_id placeholder="from sample_id">';
 		echo '<input type=number name=to_sample_id placeholder="to sample_id">';
-		get_examination_names($link);
+		//get_examination_names($link);
 		echo '<input type=submit name=show_lj value="Show LJ">';	
 	echo '</form>';
 }
@@ -60,6 +73,15 @@ function get_lj_display_parameter_date_time($link,$qc_levels)
 		echo '<input type=time name=to_time>';
 		get_examination_names($link);
 		echo '<input type=submit name=show_lj value="Show LJ">';
+	echo '</form>';
+}
+
+
+function get_lj_display_parameter_today($link)
+{
+	echo '<form method=post>';
+		echo '<input type=hidden name=session_name value=\''.$_POST['session_name'].'\'>';
+		echo '<input type=submit name=show_today_lj value="Today\'s LJ">';
 	echo '</form>';
 }
 
@@ -124,7 +146,50 @@ function show_lj($link,$parameters)
 	$sample_id_array=get_qc_sample_id_from_parameters($link,$parameters);
 	//echo '<pre>';print_r($sample_id_array);echo '</pre>';
 
-	echo '<table class="table table-striped table-sm">';
+	echo '<table class="table table-striped table-sm" id=qc_table>';
+	echo '<tr>
+		<td><button type=button class="btn btn-sm btn-info" onclick="my_sort(this,0,\'qc_table\')" data-sorting=1>Sample_ID</button></td>
+		<td><button type=button class="btn btn-sm btn-info" onclick="my_sort(this,1,\'qc_table\')" data-sorting=1>Examination</button></td>
+		<td>Result</td>
+		<td><pre>4---------3---------2---------1---------0---------1---------2---------3---------4</pre></td>
+		<td><button type=button class="btn btn-sm btn-info" onclick="my_sort_float(this,4,\'qc_table\')" data-sorting=1>SDI</button></td>
+		<td>Mean</td>
+		<td>SD</td>
+		<td><button type=button class="btn btn-sm btn-info" onclick="my_sort(this,7,\'qc_table\')" data-sorting=1>Date</button></td>
+		<td><button type=button class="btn btn-sm btn-info" onclick="my_sort(this,8,\'qc_table\')" data-sorting=1>Time</button></td>
+		<td><button type=button class="btn btn-sm btn-info" onclick="my_sort(this,9,\'qc_table\')" data-sorting=1>Equipment</button></td>
+		<td><button type=button class="btn btn-sm btn-info" onclick="my_sort(this,10,\'qc_table\')" data-sorting=1>MRD</button></td>
+		<td><button type=button class="btn btn-sm btn-info" onclick="my_sort(this,11,\'qc_table\')" data-sorting=1>Analysis Time</button></td>
+		<td></td>		
+	</tr>';
+	foreach($sample_id_array as $sample_id)
+	{
+		display_one_qc($link,$sample_id);
+	}
+	echo '</table>';
+}
+
+function show_lj_today($link)
+{
+	$sample_id_array=get_today_sample_id($link);
+	//echo '<pre>';print_r($sample_id_array);echo '</pre>';
+
+	echo '<table class="table table-striped table-sm" id=qc_table>';
+	echo '<tr>
+		<td><button type=button class="btn btn-sm btn-info" onclick="my_sort(this,0,\'qc_table\')" data-sorting=1>Sample_ID</button></td>
+		<td><button type=button class="btn btn-sm btn-info" onclick="my_sort(this,1,\'qc_table\')" data-sorting=1>Examination</button></td>
+		<td>Result</td>
+		<td><pre>4---------3---------2---------1---------0---------1---------2---------3---------4</pre></td>
+		<td><button type=button class="btn btn-sm btn-info" onclick="my_sort_float(this,4,\'qc_table\')" data-sorting=1>SDI</button></td>
+		<td>Mean</td>
+		<td>SD</td>
+		<td><button type=button class="btn btn-sm btn-info" onclick="my_sort(this,7,\'qc_table\')" data-sorting=1>Date</button></td>
+		<td><button type=button class="btn btn-sm btn-info" onclick="my_sort(this,8,\'qc_table\')" data-sorting=1>Time</button></td>
+		<td><button type=button class="btn btn-sm btn-info" onclick="my_sort(this,9,\'qc_table\')" data-sorting=1>Equipment</button></td>
+		<td><button type=button class="btn btn-sm btn-info" onclick="my_sort(this,10,\'qc_table\')" data-sorting=1>MRD</button></td>
+		<td><button type=button class="btn btn-sm btn-info" onclick="my_sort(this,11,\'qc_table\')" data-sorting=1>Analysis Time</button></td>
+		<td></td>		
+	</tr>';
 	foreach($sample_id_array as $sample_id)
 	{
 		display_one_qc($link,$sample_id);
@@ -196,8 +261,15 @@ function display_one_qc($link,$sample_id)
 				echo '<td class="p-0 m-0"><pre>'.$lj_str.'</pre></td>';
 				echo '<td>'.$sdi.'</td>';
 				echo '<td>'.$lab_ref_val['mean'].'</td>';
-				echo '<td>'.$lab_ref_val['sd'].'</td>';				
-				echo '<td>'.$date.'</td>';
+				echo '<td>'.$lab_ref_val['sd'].'</td>';
+				if(strftime("%Y-%m-%d")==$date)
+				{				
+					echo '<td class="text-success">'.$date.'</td>';
+				}
+				else
+				{
+					echo '<td>'.$date.'</td>';
+				}
 				echo '<td>'.$time.'</td>';
 				echo '<td>'.$equipment.'</td>';
 				echo '<td>'.$mrd_num.'</td>';
@@ -213,7 +285,14 @@ function display_one_qc($link,$sample_id)
 				echo '<td></td>';				
 
 				
-				echo '<td>'.$date.'</td>';
+				if(strftime("%Y-%m-%d")==$date)
+				{				
+					echo '<td class="text-success">'.$date.'</td>';
+				}
+				else
+				{
+					echo '<td>'.$date.'</td>';
+				}
 				echo '<td>'.$time.'</td>';
 				echo '<td>'.$equipment.'</td>';
 				echo '<td>'.$mrd_num.'</td>';
@@ -254,7 +333,7 @@ function get_qc_sample_id_from_parameters($link,$parameters)
 					
 				equipment.examination_id=\''.$GLOBALS['qc_eqipment_ex_id'].'\' 
 					and	
-				equipment.result = \''.$parameters['qc_equipment'].'\'
+				equipment.result like \'%'.$parameters['qc_equipment'].'%\'
 					and				
 					
 				(mrd.sample_id between \''.$parameters['from_sample_id'].'\' and \''.$parameters['to_sample_id'].'\')
@@ -275,4 +354,56 @@ function get_qc_sample_id_from_parameters($link,$parameters)
 	//echo '<pre>';print_r($data);echo '</pre>';	
 	return $data;
 }
+
+
+
+function get_today_sample_id($link)
+{
+	/*
+		[qc_equipment] => 
+
+		[from_date] => 
+		[from_time] => 
+		[to_date] => 
+		[to_time] => 
+
+		[from_sample_id] => 
+		[to_sample_id] => 
+
+		[examination_id] => 9001
+	)*/
+	//echo '<pre>';print_r($parameters);echo '</pre>';
+
+	$sql='select mrd.sample_id 
+			from 
+				result mrd,
+				result today
+			 
+			where
+				mrd.examination_id=\''.$GLOBALS['mrd'].'\' 
+					and
+				mrd.result like "QC/%" 
+					and
+					
+				today.examination_id=\''.$GLOBALS['Collection_Date'].'\' 
+					and	
+				today.result = \''.strftime("%Y-%m-%d").'\'
+					and				
+										
+				mrd.sample_id=today.sample_id
+			
+			order by mrd.sample_id	
+			limit 500';
+				
+	//echo $sql;
+	$result=run_query($link,$GLOBALS['database'],$sql);
+	$data=array();
+	while($ar=get_single_row($result))
+	{
+		$data[]=$ar['sample_id'];
+	}
+	//echo '<pre>';print_r($data);echo '</pre>';	
+	return $data;
+}
+
 ?>
