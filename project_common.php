@@ -32,6 +32,7 @@ function main_menu()
 					<div class="btn-group-vertical  d-block">
 						<button class="btn btn-outline-primary m-0 p-0" formaction=view_database_id.php type=submit name=action value=get_dbid>View Sample ID</button>			
 						<button class="btn btn-outline-primary m-0 p-0" formaction=search.php type=submit name=action value=get_search_condition>Search</button>			
+						<button class="btn btn-outline-primary m-0 p-0" formaction=report.php type=submit name=action value=get_search_condition>Report</button>			
 					</div>
 				</div>
 		</div>
@@ -4250,6 +4251,8 @@ function export_data($result)
 	   }
 }
 
+
+
 function show_examination_bin()
 {
 	echo 
@@ -4497,4 +4500,263 @@ function prepare_sample_barcode_for_tube($sample_id,$pdf)
 		$pdf->AddPage();
 		$pdf->write1DBarcode($sample_id, 'C128', 03, 6 , 43, 15, 0.4, $style, 'N');
 }
+
+//===========for LJ Chart, but , general in nature===============
+
+
+function initialize_csv_export_file($filename='export.csv')
+{
+	$fp = fopen('php://output', 'w');
+	if ($fp) 
+	{
+		header('Content-Type: text/csv');
+		header('Content-Disposition: attachment; filename="export.csv"');
+	}
+	return $fp;
+}
+
+function get_date_range_sample_id($link,$from_date,$to_date)
+{
+	$sql='select mrd.sample_id 
+			from 
+				result mrd,
+				result date_range
+			 
+			where
+				mrd.examination_id=\''.$GLOBALS['mrd'].'\' 
+					and
+				mrd.result like "QC/%" 
+					and
+					
+				date_range.examination_id=\''.$GLOBALS['Collection_Date'].'\' 
+					and	
+				(date_range.result between 
+						\''.$from_date.'\'
+							and				
+						\''.$to_date.'\'
+				)	
+					and					
+					
+				mrd.sample_id=date_range.sample_id
+			
+			order by mrd.sample_id	
+			limit 500';
+				
+	//echo $sql;
+	$result=run_query($link,$GLOBALS['database'],$sql);
+	$data=array();
+	while($ar=get_single_row($result))
+	{
+		$data[]=$ar['sample_id'];
+	}
+	//echo '<pre>';print_r($data);echo '</pre>';	
+	return $data;
+}
+
+
+
+function mk_array_for_one_qc_result($link,$sample_id)
+{
+	$mrd_num=get_one_ex_result($link,$sample_id,$GLOBALS['mrd']);
+	$sample_requirement=get_one_ex_result($link,$sample_id,$GLOBALS['sample_requirement']);
+	$date=get_one_ex_result($link,$sample_id,$GLOBALS['Collection_Date']);
+	$time=get_one_ex_result($link,$sample_id,$GLOBALS['Collection_Time']);
+	$equipment=get_one_ex_result($link,$sample_id,$GLOBALS['qc_eqipment_ex_id']);
+
+	$sql='select * from primary_result where sample_id=\''.$sample_id.'\' order by uniq';
+	$result=run_query($link,$GLOBALS['database'],$sql);
+
+	$qc_data_array=array();
+	while($ar=get_single_row($result))
+	{
+		$lab_ref_val=get_lab_reference_value($link,$mrd_num,$ar['examination_id'],$date,$time,$equipment);
+		
+		$qc_data['sample_id']=$sample_id;
+		$qc_data['examination_id']=$ar['examination_id'].'-'.get_name_of_ex_id($link,$ar['examination_id']);
+		$qc_data['result']=$ar['result'];
+
+		//if($lab_ref_val!=false && is_numeric($ar['result']))
+		if(!is_numeric($ar['result']))
+		{
+			//echo $ar['result'].' not numeric<br>';
+		}
+		if(!$lab_ref_val!=false)
+		{
+			//echo $ar['result'].' reference value not found<br>';
+		}
+		
+		if($lab_ref_val!=false && is_numeric($ar['result']))
+		{
+			$sdi=round((($ar['result']-$lab_ref_val['mean'])/$lab_ref_val['sd']),1);
+			$qc_data['sdi']=$sdi;
+			$qc_data['mean']=$lab_ref_val['mean'];
+			$qc_data['sd']=$lab_ref_val['sd'];
+			$qc_data['date']=$date;
+			$qc_data['time']=$time;
+			$qc_data['equipment']=$equipment;
+			$qc_data['mrd_num']=$mrd_num;
+			$qc_data['uniq']=$ar['uniq'];
+		}
+		else
+		{
+			$qc_data['sdi']='';
+			$qc_data['mean']='';
+			$qc_data['sd']='';
+			$qc_data['date']=$date;
+			$qc_data['time']=$time;
+			$qc_data['equipment']=$equipment;
+			$qc_data['mrd_num']=$mrd_num;
+			$qc_data['uniq']=$ar['uniq'];
+		}
+		$qc_data_array[]=$qc_data;
+	}
+	return $qc_data_array;
+}
+
+function get_lab_reference_value($link,$mrd_num,$examination_id,$dt,$tm,$equipment)
+{
+	$str_datetime=$dt.' '.$tm;
+	//2020-06-01 14:36:40
+	//%Y-%m-%d %H:%i:%s
+	$sql='select * from lab_reference_value where 
+			mrd=\''.$mrd_num.'\'
+				and
+			examination_id=\''.$examination_id.'\'
+				and
+			(str_to_date(\''.$str_datetime.'\',\'%Y-%m-%d %H:%i:%s\') 
+						between
+							str_to_date(concat(start_date," ",start_time),\'%Y-%m-%d %H:%i:%s\') 
+								and
+							str_to_date(concat(end_date," ",end_time),\'%Y-%m-%d %H:%i:%s\') 
+						)
+				and
+			equipment=\''.$equipment.'\'
+			';
+			
+	//echo $sql.'<br>';
+	$result=run_query($link,$GLOBALS['database'],$sql);
+	if(rows_affected($link)!=1)
+	{
+		//echo 'exact one raw for lab_reference_value is required. got (('.rows_affected($link).'))<br>';
+		return false;
+	}
+	$ar=get_single_row($result);
+	return $ar;
+	//database user is responsible to see that only one such row is avaialble
+}
+function get_qc_examination_names($link)
+{
+	$sql='select examination_id,name from examination where sample_requirement="QC-QC-BI"';
+	mk_select_from_sql_kv($link,$sql,'examination_id','name','examination_id','examination_id',$disabled='',$default='',$blank='yes');
+}
+
+function get_name_of_ex_id($link,$examination_id)
+{
+	$sql='select name from examination where examination_id=\''.$examination_id.'\'';
+	$result=run_query($link,$GLOBALS['database'],$sql);
+	$ar=get_single_row($result);
+	return $ar['name'];
+}
+
+function get_qc_sample_id_from_parameters($link,$parameters)
+{
+	/*
+		[qc_equipment] => 
+
+		[from_date] => 
+		[from_time] => 
+		[to_date] => 
+		[to_time] => 
+
+		[from_sample_id] => 
+		[to_sample_id] => 
+
+		[examination_id] => 9001
+	)*/
+	//echo '<pre>';print_r($parameters);echo '</pre>';
+
+	$sql='select mrd.sample_id 
+			from 
+				result mrd,
+				result equipment
+			 
+			where
+				mrd.examination_id=\''.$GLOBALS['mrd'].'\' 
+					and
+				mrd.result like "QC/%" 
+					and
+					
+				equipment.examination_id=\''.$GLOBALS['qc_eqipment_ex_id'].'\' 
+					and	
+				equipment.result like \'%'.$parameters['qc_equipment'].'%\'
+					and				
+					
+				(mrd.sample_id between \''.$parameters['from_sample_id'].'\' and \''.$parameters['to_sample_id'].'\')
+					and
+					
+				mrd.sample_id=equipment.sample_id
+			
+			order by mrd.sample_id	
+			limit 500';
+				
+	//echo $sql;
+	$result=run_query($link,$GLOBALS['database'],$sql);
+	$data=array();
+	while($ar=get_single_row($result))
+	{
+		$data[]=$ar['sample_id'];
+	}
+	//echo '<pre>';print_r($data);echo '</pre>';	
+	return $data;
+}
+
+function get_today_sample_id($link)
+{
+	/*
+		[qc_equipment] => 
+
+		[from_date] => 
+		[from_time] => 
+		[to_date] => 
+		[to_time] => 
+
+		[from_sample_id] => 
+		[to_sample_id] => 
+
+		[examination_id] => 9001
+	)*/
+	//echo '<pre>';print_r($parameters);echo '</pre>';
+
+	$sql='select mrd.sample_id 
+			from 
+				result mrd,
+				result today
+			 
+			where
+				mrd.examination_id=\''.$GLOBALS['mrd'].'\' 
+					and
+				mrd.result like "QC/%" 
+					and
+					
+				today.examination_id=\''.$GLOBALS['Collection_Date'].'\' 
+					and	
+				today.result = \''.strftime("%Y-%m-%d").'\'
+					and				
+										
+				mrd.sample_id=today.sample_id
+			
+			order by mrd.sample_id	
+			limit 500';
+				
+	//echo $sql;
+	$result=run_query($link,$GLOBALS['database'],$sql);
+	$data=array();
+	while($ar=get_single_row($result))
+	{
+		$data[]=$ar['sample_id'];
+	}
+	//echo '<pre>';print_r($data);echo '</pre>';	
+	return $data;
+}
+
 ?>

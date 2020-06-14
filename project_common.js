@@ -170,18 +170,23 @@ function my_sort(me,col_index,my_table)
             first = all_rows[i].getElementsByTagName("TD")[col_index].innerHTML
             second = all_rows[i+1].getElementsByTagName("TD")[col_index].innerHTML
 
-            if(cur_val==1)
+            if(cur_val==1)	//ascending
             {
-                if ( first > second ) 
+                if ( first > second ) //(Z,A) Z>A
                 {
-                    all_rows[i].parentNode.insertBefore(all_rows[i + 1], all_rows[i]);
+					//node.insertBefore(newnode, existingnode)
+					//ascending: result should be (A,Z)
+                    all_rows[i].parentNode.insertBefore(all_rows[i+1], all_rows[i]);
                     done_something=true
                 }
+                //else do nothing
             }
-            else
+            else  			//descending
             {
-                 if ( first < second ) 
+                 if ( first < second ) //((A,Z) A<Z
                 {
+					//node.insertBefore(newnode, existingnode)
+					//ascending: result should be (Z,A)
                     all_rows[i].parentNode.insertBefore(all_rows[i + 1], all_rows[i]);
                     done_something=true
                 }           
@@ -190,6 +195,7 @@ function my_sort(me,col_index,my_table)
         }
     }
 }
+
 
 function my_sort_float(me,col_index,my_table)
 {
@@ -211,24 +217,35 @@ function my_sort_float(me,col_index,my_table)
             //second = all_rows[i+1].getElementsByTagName("TD")[col_index].innerHTML.toLowerCase();
             first = parseFloat(all_rows[i].getElementsByTagName("TD")[col_index].innerHTML)
             second = parseFloat(all_rows[i+1].getElementsByTagName("TD")[col_index].innerHTML)
-
-            if(cur_val==1)
-            {
-                if ( first > second ) 
-                {
-                    all_rows[i].parentNode.insertBefore(all_rows[i + 1], all_rows[i]);
-                    done_something=true
-                }
-            }
-            else
-            {
-                 if ( first < second ) 
-                {
-                    all_rows[i].parentNode.insertBefore(all_rows[i + 1], all_rows[i]);
-                    done_something=true
-                }           
-            
-            }
+			if(Number.isNaN(first))
+			{
+				//alert('NA')
+				all_rows[i].parentNode.appendChild(all_rows[i]);
+			}
+			if(Number.isNaN(second))
+			{
+				all_rows[i].parentNode.appendChild(all_rows[i+1]);
+			}
+			else
+			{
+				if(cur_val==1)
+				{
+					if ( first > second ) 
+					{
+						all_rows[i].parentNode.insertBefore(all_rows[i + 1], all_rows[i]);
+						done_something=true
+					}
+				}
+				else
+				{
+					 if ( first < second ) 
+					{
+						all_rows[i].parentNode.insertBefore(all_rows[i + 1], all_rows[i]);
+						done_something=true
+					}           
+				
+				}
+			}
         }
     }
 }
