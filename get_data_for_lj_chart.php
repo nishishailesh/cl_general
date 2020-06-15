@@ -16,6 +16,7 @@ $qc_sample_type=array('QC-QC-BI');
 $GLOBALS['qc_eqipment_ex_id']=9000;
 $GLOBALS['Collection_Date']=1015;
 $GLOBALS['Collection_Time']=1016;
+$GLOBALS['remark']=5098;
 
 echo '<h2>QC</h2>';
 
@@ -177,6 +178,7 @@ function display_one_qc($link,$sample_id)
 	$date=get_one_ex_result($link,$sample_id,$GLOBALS['Collection_Date']);
 	$time=get_one_ex_result($link,$sample_id,$GLOBALS['Collection_Time']);
 	$equipment=get_one_ex_result($link,$sample_id,$GLOBALS['qc_eqipment_ex_id']);
+	$comment=get_one_ex_result($link,$sample_id,$GLOBALS['remark']);
 
 	$sql='select * from primary_result where sample_id=\''.$sample_id.'\' order by uniq';
 	$result=run_query($link,$GLOBALS['database'],$sql);
@@ -206,7 +208,40 @@ function display_one_qc($link,$sample_id)
 
 		
 		echo '<tr class=\''.$tr_class.'\'>';
-			echo '<td class=\''.$sample_class.'\'>'.$sample_id.'</td>';
+			echo '<td  class=\''.$sample_class.'\'>';
+			
+			echo '<button id=\'button_'.$sample_id.'\' 
+					data-toggle="modal" 
+					data-target=\'#modal_'.$sample_id.$ar['examination_id'].'\'   >'.$sample_id.'</button>';
+			echo '<div id=\'modal_'.$sample_id.$ar['examination_id'].'\' class=modal>';
+				echo '<div class="modal-dialog">';
+      				echo 
+      				'<div class="modal-content">
+      				<form method=post action=start.php>
+      				
+						<div class="modal-header">
+							<h4 class="modal-title">Comment for QC ID:'.$sample_id.'</h4>
+							<button type="button" class="close" data-dismiss="modal">&times;</button>
+						</div>
+						
+						<div class="modal-body">';
+						  //<textarea class="form-control p-0 m-0 no-gutters" >'.$comment.'</textarea>
+						  $remark_result=get_one_ex_result($link,$sample_id,$GLOBALS['remark']);
+						  edit_field($link,$GLOBALS['remark'],array($GLOBALS['remark']=>$remark_result),$sample_id,$readonly='');
+						  
+						echo '</div>
+						
+						<div class="modal-footer">
+						  <button type="submit" class="btn btn-danger submit" data-dismiss="modal">Save</button>
+						</div>';
+											
+    				echo '</form>
+    				</div>';
+				echo '</div>';
+			echo '</div>';
+			
+			
+			echo '</td>';
 			echo '<td>'.$ar['examination_id'].'-'.get_name_of_ex_id($link,$ar['examination_id']).'</td>';
 			echo '<td>'.$ar['result'].'</td>';
 
@@ -277,7 +312,7 @@ function display_one_qc($link,$sample_id)
 				
 				if(strftime("%Y-%m-%d")==$date)
 				{				
-					echo '<td class="text-success">'.$date.'</td>';
+					echo '<td class="border border-dark">'.$date.'</td>';
 				}
 				else
 				{
@@ -289,11 +324,19 @@ function display_one_qc($link,$sample_id)
 				//echo '<td>'.$sample_requirement.'</td>';
 				echo '<td>'.$ar['uniq'].'</td>';
 			}
+			
 		echo '</tr>';		
 	}
 }
 
-
+function echo_sample_id_button_for_remark($link,$sample_id)
+{
+	echo '<div class="modal>'.$sample_id.'</div>';
+	//echo'<form method=post action=export.php class="d-inline-block">
+	//<input type=hidden name=session_name value=\''.$_POST['session_name'].'\'>
+	//<input type=hidden name=sample_id value=\''.$sample_id_csv.'\'>
+	//<div class=print_hide><button type=submit class="btn btn-info  border-danger m-0 p-0" name=export>Export</button></div></form>';	
+}
 /*
 function get_date_range_sample_id($link,$from_date,$to_date)
 {

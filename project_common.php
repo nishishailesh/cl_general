@@ -1311,7 +1311,7 @@ function edit_field($link,$examination_id,$result_array,$sample_id,$readonly='')
 				//////
 		echo '<div class="basic_form  m-0 p-0 no-gutters">';
 			////
-			set_lable($_POST['session_name'],$_POST['sample_id'],$examination_details,$examination_id);
+			set_lable($_POST['session_name'],$sample_id,$examination_details,$examination_id);
 			////
 			echo '<div class="m-0 p-0 no-gutters">';
 				////
@@ -1356,7 +1356,7 @@ function edit_field($link,$examination_id,$result_array,$sample_id,$readonly='')
 				//////
 		echo '<div class="basic_form  m-0 p-0 no-gutters">';
 			////
-			set_lable($_POST['session_name'],$_POST['sample_id'],$examination_details,$examination_id);
+			set_lable($_POST['session_name'],$sample_id,$examination_details,$examination_id);
 			////
 			echo '<div class="m-0 p-0 no-gutters">';
 				////
@@ -1391,7 +1391,7 @@ function edit_field($link,$examination_id,$result_array,$sample_id,$readonly='')
 				//////
 		echo '<div class="basic_form  m-0 p-0 no-gutters">';
 			////
-			set_lable($_POST['session_name'],$_POST['sample_id'],$examination_details,$examination_id);
+			set_lable($_POST['session_name'],$sample_id,$examination_details,$examination_id);
 			////
 			echo '<div class="m-0 p-0 no-gutters">';
 				////
@@ -1430,7 +1430,7 @@ function edit_field($link,$examination_id,$result_array,$sample_id,$readonly='')
 		//////
 		echo '<div class="basic_form  m-0 p-0 no-gutters">';
 			////
-			set_lable($_POST['session_name'],$_POST['sample_id'],$examination_details,$examination_id);
+			set_lable($_POST['session_name'],$sample_id,$examination_details,$examination_id);
 			////
 			echo '<div class="m-0 p-0 no-gutters">';
 				////
@@ -1460,7 +1460,7 @@ function edit_field($link,$examination_id,$result_array,$sample_id,$readonly='')
 		//////
 		echo '<div class="basic_form  m-0 p-0 no-gutters">';
 			////
-			set_lable($_POST['session_name'],$_POST['sample_id'],$examination_details,$examination_id);
+			set_lable($_POST['session_name'],$sample_id,$examination_details,$examination_id);
 			////
 			echo '<div class="m-0 p-0 no-gutters">';
 				////
@@ -1500,7 +1500,7 @@ function edit_field($link,$examination_id,$result_array,$sample_id,$readonly='')
 				
 		echo '<div class="basic_form  m-0 p-0 no-gutters">';
 			////
-			set_lable($_POST['session_name'],$_POST['sample_id'],$examination_details,$examination_id);
+			set_lable($_POST['session_name'],$sample_id,$examination_details,$examination_id);
 			////
 			echo '<div class="m-0 p-0 no-gutters">';
 				////
@@ -1531,7 +1531,7 @@ function edit_field($link,$examination_id,$result_array,$sample_id,$readonly='')
 		//////
 		echo '<div class="basic_form  m-0 p-0 no-gutters">';
 			////
-			set_lable_subsection($_POST['session_name'],$_POST['sample_id'],$examination_details,$examination_id);
+			set_lable_subsection($_POST['session_name'],$sample_id,$examination_details,$examination_id);
 			////
 			echo '<div class="m-0 p-0 no-gutters">';
 				////
@@ -1561,7 +1561,7 @@ function edit_field($link,$examination_id,$result_array,$sample_id,$readonly='')
 		//////
 		echo '<div class="basic_form  m-0 p-0 no-gutters">';
 			////
-			set_lable($_POST['session_name'],$_POST['sample_id'],$examination_details,$examination_id);
+			set_lable($_POST['session_name'],$sample_id,$examination_details,$examination_id);
 			////
 			echo '<div class="m-0 p-0 no-gutters">';
 				////
@@ -1594,7 +1594,7 @@ function edit_field($link,$examination_id,$result_array,$sample_id,$readonly='')
 		//////
 		echo '<div class="basic_form  m-0 p-0 no-gutters">';
 			////
-			set_lable($_POST['session_name'],$_POST['sample_id'],$examination_details,$examination_id);
+			set_lable($_POST['session_name'],$sample_id,$examination_details,$examination_id);
 			////
 			echo '<div class="m-0 p-0 no-gutters">';
 				////
@@ -3088,7 +3088,7 @@ function set_lable($session_name,$sample_id,$examination_details,$examination_id
 				</form>
 				';
 		}		
-		echo '<label for="'.$examination_details['name'].'">'.$examination_details['name'].'</label>
+		echo '<label for="'.$examination_details['name'].'" title=\''.$examination_id.'\'>'.$examination_details['name'].'</label>
 			</div>';
 }
 

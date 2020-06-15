@@ -250,6 +250,10 @@ function my_sort_float(me,col_index,my_table)
     }
 }
 
+function show_comment_modal()
+{
+		
+}
 
 $(document).ready
 	(
