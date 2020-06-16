@@ -33,7 +33,7 @@ chmod -R www-data:www-data /var/gmcs_config
 - import cl_general_blank.sql
 - import other sql files one by one if you have some readymade data
 
-#Run Program
+# Run Program
 - create one user in user table of database (use entrypt() for password)
 - browse: 127.0.0.1/cl_general
 - login using user id and password
