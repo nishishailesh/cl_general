@@ -10,6 +10,7 @@ echo '		  <link rel="stylesheet" href="project_common.css">
 		  <script src="project_common.js"></script>';	
 $link=get_link($GLOBALS['main_user'],$GLOBALS['main_pass']);
 main_menu();
+echo '<div id=response></div>';
 
 $qc_levels=array(5,8);
 $qc_sample_type=array('QC-QC-BI');
@@ -123,17 +124,17 @@ function show_lj_for_sample($link,$sample_id_array)
 {
 	echo '<table class="table table-striped table-sm" id=qc_table>';
 	echo '<tr>
-		<td><button type=button class="btn btn-sm btn-info" onclick="my_sort(this,0,\'qc_table\')" data-sorting=1>Sample_ID</button></td>
-		<td><button type=button class="btn btn-sm btn-info" onclick="my_sort(this,1,\'qc_table\')" data-sorting=1>Examination</button></td>
+		<td><button type=button class="btn btn-sm btn-info" onclick="my_sort(this,0,\'qc_table\')" data-sorting=1>MRD</button></td>
+		<td><button type=button class="btn btn-sm btn-info" onclick="my_sort(this,1,\'qc_table\')" data-sorting=1>Sample_ID</button></td>
+		<td><button type=button class="btn btn-sm btn-info" onclick="my_sort(this,2,\'qc_table\')" data-sorting=1>Examination</button></td>
 		<td>Result</td>
 		<td><pre>4---------3---------2---------1---------0---------1---------2---------3---------4</pre></td>
-		<td><button type=button class="btn btn-sm btn-info" onclick="my_sort_float(this,4,\'qc_table\')" data-sorting=1>SDI</button></td>
+		<td><button type=button class="btn btn-sm btn-info" onclick="my_sort_float(this,5,\'qc_table\')" data-sorting=1>SDI</button></td>
 		<td>Mean</td>
 		<td>SD</td>
-		<td><button type=button class="btn btn-sm btn-info" onclick="my_sort(this,7,\'qc_table\')" data-sorting=1>Date</button></td>
-		<td><button type=button class="btn btn-sm btn-info" onclick="my_sort(this,8,\'qc_table\')" data-sorting=1>Time</button></td>
-		<td><button type=button class="btn btn-sm btn-info" onclick="my_sort(this,9,\'qc_table\')" data-sorting=1>Equipment</button></td>
-		<td><button type=button class="btn btn-sm btn-info" onclick="my_sort(this,10,\'qc_table\')" data-sorting=1>MRD</button></td>
+		<td><button type=button class="btn btn-sm btn-info" onclick="my_sort(this,8,\'qc_table\')" data-sorting=1>Date</button></td>
+		<td><button type=button class="btn btn-sm btn-info" onclick="my_sort(this,9,\'qc_table\')" data-sorting=1>Time</button></td>
+		<td><button type=button class="btn btn-sm btn-info" onclick="my_sort(this,10,\'qc_table\')" data-sorting=1>Equipment</button></td>
 		<td><button type=button class="btn btn-sm btn-info" onclick="my_sort(this,11,\'qc_table\')" data-sorting=1>Analysis Time</button></td>
 		<td></td>		
 	</tr>';
@@ -208,16 +209,32 @@ function display_one_qc($link,$sample_id)
 
 		
 		echo '<tr class=\''.$tr_class.'\'>';
+		
+		if(substr($mrd_num,0,strlen($GLOBALS['normal_qc_str']))==$GLOBALS['normal_qc_str'])
+		{
+			$modified_mrd_num=substr_replace(
+					$mrd_num,'<span class="bg-warning text-dark">'.$GLOBALS['normal_qc_str'].'</span>',
+					0,strlen($GLOBALS['normal_qc_str'])
+					);
+		}
+		else
+		{
+			$modified_mrd_num=substr_replace(
+					$mrd_num,'<span class="bg-light text-dark">'.$GLOBALS['abnormal_qc_str'].'</span>',
+					0,strlen($GLOBALS['abnormal_qc_str'])
+					);
+		}					
+		echo '<td>'.$modified_mrd_num.'</td>';
+		//sample_id button for remark modal popup		
 			echo '<td  class=\''.$sample_class.'\'>';
-			
-			echo '<button id=\'button_'.$sample_id.'\' 
+			echo '<button id=\'button_'.$sample_id.'\'
+					class="btn btn-sm '.$sample_class.' "
 					data-toggle="modal" 
 					data-target=\'#modal_'.$sample_id.$ar['examination_id'].'\'   >'.$sample_id.'</button>';
-			echo '<div id=\'modal_'.$sample_id.$ar['examination_id'].'\' class=modal>';
+			echo '<div id=\'modal_'.$sample_id.$ar['examination_id'].'\' class="modal">';
 				echo '<div class="modal-dialog">';
       				echo 
       				'<div class="modal-content">
-      				<form method=post action=start.php>
       				
 						<div class="modal-header">
 							<h4 class="modal-title">Comment for QC ID:'.$sample_id.'</h4>
@@ -225,23 +242,20 @@ function display_one_qc($link,$sample_id)
 						</div>
 						
 						<div class="modal-body">';
-						  //<textarea class="form-control p-0 m-0 no-gutters" >'.$comment.'</textarea>
 						  $remark_result=get_one_ex_result($link,$sample_id,$GLOBALS['remark']);
-						  edit_field($link,$GLOBALS['remark'],array($GLOBALS['remark']=>$remark_result),$sample_id,$readonly='');
-						  
+						  edit_field($link,$GLOBALS['remark'],array($GLOBALS['remark']=>$remark_result),$sample_id,$readonly='');						  
 						echo '</div>
 						
 						<div class="modal-footer">
-						  <button type="submit" class="btn btn-danger submit" data-dismiss="modal">Save</button>
+						  <button class="btn btn-danger" data-dismiss="modal">Save</button>
 						</div>';
 											
-    				echo '</form>
-    				</div>';
+    				echo '</div>';
 				echo '</div>';
 			echo '</div>';
-			
-			
 			echo '</td>';
+		//end of sample_id button for remark modal popup
+		
 			echo '<td>'.$ar['examination_id'].'-'.get_name_of_ex_id($link,$ar['examination_id']).'</td>';
 			echo '<td>'.$ar['result'].'</td>';
 
@@ -299,7 +313,6 @@ function display_one_qc($link,$sample_id)
 				}
 				echo '<td>'.$time.'</td>';
 				echo '<td>'.$equipment.'</td>';
-				echo '<td>'.$mrd_num.'</td>';
 				//echo '<td>'.$sample_requirement.'</td>';
 				echo '<td>'.$ar['uniq'].'</td>';			
 			}
@@ -320,7 +333,6 @@ function display_one_qc($link,$sample_id)
 				}
 				echo '<td>'.$time.'</td>';
 				echo '<td>'.$equipment.'</td>';
-				echo '<td>'.$mrd_num.'</td>';
 				//echo '<td>'.$sample_requirement.'</td>';
 				echo '<td>'.$ar['uniq'].'</td>';
 			}

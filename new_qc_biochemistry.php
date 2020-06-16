@@ -48,6 +48,7 @@ function get_data_specific($link)
 			get_one_field_for_insert($link,1015);	//collection date
 			get_one_field_for_insert($link,1016);	//collection time
 			get_one_field_for_insert($link,9000);	//equipment
+			get_one_field_for_insert($link,5098);	//Remark
 
 			//get_one_field_for_insert($link,1008);	//Sex
 			
