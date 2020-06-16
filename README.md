@@ -1,12 +1,13 @@
-#cl_general installation\\ 
+# cl_general installation
+
 download zip
 
-======Setup PHP scripts======
+## Setup PHP scripts
 create /var/www/html/cl_general folder
 extract all files to  /var/www/html/cl_general
 chmod -R www-data:www-data /var/www/html/cl_general
 
-===create /var/gmcs_config/staff.conf with following content===
+#### create /var/gmcs_config/staff.conf with following content
 
 <?php
 $GLOBALS['main_user']='mysql user';
@@ -19,7 +20,7 @@ $GLOBALS['email_db_server']='email database ip';
 
 chmod -R www-data:www-data /var/gmcs_config
 
-=====create databse======
+## create databse
 
 /var/www/html/cl_general folder have many SQL
 create database cl_general
