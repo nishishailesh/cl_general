@@ -26,7 +26,7 @@ $GLOBALS['email_db_server']='email database ip';
 chmod -R www-data:www-data /var/gmcs_config
 ```
 
-## create databse
+## create database
 
 - /var/www/html/cl_general folder have many SQL
 - create database cl_general
