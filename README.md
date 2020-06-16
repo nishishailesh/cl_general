@@ -7,6 +7,7 @@ extract all files to  /var/www/html/cl_general
 chmod -R www-data:www-data /var/www/html/cl_general
 
 ===create /var/gmcs_config/staff.conf with following content===
+
 <?php
 $GLOBALS['main_user']='mysql user';
 $GLOBALS['main_pass']='mysql password';
