@@ -5,9 +5,10 @@ download zip
 ## Setup PHP scripts
 - create /var/www/html/cl_general folder
 - extract all files to  /var/www/html/cl_general
-'''
+- run command:
+```
 chmod -R www-data:www-data /var/www/html/cl_general
-'''
+```
 
 #### create /var/gmcs_config/staff.conf with following content
 
