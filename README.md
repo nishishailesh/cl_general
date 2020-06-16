@@ -1,4 +1,4 @@
-#cl_general installation, 
+#cl_general installation\\ 
 download zip
 
 ======Setup PHP scripts======
