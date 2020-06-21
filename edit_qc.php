@@ -1,7 +1,5 @@
 <?php
 //$GLOBALS['nojunk']='';
-//echo '<pre>';print_r($_POST);print_r($_FILES);echo '</pre>';
-
 require_once 'project_common.php';
 require_once 'base/verify_login.php';
 require_once 'verify.php';
@@ -65,21 +63,10 @@ if($_POST['action']=='verify')
 	edit_sample($link,$_POST['sample_id']);
 }
 
-if($_POST['action']=='save_primary_result')
-{
-    //[session_name] => sn_1241728485
-    //[sample_id] => 9000012
-    //[examination_id] => 9001
-    //[__ex__9001] => 1.2
-    //[action] => save_primary_result
-    
-    insert_primary_result($link,$_POST['sample_id'],$_POST['examination_id'],$_POST['result'],$_POST['uniq']);
-	edit_sample($link,$_POST['sample_id']);
-    
-}
 //////////////user code ends////////////////
 tail();
 
+//echo '<pre>';print_r($_POST);print_r($_FILES);echo '</pre>';
 
 //////////////Functions///////////////////////
 function calculate_and_update($link,$sample_id)
@@ -166,36 +153,6 @@ function save_single_result_blob($link,$sample_id,$examination_id,$uniq)
 		if(!run_query($link,$GLOBALS['database'],$update_sql_blob))
 		{echo 'blob data synchronization failed';}
 	}	
-}
-
-
-function insert_primary_result($link,$sample_id,$examination_id,$ex_result,$uniq)
-{
-	
-	$sql='insert into primary_result
-				(sample_id,examination_id,result,uniq)
-				values
-			   (\''.$sample_id.'\' ,
-				\''.$examination_id.'\', 
-				\''.my_safe_string($link,$ex_result).'\',
-				\''.$uniq.'\')';
-				
-	//echo $sql;
-	if(!$result=run_query($link,$GLOBALS['database'],$sql))
-	{
-		echo '<p>Data not updated</p>';
-	}
-	else
-	{
-		if(rows_affected($link)>0)
-		{
-			echo '<p>'.$_POST['sample_id'].'|'.$_POST['examination_id'].'|'.$_POST['result'].'|Saved in primary_result</p>';				
-		}
-		else
-		{
-			echo '<p>nothing to update (no row / same data)</p>';
-		}				
-	}
 }
 //////////////Functions///////////////////////
 

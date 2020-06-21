@@ -33,6 +33,7 @@ function main_menu()
 						<button class="btn btn-outline-primary m-0 p-0" formaction=view_database_id.php type=submit name=action value=get_dbid>View Sample ID</button>			
 						<button class="btn btn-outline-primary m-0 p-0" formaction=search.php type=submit name=action value=get_search_condition>Search</button>			
 						<button class="btn btn-outline-primary m-0 p-0" formaction=report.php type=submit name=action value=get_search_condition>Report</button>			
+						<button class="btn btn-outline-primary m-0 p-0" formaction=view_worklist.php type=submit name=action value=get_sid_eid_for_worklist>Worklist</button>			
 					</div>
 				</div>
 		</div>
@@ -64,6 +65,7 @@ function main_menu()
 				
 		<button class="btn btn-outline-primary m-0 p-0" formaction=copy_prototype.php type=submit name=action value=copy_prototype>Copy Prototype</button>			
 		<button class="btn btn-outline-primary m-0 p-0" formaction=start.php type=submit name=action value=home><img src=img/home.jpeg height=20></button>
+		<button class="btn btn-outline-primary m-0 p-0" formaction=start.php type=submit formtarget=_blank name=action value=home>+</button>
 	</div>
 
 	</form>';		
@@ -1096,7 +1098,7 @@ function get_primary_result($link,$sample_id,$examination_id)
 					data-exid=\''.$examination_id.'\' 
 					value=\''.$ar['result'].'\' >'.$ar['result'].'</button>';
 		*/			
-		echo '<form class="d-inline" method=post><button type=submit
+		echo '<form class="d-inline" method=post><button type=submit title=\''.$ar['uniq'].'\'
 					class="btn btn-sm btn-outline-important  no-gutters align-top"
 					name=result value=\''.$ar['result'].'\' >'.$ar['result'].'</button>
 					<input type=hidden name=sample_id value=\''.$sample_id.'\' >
@@ -1105,6 +1107,53 @@ function get_primary_result($link,$sample_id,$examination_id)
 					<input type=hidden name=session_name value=\''.session_name().'\'>
 			</form>';
 	}
+	
+	//get primary result
+	
+			echo '<button id=\'button_'.$sample_id.$examination_id.'\'
+					class="btn btn-sm d-inline   no-gutters align-top"
+					data-toggle="modal" 
+					data-target=\'#modal_'.$sample_id.$examination_id.'\' >+</button>';
+			echo '<div id=\'modal_'.$sample_id.$examination_id.'\' class="modal">';
+				echo '<div class="modal-dialog">';
+      				echo 
+      				'<div class="modal-content">
+      				
+						<div class="modal-header">
+							<h4 class="modal-title">add primary result for Sample ID:'.$sample_id.' Examination ID:'.$examination_id.'<br>
+							Refresh main page for reflecting changes</h5>
+							<button type="button" class="close" data-dismiss="modal">&times;</button>
+						</div>
+						
+						<div class="modal-body">';
+						//get primary data
+						echo '<form method=post>';
+							echo '<input type=hidden name=session_name value=\''.$_POST['session_name'].'\'>';
+							echo '<input type=hidden name=sample_id value=\''.$sample_id.'\' >';
+							echo '<input type=hidden name=examination_id value=\''.$examination_id.'\'>';
+								
+							get_one_field_for_insert_in_primary_result($link,$sample_id,$examination_id);
+							echo '<input type=text name=uniq value=\''.strftime("%Y-%m-%d %H:%M:%S").'\'>';
+						  	echo '<button 
+						  			id=\'submit_'.$sample_id.$examination_id.'\' 
+						  			type=submit
+						  			name=action
+						  			value=save_primary_result
+						  			class="btn btn-danger insert_primary_result" 
+						  			>Save
+						  	</button>';						  
+						echo '</form>';
+						//end of get primary data
+						echo '</div>
+						
+						
+						<div class="modal-footer">
+						  
+						</div>';
+											
+    				echo '</div>';
+				echo '</div>';
+			echo '</div>';
 	//return $values;
 }
 
@@ -1287,7 +1336,7 @@ function sync_all($link,$sample_id)
 		
 }
 
-function edit_field($link,$examination_id,$result_array,$sample_id,$readonly='')
+function edit_field($link,$examination_id,$result_array,$sample_id,$readonly='',$frill=True)
 {
 	if(array_key_exists($examination_id,$result_array)){$result=$result_array[$examination_id];}else{$result='';}
 	$examination_details=get_one_examination_details($link,$examination_id);
@@ -1296,7 +1345,15 @@ function edit_field($link,$examination_id,$result_array,$sample_id,$readonly='')
 	
 	$type=isset($edit_specification['type'])?$edit_specification['type']:'text';
 	$readonly=isset($edit_specification['readonly'])?$edit_specification['readonly']:'';
-	$help=isset($edit_specification['help'])?$edit_specification['help']:'';
+	
+	if($frill){
+				$help=isset($edit_specification['help'])?$edit_specification['help']:'';
+			}
+	else
+	{
+		$help='';
+	}
+	
 	$pattern=isset($edit_specification['pattern'])?$edit_specification['pattern']:'';
 	$placeholder=isset($edit_specification['placeholder'])?$edit_specification['placeholder']:'';
 	$step=isset($edit_specification['step'])?$edit_specification['step']:0;
@@ -1311,7 +1368,7 @@ function edit_field($link,$examination_id,$result_array,$sample_id,$readonly='')
 				//////
 		echo '<div class="basic_form  m-0 p-0 no-gutters">';
 			////
-			set_lable($_POST['session_name'],$sample_id,$examination_details,$examination_id);
+			set_lable($_POST['session_name'],$sample_id,$examination_details,$examination_id,$frill);
 			////
 			echo '<div class="m-0 p-0 no-gutters">';
 				////
@@ -1330,7 +1387,7 @@ function edit_field($link,$examination_id,$result_array,$sample_id,$readonly='')
 						>'.$result.'</button>';
 				echo '</div>';
 				echo '<div class="d-inline  no-gutters">';
-						get_primary_result($link,$sample_id,$examination_id);
+						if($frill){get_primary_result($link,$sample_id,$examination_id);}
 				echo '</div>';
 			echo '</div>';
 			echo '<div class="help"><pre>'.$help.'</pre></div>';	
@@ -1356,7 +1413,7 @@ function edit_field($link,$examination_id,$result_array,$sample_id,$readonly='')
 				//////
 		echo '<div class="basic_form  m-0 p-0 no-gutters">';
 			////
-			set_lable($_POST['session_name'],$sample_id,$examination_details,$examination_id);
+			set_lable($_POST['session_name'],$sample_id,$examination_details,$examination_id,$frill);
 			////
 			echo '<div class="m-0 p-0 no-gutters">';
 				////
@@ -1372,7 +1429,7 @@ function edit_field($link,$examination_id,$result_array,$sample_id,$readonly='')
 						class="form-control autosave-select">'.$option_html.'</select>';
 				echo '</div>';
 				echo '<div class="d-inline  no-gutters">';
-					get_primary_result($link,$sample_id,$examination_id);
+					if($frill){get_primary_result($link,$sample_id,$examination_id);}
 				echo '</div>';
 			echo '</div>';
 			echo '<div class="help"><pre>'.$help.'</pre></div>';	
@@ -1391,7 +1448,7 @@ function edit_field($link,$examination_id,$result_array,$sample_id,$readonly='')
 				//////
 		echo '<div class="basic_form  m-0 p-0 no-gutters">';
 			////
-			set_lable($_POST['session_name'],$sample_id,$examination_details,$examination_id);
+			set_lable($_POST['session_name'],$sample_id,$examination_details,$examination_id,$frill);
 			////
 			echo '<div class="m-0 p-0 no-gutters">';
 				////
@@ -1415,7 +1472,7 @@ function edit_field($link,$examination_id,$result_array,$sample_id,$readonly='')
 						value=\''.$result.'\'>';
 				echo '</div>';
 				echo '<div class="d-inline  no-gutters">';
-					get_primary_result($link,$sample_id,$examination_id);
+					if($frill){get_primary_result($link,$sample_id,$examination_id);}
 					if(strlen($calculate)>0)
 					{
 						//show_source_button($element_id,calculate_result($link,$calculate,$ex_list,$sample_id,$decimal));
@@ -1430,7 +1487,7 @@ function edit_field($link,$examination_id,$result_array,$sample_id,$readonly='')
 		//////
 		echo '<div class="basic_form  m-0 p-0 no-gutters">';
 			////
-			set_lable($_POST['session_name'],$sample_id,$examination_details,$examination_id);
+			set_lable($_POST['session_name'],$sample_id,$examination_details,$examination_id,$frill);
 			////
 			echo '<div class="m-0 p-0 no-gutters">';
 				////
@@ -1448,7 +1505,7 @@ function edit_field($link,$examination_id,$result_array,$sample_id,$readonly='')
 						value=\''.$result.'\'>';
 				echo '</div>';
 				echo '<div class="d-inline  no-gutters">';
-					get_primary_result($link,$sample_id,$examination_id);
+					if($frill){get_primary_result($link,$sample_id,$examination_id);}
 				echo '</div>';
 			echo '</div>';
 			echo '<div class="help"><pre>'.$help.'</pre></div>';	
@@ -1460,7 +1517,7 @@ function edit_field($link,$examination_id,$result_array,$sample_id,$readonly='')
 		//////
 		echo '<div class="basic_form  m-0 p-0 no-gutters">';
 			////
-			set_lable($_POST['session_name'],$sample_id,$examination_details,$examination_id);
+			set_lable($_POST['session_name'],$sample_id,$examination_details,$examination_id,$frill);
 			////
 			echo '<div class="m-0 p-0 no-gutters">';
 				////
@@ -1479,7 +1536,7 @@ function edit_field($link,$examination_id,$result_array,$sample_id,$readonly='')
 						value=\''.$result.'\'>';
 				echo '</div>';
 				echo '<div class="d-inline  no-gutters">';
-					get_primary_result($link,$sample_id,$examination_id);
+					if($frill){get_primary_result($link,$sample_id,$examination_id);}
 				echo '</div>';
 			echo '</div>';
 			echo '<div class="help"><pre>'.$help.'</pre></div>';	
@@ -1500,7 +1557,7 @@ function edit_field($link,$examination_id,$result_array,$sample_id,$readonly='')
 				
 		echo '<div class="basic_form  m-0 p-0 no-gutters">';
 			////
-			set_lable($_POST['session_name'],$sample_id,$examination_details,$examination_id);
+			set_lable($_POST['session_name'],$sample_id,$examination_details,$examination_id,$frill);
 			////
 			echo '<div class="m-0 p-0 no-gutters">';
 				////
@@ -1520,7 +1577,7 @@ function edit_field($link,$examination_id,$result_array,$sample_id,$readonly='')
 					htmlspecialchars($result,ENT_QUOTES).'</textarea>';
 				echo '</div>';
 				echo '<div class="d-inline  no-gutters">';
-					get_primary_result($link,$sample_id,$examination_id);
+					if($frill){get_primary_result($link,$sample_id,$examination_id);}
 				echo '</div>';
 			echo '</div>';
 			echo '<div class="help"><pre>'.$help.'</pre></div>';	
@@ -1549,7 +1606,7 @@ function edit_field($link,$examination_id,$result_array,$sample_id,$readonly='')
 					htmlspecialchars($result,ENT_QUOTES).'</textarea>';
 				echo '</div>';
 				echo '<div class="d-inline  no-gutters">';
-					get_primary_result($link,$sample_id,$examination_id);
+					if($frill){get_primary_result($link,$sample_id,$examination_id);}
 				echo '</div>';
 			echo '</div>';
 			echo '<div class="help"><pre>'.$help.'</pre></div>';	
@@ -1561,7 +1618,7 @@ function edit_field($link,$examination_id,$result_array,$sample_id,$readonly='')
 		//////
 		echo '<div class="basic_form  m-0 p-0 no-gutters">';
 			////
-			set_lable($_POST['session_name'],$sample_id,$examination_details,$examination_id);
+			set_lable($_POST['session_name'],$sample_id,$examination_details,$examination_id,$frill);
 			////
 			echo '<div class="m-0 p-0 no-gutters">';
 				////
@@ -1582,7 +1639,7 @@ function edit_field($link,$examination_id,$result_array,$sample_id,$readonly='')
 					htmlspecialchars($result,ENT_QUOTES).'\'>';
 				echo '</div>';
 				echo '<div class="d-inline  no-gutters">';
-					get_primary_result($link,$sample_id,$examination_id);
+					if($frill){get_primary_result($link,$sample_id,$examination_id);}
 				echo '</div>';
 			echo '</div>';
 			echo '<div class="help"><pre>'.$help.'</pre></div>';	
@@ -1594,7 +1651,7 @@ function edit_field($link,$examination_id,$result_array,$sample_id,$readonly='')
 		//////
 		echo '<div class="basic_form  m-0 p-0 no-gutters">';
 			////
-			set_lable($_POST['session_name'],$sample_id,$examination_details,$examination_id);
+			set_lable($_POST['session_name'],$sample_id,$examination_details,$examination_id,$frill);
 			////
 			echo '<div class="m-0 p-0 no-gutters">';
 				////
@@ -1615,13 +1672,15 @@ function edit_field($link,$examination_id,$result_array,$sample_id,$readonly='')
 					htmlspecialchars($result,ENT_QUOTES).'</textarea>';
 				echo '</div>';
 				echo '<div class="d-inline  no-gutters">';
-					get_primary_result($link,$sample_id,$examination_id);
+					if($frill){get_primary_result($link,$sample_id,$examination_id);}
 				echo '</div>';
 			echo '</div>';
 			echo '<div class="help"><pre>'.$help.'</pre></div>';	
 		echo '</div>';
 	} 
 }
+
+
 
 /*
 function decide_alert($result,$interval)
@@ -2202,7 +2261,10 @@ function get_examination_data($link)
 								{
 									$ex_data=get_one_examination_details($link,$v);
 									$sr=$ex_data['sample_requirement']!='None'?$ex_data['sample_requirement']:'';
-									my_on_off_ex($ex_data['name'].'<br>'.$sr,$ex_data['examination_id']);
+									$edit_specification=json_decode($ex_data['edit_specification'],true);
+									$method=isset($edit_specification['method'])?$edit_specification['method']:'';
+
+									my_on_off_ex($ex_data['name'].'<br>'.$sr.'<br>'.$method,$ex_data['examination_id']);
 								}
 							echo '</div>';
 							
@@ -2853,7 +2915,7 @@ function get_one_field_for_insert($link,$examination_id)
 						data-exid="'.$examination_id.'" 
 						
 					pattern="'.$pattern.'" 
-						class="form-control autosave" 
+						class="form-control" 
 						type=\''.$type.'\' 
 						>';
 				echo '</div>';
@@ -2963,6 +3025,277 @@ function get_one_field_for_insert($link,$examination_id)
 }
 
 
+function get_one_field_for_insert_in_primary_result($link,$sample_id,$examination_id)
+{
+	$examination_details=get_one_examination_details($link,$examination_id);
+	$edit_specification=json_decode($examination_details['edit_specification'],true);
+	if(!$edit_specification){$edit_specification=array();}
+
+		$result='';
+
+	$type=isset($edit_specification['type'])?$edit_specification['type']:'text';
+	$readonly=isset($edit_specification['readonly'])?$edit_specification['readonly']:'';
+	$help=isset($edit_specification['help'])?$edit_specification['help']:'';
+	$pattern=isset($edit_specification['pattern'])?$edit_specification['pattern']:'';
+	$required=isset($edit_specification['required'])?$edit_specification['required']:'';
+	$placeholder=isset($edit_specification['placeholder'])?$edit_specification['placeholder']:'';
+	
+	$element_id='r_id_'.$examination_id;
+
+	if($type=='yesno')
+	{
+				//////
+		echo '<div class="basic_form  m-0 p-0 no-gutters">';
+			////
+				echo '<div  class="my_lable">';
+					echo $examination_details['name'];
+				echo '</div>';			////
+			echo '<div class="m-0 p-0 no-gutters">';
+					echo '
+							<button 
+							
+							id="'.$element_id.'" 
+								name=result
+								data-sid="__s__'.$sample_id.'" 
+								class="form-control btn btn-info mb-1"
+								type=button
+								>'.$result.'
+					</button>';
+			echo '</div>';
+			echo '<p class="help">'.nl2br(htmlspecialchars($help)).'</p>';	
+		echo '</div>';
+	}
+	else if($type=='select')
+	{
+		$option=isset($edit_specification['option'])?explode(',',$edit_specification['option']):array();
+		$option_html='';
+		
+		foreach($option as $v)
+		{
+				$option_html=$option_html.'<option>'.$v.'</option>';
+		}
+		
+				//////
+		echo '<div class="basic_form  m-0 p-0 no-gutters">';
+			////
+				echo '<div  class="my_lable">';
+					echo $examination_details['name'];
+				echo '</div>';			////
+			echo '<div class="m-0 p-0 no-gutters">';
+				////
+				echo '<div class="d-inline-block  no-gutters">';	
+				
+			echo '
+					<select  
+					id="'.$element_id.'" 
+						name=result
+						data-exid="'.$examination_id.'" 
+						data-sid="__s__'.$sample_id.'" 
+						
+						class="form-control">'.$option_html.'</select>';
+				echo '</div>';
+				echo '<div class="d-inline  no-gutters">';
+					//get_primary_result($link,$sample_id,$examination_id);
+				echo '</div>';
+			echo '</div>';
+			echo '<p class="help">'.$help.'</p>';	
+		echo '</div>';
+	}
+	elseif($type=='number')
+	{
+		$step=isset($edit_specification['step'])?$edit_specification['step']:1;
+		
+				//////
+		echo '<div class="basic_form  m-0 p-0 no-gutters">';
+			////
+				echo '<div  class="my_lable">';
+					echo $examination_details['name'];
+				echo '</div>';			////
+			echo '<div class="m-0 p-0 no-gutters">';
+				////
+				echo '<div class="d-inline-block  no-gutters">';	
+				
+			echo '
+					<input 
+						
+					id="'.$element_id.'" 
+						name=result
+						data-exid="'.$examination_id.'" 
+						data-sid="__s__'.$sample_id.'" 						
+						
+						class="form-control" 
+						type=text 
+						step=\''.$step.'\' 
+						>';
+				echo '</div>';
+				echo '<div class="d-inline  no-gutters">';
+					//get_primary_result($link,$sample_id,$examination_id);
+				echo '</div>';
+			echo '</div>';
+			echo '<p class="help">'.$help.'</p>';	
+		echo '</div>';
+	}
+	elseif($type=='date' || $type=='time')
+	{
+		if($type=='date'){$default=strftime("%Y-%m-%d");}
+		elseif($type=='time'){$default=strftime("%H:%M");}
+		//////
+		echo '<div class="basic_form  m-0 p-0 no-gutters">';
+			////
+				echo '<div  class="my_lable">';
+					echo $examination_details['name'];
+				echo '</div>';			////
+			echo '<div class="m-0 p-0 no-gutters">';
+				////
+				echo '<div class="d-inline-block  no-gutters">';			
+			echo '
+						<input 
+						
+					id="'.$element_id.'" 
+						name=result
+						data-exid="'.$examination_id.'" 
+						data-sid="__s__'.$sample_id.'" 
+						
+						class="form-control" 
+						type=\''.$type.'\' 
+						>';
+				echo '</div>';
+				echo '<div class="d-inline  no-gutters">';
+					show_source_button($element_id,$default);
+				echo '</div>';
+			echo '</div>';
+			echo '<p class="help">'.$help.'</p>';	
+		echo '</div>';
+	}
+	elseif($type=='datetime-local')
+	{
+		$step=isset($edit_specification['step'])?$edit_specification['step']:1;
+		//////
+		echo '<div class="basic_form  m-0 p-0 no-gutters">';
+			////
+				echo '<div  class="my_lable">';
+					echo $examination_details['name'];
+				echo '</div>';			////
+			echo '<div class="m-0 p-0 no-gutters">';
+				////
+				echo '<div class="d-inline-block  no-gutters">';
+			echo '
+						<input 
+						
+					id="'.$element_id.'" 
+						name=result
+						data-exid="'.$examination_id.'" 
+						data-sid="__s__'.$sample_id.'" 
+					pattern="'.$pattern.'" 
+						class="form-control" 
+						type=\''.$type.'\' 
+						>';
+				echo '</div>';
+				echo '<div class="d-inline  no-gutters">';
+					//get_primary_result($link,$sample_id,$examination_id);
+				echo '</div>';
+			echo '</div>';
+			echo '<p class="help">'.$help.'</p>';	
+		echo '</div>';
+	}
+	elseif($type=='blob')
+	{
+		//////
+		echo '<div class="basic_form  m-0 p-0 no-gutters">';
+			////
+				echo '<div  class="my_lable">';
+					echo $examination_details['name'];
+				echo '</div>';			////
+			echo '<div class="m-0 p-0 no-gutters">';
+				////
+				echo '<div class="d-inline-block no-gutters">';
+				
+					echo '<textarea rows=1
+					
+					id="'.$element_id.'" 
+					name=result
+					data-exid="'.$examination_id.'" 
+					data-sid="__s__'.$sample_id.'" 					
+					pattern="'.$pattern.'" 
+					class="form-control p-0 m-0 no-gutters" 
+					type=\''.$type.'\' ></textarea>';
+					
+				echo '</div>';
+				echo '<div class="d-inline  no-gutters">';
+					//get_primary_result($link,$sample_id,$examination_id);
+				echo '</div>';
+			echo '</div>';
+			echo '<p class="help">'.$help.'</p>';	
+		echo '</div>';
+	} 
+	elseif($type=='json')
+	{
+		//////
+		
+		$json=isset($edit_specification['json'])?$edit_specification['json']:'';
+		//$json_array=json_decode($json,true);
+		//$type=isset($edit_specification['type'])?$edit_specification['type']:'text';
+				
+		echo '<div class="basic_form  m-0 p-0 no-gutters">';
+			////
+				echo '<div  class="my_lable">';
+					echo $examination_details['name'];
+				echo '</div>';
+			////
+			echo '<div class="m-0 p-0 no-gutters">';
+				////
+				echo '<div class="d-inline-block no-gutters">';
+					//print_r($json_array);
+					echo '<pre>';print_r($edit_specification['json']);echo '</pre>';
+					echo '<textarea rows=1
+					
+					id="'.$element_id.'" 
+					name=result
+					data-exid="'.$examination_id.'" 
+					data-sid="__s__'.$sample_id.'" 					
+					pattern="'.$pattern.'" 
+					class="form-control p-0 m-0 no-gutters" 
+					type=\''.$type.'\' ></textarea>';
+				echo '</div>';
+				echo '<div class="d-inline  no-gutters">';
+					//get_primary_result($link,$sample_id,$examination_id);
+				echo '</div>';
+			echo '</div>';
+			echo '<p class="help">'.$help.'</p>';	
+		echo '</div>';
+	} 			
+	else  
+	{
+		//////
+		echo '<div class="basic_form  m-0 p-0 no-gutters">';
+			////
+				echo '<div  class="my_lable">';
+					echo $examination_details['name'];
+				echo '</div>';
+			////
+				echo '<div class="m-0 p-0 no-gutters">';
+					////
+					echo '<div class="d-inline-block no-gutters">';
+					echo '<textarea rows=1
+						
+						id="'.$element_id.'"
+						name=result
+						data-exid="'.$examination_id.'"
+						data-sid="__s__'.$sample_id.'" 
+						pattern="'.$pattern.'"
+						class="form-controlp-0 m-0 no-gutters"
+						type=\''.$type.'\' ></textarea>';
+					echo '</div>';
+					echo '<div class="d-inline  no-gutters">';
+						//get_primary_result($link,$sample_id,$examination_id);
+					echo '</div>';
+				echo '</div>';
+			////
+			echo '<p class="help">'.nl2br(htmlspecialchars($help)).'</p>';
+		echo '</div>';
+	}
+}
+
 function get_one_ex_result($link,$sample_id,$examination_id)
 {
 		$sql='select * from result where sample_id=\''.$sample_id.'\' and examination_id=\''.$examination_id.'\'';
@@ -3071,14 +3404,16 @@ function add_new_examination_and_profile($link,$sample_id,$list_of_selected_exam
 	}
 }
 
-function set_lable($session_name,$sample_id,$examination_details,$examination_id)
+function set_lable($session_name,$sample_id,$examination_details,$examination_id,$frill=true)
 {
 		echo '
 			<div class="my_lable">';
 			
 		if($examination_details['examination_id']!=$GLOBALS['mrd'] && $examination_details['examination_id']!=$GLOBALS['sample_requirement'])
 		{
-		echo '
+		if($frill)
+			{
+			echo '
 				<form method=post class="d-inline">
 					<input type=hidden name=session_name value=\''.$session_name.'\'>
 					<input type=hidden name=sample_id value=\''.$sample_id.'\'>
@@ -3087,6 +3422,7 @@ function set_lable($session_name,$sample_id,$examination_details,$examination_id
 					<button type=submit  class="btn btn-danger btn-sm d-inline m-0 p-0" name=action value=delete title=Delete>X</button>	
 				</form>
 				';
+			}
 		}		
 		echo '<label for="'.$examination_details['name'].'" title=\''.$examination_id.'\'>'.$examination_details['name'].'</label>
 			</div>';
@@ -4644,9 +4980,16 @@ function get_lab_reference_value($link,$mrd_num,$examination_id,$dt,$tm,$equipme
 	return $ar;
 	//database user is responsible to see that only one such row is avaialble
 }
+
 function get_qc_examination_names($link)
 {
 	$sql='select examination_id,name from examination where sample_requirement="QC-QC-BI"';
+	mk_select_from_sql_kv($link,$sql,'examination_id','name','examination_id','examination_id',$disabled='',$default='',$blank='yes');
+}
+
+function get_examination_names($link)
+{
+	$sql='select examination_id,name from examination';
 	mk_select_from_sql_kv($link,$sql,'examination_id','name','examination_id','examination_id',$disabled='',$default='',$blank='yes');
 }
 
@@ -4675,6 +5018,7 @@ function get_qc_sample_id_from_parameters($link,$parameters)
 	)*/
 	//echo '<pre>';print_r($parameters);echo '</pre>';
 
+
 	$sql='select mrd.sample_id 
 			from 
 				result mrd,
@@ -4695,7 +5039,7 @@ function get_qc_sample_id_from_parameters($link,$parameters)
 					and
 					
 				mrd.sample_id=equipment.sample_id
-			
+							
 			order by mrd.sample_id	
 			limit 500';
 				

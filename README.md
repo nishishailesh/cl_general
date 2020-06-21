@@ -40,3 +40,4 @@ chmod -R www-data:www-data /var/gmcs_config
 - explore
 
 feel free to contact:9664555812 (India, WhatApp), biochemistrygmcs@gmail.com
+
