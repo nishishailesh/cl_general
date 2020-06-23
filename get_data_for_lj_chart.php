@@ -4,7 +4,7 @@ require_once 'project_common.php';
 require_once 'base/verify_login.php';
 
 ////////User code below/////////////////////
-//echo '<pre>';print_r($_POST);echo '</pre>';
+echo '<pre>';print_r($_POST);echo '</pre>';
 	
 echo '		  <link rel="stylesheet" href="project_common.css">
 		  <script src="project_common.js"></script>';	
@@ -53,6 +53,8 @@ if(isset($_POST['get_data']))
 
 if(isset($_POST['show_lj']))
 {
+		echo '<button onclick="toggle_display(\'compact\')">extra</button>';
+
 	if($_POST['show_lj']=='show_lj_sample_id')
 	{
 		show_lj($link,$_POST);
@@ -87,6 +89,7 @@ function get_lj_display_parameter_sample_id($link,$qc_levels)
 		echo '<input type=text name=qc_equipment placeholder="QC Equipment">';
 		echo '<input type=number name=from_sample_id placeholder="from sample_id">';
 		echo '<input type=number name=to_sample_id placeholder="to sample_id">';
+		echo '<input type=checkbox name=compact>';
 		//get_examination_names($link);
 		get_examination_data($link);
 		echo '<button type=submit class="btn btn-primary" name=show_lj value="show_lj_sample_id">Show LJ</button>';
@@ -134,16 +137,22 @@ function show_lj_for_sample($link,$sample_id_array,$ex_requested=array())
 		<td><button type=button class="btn btn-sm btn-info" onclick="my_sort(this,1,\'qc_table\')" data-sorting=1>Sample_ID</button></td>
 		<td><button type=button class="btn btn-sm btn-info" onclick="my_sort(this,2,\'qc_table\')" data-sorting=1>Examination</button></td>
 		<td>Result</td>
-		<td><pre>4---------3---------2---------1---------0---------1---------2---------3---------4</pre></td>
-		<td><button type=button class="btn btn-sm btn-info" onclick="my_sort_float(this,5,\'qc_table\')" data-sorting=1>SDI</button></td>
-		<td>Mean</td>
-		<td>SD</td>
-		<td><button type=button class="btn btn-sm btn-info" onclick="my_sort(this,8,\'qc_table\')" data-sorting=1>Date</button></td>
-		<td><button type=button class="btn btn-sm btn-info" onclick="my_sort(this,9,\'qc_table\')" data-sorting=1>Time</button></td>
-		<td><button type=button class="btn btn-sm btn-info" onclick="my_sort(this,10,\'qc_table\')" data-sorting=1>Equipment</button></td>
-		<td><button type=button class="btn btn-sm btn-info" onclick="my_sort(this,11,\'qc_table\')" data-sorting=1>Analysis Time</button></td>
-		<td></td>		
-	</tr>';
+		<td><pre>4---------3---------2---------1---------0---------1---------2---------3---------4</pre></td>';
+		
+		if(!isset($_POST['compact']))
+		{
+			echo '
+			<td  class="compact collapse" ><button type=button class="btn btn-sm btn-info" onclick="my_sort_float(this,5,\'qc_table\')" data-sorting=1>SDI</button></td>
+			<td  class="compact collapse" >Mean</td>
+			<td  class="compact collapse" >SD</td>
+			<td  class="compact collapse" ><button type=button class="btn btn-sm btn-info" onclick="my_sort(this,8,\'qc_table\')" data-sorting=1>Date</button></td>
+			<td  class="compact collapse" ><button type=button class="btn btn-sm btn-info" onclick="my_sort(this,9,\'qc_table\')" data-sorting=1>Time</button></td>
+			<td  class="compact collapse" ><button type=button class="btn btn-sm btn-info" onclick="my_sort(this,10,\'qc_table\')" data-sorting=1>Equipment</button></td>
+			<td  class="compact collapse" ><button type=button class="btn btn-sm btn-info" onclick="my_sort(this,11,\'qc_table\')" data-sorting=1>Analysis Time</button></td>
+			';
+		}
+			
+	echo '</tr>';
 	foreach($sample_id_array as $sample_id)
 	{
 		display_one_qc($link,$sample_id,$ex_requested);
@@ -312,41 +321,50 @@ function display_one_qc($link,$sample_id,$ex_requested)
 					}
 
 					echo '<td class="p-0 m-0"><pre>'.$lj_str.'</pre></td>';
-					echo '<td>'.$sdi.'</td>';
-					echo '<td>'.$lab_ref_val['mean'].'</td>';
-					echo '<td>'.$lab_ref_val['sd'].'</td>';
-					if(strftime("%Y-%m-%d")==$date)
-					{				
-						echo '<td class="border border-dark">'.$date.'</td>';
-					}
-					else
+					
+					if(!isset($_POST['compact']))
 					{
-						echo '<td>'.$date.'</td>';
-					}
-					echo '<td>'.$time.'</td>';
-					echo '<td>'.$equipment.'</td>';
-					//echo '<td>'.$sample_requirement.'</td>';
-					echo '<td>'.$ar['uniq'].'</td>';			
+						echo '<td  class="compact collapse" >'.$sdi.'</td>';
+						echo '<td  class="compact collapse" >'.$lab_ref_val['mean'].'</td>';
+						echo '<td  class="compact collapse" >'.$lab_ref_val['sd'].'</td>';
+						if(strftime("%Y-%m-%d")==$date)
+						{				
+							echo '<td class="compact collapse border border-dark">'.$date.'</td>';
+						}
+						else
+						{
+							echo '<td  class="compact collapse" >'.$date.'</td>';
+						}
+						echo '<td  class="compact collapse" >'.$time.'</td>';
+						echo '<td  class="compact collapse" >'.$equipment.'</td>';
+						//echo '<td>'.$sample_requirement.'</td>';
+						echo '<td  class="compact collapse" >'.$ar['uniq'].'</td>';			
+					}	
+					
 				}
 				else
 				{
 					echo '<td class="p-0 m-0"><pre></pre></td>';
-					echo '<td></td>';
-					echo '<td></td>';
-					echo '<td></td>';				
 					
-					if(strftime("%Y-%m-%d")==$date)
-					{				
-						echo '<td class="border border-dark">'.$date.'</td>';
-					}
-					else
+					if(!isset($_POST['compact']))
 					{
-						echo '<td>'.$date.'</td>';
+						echo '<td  class="compact collapse" ></td>';
+						echo '<td  class="compact collapse" ></td>';
+						echo '<td  class="compact collapse" ></td>';				
+						
+						if(strftime("%Y-%m-%d")==$date)
+						{				
+							echo '<td class="compact collapse border border-dark">'.$date.'</td>';
+						}
+						else
+						{
+							echo '<td  class="compact collapse" >'.$date.'</td>';
+						}
+						echo '<td  class="compact collapse" >'.$time.'</td>';
+						echo '<td  class="compact collapse" >'.$equipment.'</td>';
+						//echo '<td>'.$sample_requirement.'</td>';
+						echo '<td  class="compact collapse" >'.$ar['uniq'].'</td>';
 					}
-					echo '<td>'.$time.'</td>';
-					echo '<td>'.$equipment.'</td>';
-					//echo '<td>'.$sample_requirement.'</td>';
-					echo '<td>'.$ar['uniq'].'</td>';
 				}
 				
 			echo '</tr>';		

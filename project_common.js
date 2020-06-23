@@ -65,6 +65,11 @@ function toggle_color(me)
 	}
 }
 
+function toggle_display(class_name)
+{
+	$("."+class_name).toggle()
+}
+
 function copy_to_bin(me)
 {
 	//copy_bin=copy_bin+me.innerHTML
