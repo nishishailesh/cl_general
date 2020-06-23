@@ -1633,9 +1633,11 @@ function edit_field($link,$examination_id,$result_array,$sample_id,$readonly='',
 					pattern="'.$pattern.'" 
 					class="form-control autosave p-0 m-0 no-gutters '.$zoom.' " 
 					style="resize: both;"
-					minlength=\''.$minlength.'\'
-					required=\''.$required.'\'
-					type=text value=\''.
+					minlength=\''.$minlength.'\'';
+
+					if(strlen($required)>0)	{echo 'required=\''.$required.'\'';}
+					
+					echo 'type=text value=\''.
 					htmlspecialchars($result,ENT_QUOTES).'\'>';
 				echo '</div>';
 				echo '<div class="d-inline  no-gutters">';
@@ -1666,9 +1668,9 @@ function edit_field($link,$examination_id,$result_array,$sample_id,$readonly='',
 					pattern="'.$pattern.'" 
 					class="form-control autosave p-0 m-0 no-gutters '.$zoom.' " 
 					style="resize: both;"
-					minlength=\''.$minlength.'\'
-					required=\''.$required.'\'
-					type=\''.$type.'\' >'.
+					minlength=\''.$minlength.'\'';
+					if(strlen($required)>0)	{echo 'required=\''.$required.'\'';}
+					echo 'type=\''.$type.'\' >'.
 					htmlspecialchars($result,ENT_QUOTES).'</textarea>';
 				echo '</div>';
 				echo '<div class="d-inline  no-gutters">';
@@ -3005,12 +3007,14 @@ function get_one_field_for_insert($link,$examination_id)
 					////
 					echo '<div class="d-inline-block no-gutters">';
 					echo '<textarea rows=1
-						
+
 						id="'.$element_id.'"
 						name="__ex__'.$examination_id.'"
-						data-exid="'.$examination_id.'"
-						required=\''.$required.'\'
-						pattern="'.$pattern.'"
+						data-exid="'.$examination_id.'"';
+						
+						if(strlen($required)>0) {echo 'required=\''.$required.'\'';}
+
+						echo 'pattern="'.$pattern.'"
 						class="form-control autosave p-0 m-0 no-gutters"
 						type=\''.$type.'\' ></textarea>';
 					echo '</div>';

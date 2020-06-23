@@ -4,7 +4,7 @@ require_once 'project_common.php';
 require_once 'base/verify_login.php';
 
 ////////User code below/////////////////////
-echo '<pre>';print_r($_POST);echo '</pre>';
+//echo '<pre>';print_r($_POST);echo '</pre>';
 	
 echo '		  <link rel="stylesheet" href="project_common.css">
 		  <script src="project_common.js"></script>';	
