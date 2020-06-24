@@ -22,9 +22,9 @@ $GLOBALS['remark']=5098;
 echo '<h2>QC</h2>';
 echo '<form method=post>
 <input type=hidden name=session_name value=\''.$_POST['session_name'].'\'>
-<button type=submit name=get_data value=sample_id_wise>Sample ID wise</button>
-<button type=submit name=get_data value=today>Today</button>
-<button type=submit name=get_data value=date_wise>Date wise</button>
+<button class="btn btn-info btn-sm" type=submit name=get_data value=sample_id_wise>Sample ID wise</button>
+<button class="btn btn-info btn-sm" type=submit name=get_data value=today>Today</button>
+<button class="btn btn-info btn-sm" type=submit name=get_data value=date_wise>Date wise</button>
 </form>';
 
 if(isset($_POST['get_data']))
@@ -53,7 +53,7 @@ if(isset($_POST['get_data']))
 
 if(isset($_POST['show_lj']))
 {
-		echo '<button onclick="toggle_display(\'compact\')">extra</button>';
+		echo '<button class="btn btn-warning btn-sm"  onclick="toggle_display(\'compact\')">extra</button>';
 
 	if($_POST['show_lj']=='show_lj_sample_id')
 	{
@@ -131,7 +131,7 @@ function read_checkbox($ar)
 
 function show_lj_for_sample($link,$sample_id_array,$ex_requested=array())
 {
-	echo '<table class="table table-striped table-sm" id=qc_table>';
+	echo '<table class="table  table-sm" id=qc_table>';
 	echo '<tr>
 		<td><button type=button class="btn btn-sm btn-info" onclick="my_sort(this,0,\'qc_table\')" data-sorting=1>MRD</button></td>
 		<td><button type=button class="btn btn-sm btn-info" onclick="my_sort(this,1,\'qc_table\')" data-sorting=1>Sample_ID</button></td>
@@ -199,6 +199,7 @@ function display_one_qc($link,$sample_id,$ex_requested)
 	$sql='select * from primary_result where sample_id=\''.$sample_id.'\' order by uniq';
 	$result=run_query($link,$GLOBALS['database'],$sql);
 
+	$current_ex_id=0;
 	while($ar=get_single_row($result))
 	{
 		$ex_requested=array_filter($ex_requested);
@@ -209,7 +210,16 @@ function display_one_qc($link,$sample_id,$ex_requested)
 			if($sample_id%2==0){$sample_class='text-danger';}
 			else{$sample_class='text-info';}
 
-
+			if($current_ex_id==$ar['examination_id'])
+			{
+				$border='border border-top-0 border-bottom-0';
+			}
+			else
+			{
+				$border='border  border-top-0 border-bottom-0';
+				$current_ex_id=$ar['examination_id'];
+			}
+			
 			$tr_class_list=array(
 			'text-primary',
 			'text-secondary',
@@ -223,7 +233,7 @@ function display_one_qc($link,$sample_id,$ex_requested)
 			'text-success'
 			);
 
-			$tr_class=$tr_class_list[$ar['examination_id']%10];
+			$tr_class=$tr_class_list[$ar['examination_id']%10].' '.$border;
 
 			
 			echo '<tr class=\''.$tr_class.'\'>';
@@ -234,7 +244,7 @@ function display_one_qc($link,$sample_id,$ex_requested)
 						$mrd_num,'<span class="bg-warning text-dark">'.$GLOBALS['normal_qc_str'].'</span>',
 						0,strlen($GLOBALS['normal_qc_str'])
 						);
-				$tick='X';
+				$tick=$GLOBALS['normal_qc_tick'];
 			}
 			else
 			{
@@ -242,7 +252,7 @@ function display_one_qc($link,$sample_id,$ex_requested)
 						$mrd_num,'<span class="bg-light text-dark">'.$GLOBALS['abnormal_qc_str'].'</span>',
 						0,strlen($GLOBALS['abnormal_qc_str'])
 						);
-				$tick='Y';
+				$tick=$GLOBALS['abnormal_qc_tick'];
 			}					
 			echo '<td>'.$modified_mrd_num.'</td>';
 			//sample_id button for remark modal popup		
@@ -309,15 +319,15 @@ function display_one_qc($link,$sample_id,$ex_requested)
 					$x=max($x,0);
 					if($x>=20 && $x<=60)
 					{
-						$lj_str=substr_replace($lj_str,'<span class="bg-success">'.$tick.'</span>',$x,1);
+						$lj_str=substr_replace($lj_str,'<span class="text-success border border-success rounded-circle ">'.$tick.'</span>',$x,1);
 					}
 					elseif($x>=10 && $x<=70)
 					{
-						$lj_str=substr_replace($lj_str,'<span class="bg-warning">'.$tick.'</span>',$x,1);
+						$lj_str=substr_replace($lj_str,'<span class="text-warning border border-warning rounded-circle ">'.$tick.'</span>',$x,1);
 					}
 					else
 					{
-						$lj_str=substr_replace($lj_str,'<span class="bg-danger">'.$tick.'</span>',$x,1);
+						$lj_str=substr_replace($lj_str,'<span class="text-danger border border-danger rounded-circle ">'.$tick.'</span>',$x,1);
 					}
 
 					echo '<td class="p-0 m-0"><pre>'.$lj_str.'</pre></td>';

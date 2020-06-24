@@ -57,7 +57,7 @@ function main_menu()
 					<div class="btn-group-vertical  d-block">
 						<button class="btn btn-outline-primary m-0 p-0" formaction=import_erba_xl_640_results.php type=submit name=action value=get_file>Import XL-640 Result</button>					
 						<button class="btn btn-outline-primary m-0 p-0" formaction=import_erba_xl_1000_results.php type=submit name=action value=get_file>Import XL-1000 Result</button>											
-						<button class="btn btn-outline-primary m-0 p-0" formaction=get_id_range_for_small_barcode.php type=submit name=action value=get_sample_id_range>Eppindorf Barcode</button>					
+						<button class="btn btn-outline-primary m-0 p-0" formaction=get_id_range_for_small_barcode.php type=submit name=action value=get_sample_id_range>Sample Tube Barcode</button>					
 						<button class="btn btn-outline-primary m-0 p-0" formaction=get_data_for_lj_chart.php type=submit name=action value=get_data>LJ Chart</button>					
 					</div>
 				</div>
@@ -2646,6 +2646,22 @@ function save_insert_specific($link)
 		$requested=array_merge($requested,$profile_ex_requested);
 	}
 
+//////for EXTRA
+	$super_profile_requested=explode(',',$_POST['list_of_selected_super_profile']);
+	foreach($super_profile_requested as $sp)
+	{
+		$ssql='select * from super_profile where super_profile_id=\''.$sp.'\'';
+		$result=run_query($link,$GLOBALS['database'],$ssql);
+		if(rows_affected($link)>0)
+		{
+			$ar=get_single_row($result);
+			//echo $psql;print_r($ar);
+			$extra_requested_in_super_profile=explode(',',$ar['extra']);
+			$requested=array_merge($requested,$extra_requested_in_super_profile);
+		}
+	}
+//////end of extra
+
 	$with_result=array();
 	foreach($_POST as $k=>$v)
 	{
@@ -4879,7 +4895,7 @@ function get_date_range_sample_id($link,$from_date,$to_date)
 					
 				mrd.sample_id=date_range.sample_id
 			
-			order by mrd.sample_id	
+			order by mrd.sample_id	 desc
 			limit 500';
 				
 	//echo $sql;
@@ -4894,7 +4910,7 @@ function get_date_range_sample_id($link,$from_date,$to_date)
 }
 
 
-
+//used for exporting QC results
 function mk_array_for_one_qc_result($link,$sample_id)
 {
 	$mrd_num=get_one_ex_result($link,$sample_id,$GLOBALS['mrd']);
@@ -5044,7 +5060,7 @@ function get_qc_sample_id_from_parameters($link,$parameters)
 					
 				mrd.sample_id=equipment.sample_id
 							
-			order by mrd.sample_id	
+			order by mrd.sample_id	desc
 			limit 500';
 				
 	//echo $sql;

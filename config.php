@@ -56,6 +56,8 @@ $GLOBALS['MI']=array('name'=>'New Civil Hospital Surat Laboratory Services',
 
 $GLOBALS['normal_qc_str']='QC/5/';
 $GLOBALS['abnormal_qc_str']='QC/8/';
+$GLOBALS['normal_qc_tick']='N';
+$GLOBALS['abnormal_qc_tick']='A';
 
 //example configutation file for passwords
 /*

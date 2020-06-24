@@ -44,7 +44,7 @@ echo '<div class="basic_form">';
 			<input type=text size=13 id=from name=to class="form-control text-danger" required="required" \>
 			<p class="help"><span class=text-danger>Must be</span> number</p>';
 	echo '	<label class="my_label text-danger" for="codetype">Code Type</label>
-			<input type=text  size=13 id=codetpye name=code_type class="form-control text-danger" required="required" \>
+			<input type=text  size=13 id=codetpye name=code_type class="form-control text-danger" value=C128 required="required" \>
 			<p class="help"><span class=text-danger>C128 C39 i25</span></p>';
 	echo '	<label class="my_label text-danger" for="append">append</label>
 			<input type=text  size=13 id=append name=append class="form-control text-danger" \>
