@@ -5093,7 +5093,7 @@ function get_today_sample_id($link)
 										
 				mrd.sample_id=today.sample_id
 			
-			order by mrd.sample_id	
+			order by mrd.sample_id desc	
 			limit 500';
 				
 	//echo $sql;
