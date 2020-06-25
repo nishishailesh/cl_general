@@ -131,7 +131,7 @@ function read_checkbox($ar)
 
 function show_lj_for_sample($link,$sample_id_array,$ex_requested=array())
 {
-	echo '<table class="table  table-sm" id=qc_table>';
+	echo '<table class="table table-sm" id=qc_table>';
 	echo '<tr>
 		<td><button type=button class="btn btn-sm btn-info" onclick="my_sort(this,0,\'qc_table\')" data-sorting=1>MRD</button></td>
 		<td><button type=button class="btn btn-sm btn-info" onclick="my_sort(this,1,\'qc_table\')" data-sorting=1>Sample_ID</button></td>

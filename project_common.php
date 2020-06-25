@@ -2251,7 +2251,9 @@ function get_examination_data($link)
 						//echo '<img src="img/show_hide.png" height=32 data-toggle="collapse" class=sh href=\'#'.$div_id.'\' ><div></div><div></div>';
 						echo '<div class="collapse show " id=\''.$div_id.'\'>';
 							
-							echo '<h5>'.$pinfo['name'].'</h5>';
+							echo '<span class="border border-dark rounded d-inline">Profile';
+							my_on_off_profile($pinfo['name'],$ar['profile_id']);
+							echo '</span>';
 							
 							echo '<div class="ex_profile">';
 								$ex_list=array_merge(explode(',',$ar['examination_id_list']),explode(',',$ar['extra']));
@@ -3379,6 +3381,23 @@ function add_new_examination_and_profile($link,$sample_id,$list_of_selected_exam
 		$requested=array_merge($requested,$profile_ex_requested);
 	}
 	//print_r($requested);
+
+//////for EXTRA
+	$super_profile_requested=explode(',',$_POST['list_of_selected_super_profile']);
+	foreach($super_profile_requested as $sp)
+	{
+		$ssql='select * from super_profile where super_profile_id=\''.$sp.'\'';
+		$result=run_query($link,$GLOBALS['database'],$ssql);
+		if(rows_affected($link)>0)
+		{
+			$ar=get_single_row($result);
+			//echo $psql;print_r($ar);
+			$extra_requested_in_super_profile=explode(',',$ar['extra']);
+			$requested=array_merge($requested,$extra_requested_in_super_profile);
+		}
+	}
+//////end of extra
+
 
 	$requested=array_filter(array_unique($requested));
 	//print_r($requested);
