@@ -4,7 +4,7 @@ require_once 'project_common.php';
 require_once 'base/verify_login.php';
 
 ////////User code below/////////////////////
-//echo '<pre>';print_r($_POST);echo '</pre>';
+echo '<pre>';print_r($_POST);echo '</pre>';
 	
 echo '		  <link rel="stylesheet" href="project_common.css">
 		  <script src="project_common.js"></script>';	
@@ -21,10 +21,14 @@ $GLOBALS['remark']=5098;
 
 echo '<h2>QC</h2>';
 echo '<form method=post>
-<input type=hidden name=session_name value=\''.$_POST['session_name'].'\'>
-<button class="btn btn-info btn-sm" type=submit name=get_data value=sample_id_wise>Sample ID wise</button>
-<button class="btn btn-info btn-sm" type=submit name=get_data value=today>Today</button>
-<button class="btn btn-info btn-sm" type=submit name=get_data value=date_wise>Date wise</button>
+	<input type=hidden name=session_name value=\''.$_POST['session_name'].'\'>
+	<button class="btn btn-info btn-sm" type=submit name=get_data value=sample_id_wise>Sample ID wise</button>
+	<button class="btn btn-info btn-sm" type=submit name=get_data value=today>Today</button>
+	<button class="btn btn-info btn-sm" type=submit name=get_data value=date_wise>Date wise</button>
+	
+	<button class="btn btn-info btn-sm" type=submit name=get_data value=one_by_one>OnebyOne</button>
+	<input type=number name=one_by_one_sample_id placeholder="for 1-by-1">
+	
 </form>';
 
 if(isset($_POST['get_data']))
@@ -49,11 +53,18 @@ if(isset($_POST['get_data']))
 			get_lj_display_parameter_date($link);
 		echo '</div>';
 	}
+	else if(	$_POST['get_data']=='one_by_one')
+	{
+		echo '<div class="d-inline-block border rounded p-2 border-primary">';
+		//get_lj_display_parameter_date_time($link,$qc_levels);
+			show_lj_for_single_sample($link,$_POST['one_by_one_sample_id']);
+		echo '</div>';
+	}	
 }
 
 if(isset($_POST['show_lj']))
 {
-		echo '<button class="btn btn-warning btn-sm"  onclick="toggle_display(\'compact\')">extra</button>';
+	echo '<button class="btn btn-warning btn-sm"  onclick="toggle_display(\'compact\')">extra</button>';
 
 	if($_POST['show_lj']=='show_lj_sample_id')
 	{
@@ -128,7 +139,6 @@ function read_checkbox($ar)
 	}
 }
 
-
 function show_lj_for_sample($link,$sample_id_array,$ex_requested=array())
 {
 	echo '<table class="table table-sm" id=qc_table>';
@@ -159,6 +169,14 @@ function show_lj_for_sample($link,$sample_id_array,$ex_requested=array())
 	}
 	echo '</table>';	
 }
+
+function show_lj_for_single_sample($link,$sample_id,$ex_requested=array())
+{
+	$sample_id_array=array($sample_id);
+	//echo '<pre>';print_r($sample_id_array);echo '</pre>';
+	show_lj_for_sample($link,$sample_id_array);
+}
+
 
 function show_lj($link,$parameters)
 {
