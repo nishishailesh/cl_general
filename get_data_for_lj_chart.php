@@ -4,7 +4,7 @@ require_once 'project_common.php';
 require_once 'base/verify_login.php';
 
 ////////User code below/////////////////////
-echo '<pre>';print_r($_POST);echo '</pre>';
+//echo '<pre>';print_r($_POST);echo '</pre>';
 	
 echo '		  <link rel="stylesheet" href="project_common.css">
 		  <script src="project_common.js"></script>';	
@@ -19,16 +19,35 @@ $GLOBALS['Collection_Date']=1015;
 $GLOBALS['Collection_Time']=1016;
 $GLOBALS['remark']=5098;
 
+if(isset($_POST['one_by_one_sample_id']))
+{
+	if(ctype_digit($_POST['one_by_one_sample_id']))
+	{
+		$one_by_one_sample_id=$_POST['one_by_one_sample_id']+1;
+	}
+	else
+	{
+		$one_by_one_sample_id=0;
+	}
+}
+else
+{
+	$one_by_one_sample_id=0;
+}
+
 echo '<h2>QC</h2>';
 echo '<form method=post>
 	<input type=hidden name=session_name value=\''.$_POST['session_name'].'\'>
 	<button class="btn btn-info btn-sm" type=submit name=get_data value=sample_id_wise>Sample ID wise</button>
 	<button class="btn btn-info btn-sm" type=submit name=get_data value=today>Today</button>
 	<button class="btn btn-info btn-sm" type=submit name=get_data value=date_wise>Date wise</button>
-	
+
+
 	<button class="btn btn-info btn-sm" type=submit name=get_data value=one_by_one>OnebyOne</button>
-	<input type=number name=one_by_one_sample_id placeholder="for 1-by-1">
-	
+	<input type=number name=one_by_one_sample_id value=\''.$one_by_one_sample_id.'\' placeholder="for 1-by-1">
+	<button class="btn btn-info btn-sm" type=submit name=get_data value=one_by_one_plus>+1</button>
+	<button class="btn btn-info btn-sm" type=submit name=get_data value=one_by_one_minus>-1</button>
+
 </form>';
 
 if(isset($_POST['get_data']))
@@ -55,11 +74,13 @@ if(isset($_POST['get_data']))
 	}
 	else if(	$_POST['get_data']=='one_by_one')
 	{
+
+		echo '<button class="btn btn-warning btn-sm"  onclick="toggle_display(\'compact\')">extra</button><br>';
 		echo '<div class="d-inline-block border rounded p-2 border-primary">';
 		//get_lj_display_parameter_date_time($link,$qc_levels);
 			show_lj_for_single_sample($link,$_POST['one_by_one_sample_id']);
 		echo '</div>';
-	}	
+	}
 }
 
 if(isset($_POST['show_lj']))

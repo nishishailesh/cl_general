@@ -2,7 +2,7 @@
 --
 -- Host: localhost    Database: cl_general
 -- ------------------------------------------------------
--- Server version	10.3.22-MariaDB-1
+-- Server version	10.3.22-MariaDB-0+deb10u1
 
 /*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
 /*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
@@ -62,7 +62,7 @@ CREATE TABLE `examination` (
   PRIMARY KEY (`examination_id`),
   KEY `sample_requirement` (`sample_requirement`),
   CONSTRAINT `examination_ibfk_1` FOREIGN KEY (`sample_requirement`) REFERENCES `sample_id_strategy` (`sample_requirement`)
-) ENGINE=InnoDB AUTO_INCREMENT=10004 DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
+) ENGINE=InnoDB AUTO_INCREMENT=100014 DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -102,7 +102,7 @@ CREATE TABLE `lab_reference_value` (
   `sd` decimal(10,4) NOT NULL,
   `remark` varchar(100) NOT NULL,
   PRIMARY KEY (`lab_reference_value_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=89 DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB AUTO_INCREMENT=131 DEFAULT CHARSET=utf8mb4;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -272,7 +272,7 @@ CREATE TABLE `super_profile` (
   `super_profile_id` int(11) NOT NULL,
   `name` varchar(100) NOT NULL,
   `profile_id_list` varchar(500) NOT NULL,
-  `extra` varchar(300) NOT NULL,
+  `extra` varchar(300) DEFAULT NULL,
   `edit_specification` varchar(500) NOT NULL,
   PRIMARY KEY (`super_profile_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
@@ -320,4 +320,4 @@ CREATE TABLE `view_info_data` (
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2020-06-25 15:43:12
+-- Dump completed on 2020-06-25 17:33:18
