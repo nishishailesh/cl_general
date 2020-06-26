@@ -4890,53 +4890,16 @@ function initialize_csv_export_file($filename='export.csv')
 	return $fp;
 }
 
-function get_date_range_sample_id($link,$from_date,$to_date)
-{
-	$sql='select mrd.sample_id 
-			from 
-				result mrd,
-				result date_range
-			 
-			where
-				mrd.examination_id=\''.$GLOBALS['mrd'].'\' 
-					and
-				mrd.result like "QC/%" 
-					and
-					
-				date_range.examination_id=\''.$GLOBALS['Collection_Date'].'\' 
-					and	
-				(date_range.result between 
-						\''.$from_date.'\'
-							and				
-						\''.$to_date.'\'
-				)	
-					and					
-					
-				mrd.sample_id=date_range.sample_id
-			
-			order by mrd.sample_id	 desc
-			limit 500';
-				
-	//echo $sql;
-	$result=run_query($link,$GLOBALS['database'],$sql);
-	$data=array();
-	while($ar=get_single_row($result))
-	{
-		$data[]=$ar['sample_id'];
-	}
-	//echo '<pre>';print_r($data);echo '</pre>';	
-	return $data;
-}
 
 
 //used for exporting QC results
-function mk_array_for_one_qc_result($link,$sample_id)
+function mk_array_for_one_qc_result($link,$sample_id,$ex_requested)
 {
 	$mrd_num=get_one_ex_result($link,$sample_id,$GLOBALS['mrd']);
 	$sample_requirement=get_one_ex_result($link,$sample_id,$GLOBALS['sample_requirement']);
 	$date=get_one_ex_result($link,$sample_id,$GLOBALS['Collection_Date']);
 	$time=get_one_ex_result($link,$sample_id,$GLOBALS['Collection_Time']);
-	$equipment=get_one_ex_result($link,$sample_id,$GLOBALS['qc_eqipment_ex_id']);
+	$equipment=get_one_ex_result($link,$sample_id,$GLOBALS['qc_equipment_ex_id']);
 
 	$sql='select * from primary_result where sample_id=\''.$sample_id.'\' order by uniq';
 	$result=run_query($link,$GLOBALS['database'],$sql);
@@ -4944,46 +4907,51 @@ function mk_array_for_one_qc_result($link,$sample_id)
 	$qc_data_array=array();
 	while($ar=get_single_row($result))
 	{
-		$lab_ref_val=get_lab_reference_value($link,$mrd_num,$ar['examination_id'],$date,$time,$equipment);
-		
-		$qc_data['sample_id']=$sample_id;
-		$qc_data['examination_id']=$ar['examination_id'].'-'.get_name_of_ex_id($link,$ar['examination_id']);
-		$qc_data['result']=$ar['result'];
+		$ex_requested=array_filter($ex_requested);
+		if(in_array($ar['examination_id'],$ex_requested) || count($ex_requested)==0)
+		{
+			
+			$lab_ref_val=get_lab_reference_value($link,$mrd_num,$ar['examination_id'],$date,$time,$equipment);
+			
+			$qc_data['sample_id']=$sample_id;
+			$qc_data['examination_id']=$ar['examination_id'].'-'.get_name_of_ex_id($link,$ar['examination_id']);
+			$qc_data['result']=$ar['result'];
 
-		//if($lab_ref_val!=false && is_numeric($ar['result']))
-		if(!is_numeric($ar['result']))
-		{
-			//echo $ar['result'].' not numeric<br>';
+			//if($lab_ref_val!=false && is_numeric($ar['result']))
+			if(!is_numeric($ar['result']))
+			{
+				//echo $ar['result'].' not numeric<br>';
+			}
+			if(!$lab_ref_val!=false)
+			{
+				//echo $ar['result'].' reference value not found<br>';
+			}
+			
+			if($lab_ref_val!=false && is_numeric($ar['result']))
+			{
+				$sdi=round((($ar['result']-$lab_ref_val['mean'])/$lab_ref_val['sd']),1);
+				$qc_data['sdi']=$sdi;
+				$qc_data['mean']=$lab_ref_val['mean'];
+				$qc_data['sd']=$lab_ref_val['sd'];
+				$qc_data['date']=$date;
+				$qc_data['time']=$time;
+				$qc_data['equipment']=$equipment;
+				$qc_data['mrd_num']=$mrd_num;
+				$qc_data['uniq']=$ar['uniq'];
+			}
+			else
+			{
+				$qc_data['sdi']='';
+				$qc_data['mean']='';
+				$qc_data['sd']='';
+				$qc_data['date']=$date;
+				$qc_data['time']=$time;
+				$qc_data['equipment']=$equipment;
+				$qc_data['mrd_num']=$mrd_num;
+				$qc_data['uniq']=$ar['uniq'];
+			}
+			$qc_data_array[]=$qc_data;
 		}
-		if(!$lab_ref_val!=false)
-		{
-			//echo $ar['result'].' reference value not found<br>';
-		}
-		
-		if($lab_ref_val!=false && is_numeric($ar['result']))
-		{
-			$sdi=round((($ar['result']-$lab_ref_val['mean'])/$lab_ref_val['sd']),1);
-			$qc_data['sdi']=$sdi;
-			$qc_data['mean']=$lab_ref_val['mean'];
-			$qc_data['sd']=$lab_ref_val['sd'];
-			$qc_data['date']=$date;
-			$qc_data['time']=$time;
-			$qc_data['equipment']=$equipment;
-			$qc_data['mrd_num']=$mrd_num;
-			$qc_data['uniq']=$ar['uniq'];
-		}
-		else
-		{
-			$qc_data['sdi']='';
-			$qc_data['mean']='';
-			$qc_data['sd']='';
-			$qc_data['date']=$date;
-			$qc_data['time']=$time;
-			$qc_data['equipment']=$equipment;
-			$qc_data['mrd_num']=$mrd_num;
-			$qc_data['uniq']=$ar['uniq'];
-		}
-		$qc_data_array[]=$qc_data;
 	}
 	return $qc_data_array;
 }
@@ -5040,6 +5008,52 @@ function get_name_of_ex_id($link,$examination_id)
 	return $ar['name'];
 }
 
+function get_date_range_sample_id($link,$from_date,$to_date,$parameters)
+{
+	$sql='select mrd.sample_id 
+			from 
+				result mrd,
+				result date_range,
+				result equipment
+			 
+			where
+				mrd.examination_id=\''.$GLOBALS['mrd'].'\' 
+					and
+				mrd.result like "QC/%" 
+					and
+
+					
+				date_range.examination_id=\''.$GLOBALS['Collection_Date'].'\' 
+					and	
+				(date_range.result between 
+						\''.$from_date.'\'
+							and				
+						\''.$to_date.'\'
+				)	
+					and					
+					
+				equipment.result like \'%'.$parameters['qc_equipment'].'%\'
+					and	
+										
+				mrd.sample_id=date_range.sample_id
+				and
+				mrd.sample_id=equipment.sample_id
+			
+			order by mrd.sample_id	 desc
+			limit 500';
+				
+	//echo $sql;
+	$result=run_query($link,$GLOBALS['database'],$sql);
+	$data=array();
+	while($ar=get_single_row($result))
+	{
+		$data[]=$ar['sample_id'];
+	}
+	//echo '<pre>';print_r($data);echo '</pre>';	
+	return $data;
+}
+
+
 function get_qc_sample_id_from_parameters($link,$parameters)
 {
 	/*
@@ -5069,7 +5083,7 @@ function get_qc_sample_id_from_parameters($link,$parameters)
 				mrd.result like "QC/%" 
 					and
 					
-				equipment.examination_id=\''.$GLOBALS['qc_eqipment_ex_id'].'\' 
+				equipment.examination_id=\''.$GLOBALS['qc_equipment_ex_id'].'\' 
 					and	
 				equipment.result like \'%'.$parameters['qc_equipment'].'%\'
 					and				

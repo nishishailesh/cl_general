@@ -14,7 +14,7 @@ echo '<div id=response></div>';
 
 $qc_levels=array(5,8);
 $qc_sample_type=array('QC-QC-BI');
-$GLOBALS['qc_eqipment_ex_id']=9000;
+$GLOBALS['qc_equipment_ex_id']=9000;
 $GLOBALS['Collection_Date']=1015;
 $GLOBALS['Collection_Time']=1016;
 $GLOBALS['remark']=5098;
@@ -23,7 +23,7 @@ if(isset($_POST['one_by_one_sample_id']))
 {
 	if(ctype_digit($_POST['one_by_one_sample_id']))
 	{
-		$one_by_one_sample_id=$_POST['one_by_one_sample_id']+1;
+		$one_by_one_sample_id=$_POST['one_by_one_sample_id'];
 	}
 	else
 	{
@@ -35,6 +35,25 @@ else
 	$one_by_one_sample_id=0;
 }
 
+if(isset($_POST['get_data']))
+{
+
+	if($_POST['get_data']=='one_by_one')
+	{
+		$one_by_one_sample_id=$one_by_one_sample_id;
+	}
+
+	if($_POST['get_data']=='one_by_one_plus')
+	{
+		$one_by_one_sample_id=$one_by_one_sample_id+1;
+	}
+
+	if($_POST['get_data']=='one_by_one_minus')
+	{
+		$one_by_one_sample_id=$one_by_one_sample_id-1;
+	}
+
+}
 echo '<h2>QC</h2>';
 echo '<form method=post>
 	<input type=hidden name=session_name value=\''.$_POST['session_name'].'\'>
@@ -42,12 +61,12 @@ echo '<form method=post>
 	<button class="btn btn-info btn-sm" type=submit name=get_data value=today>Today</button>
 	<button class="btn btn-info btn-sm" type=submit name=get_data value=date_wise>Date wise</button>
 
-
-	<button class="btn btn-info btn-sm" type=submit name=get_data value=one_by_one>OnebyOne</button>
+	<div class="d-inline border border-success rounded p-2" >
 	<input type=number name=one_by_one_sample_id value=\''.$one_by_one_sample_id.'\' placeholder="for 1-by-1">
 	<button class="btn btn-info btn-sm" type=submit name=get_data value=one_by_one_plus>+1</button>
+	<button class="btn btn-info btn-sm" type=submit name=get_data value=one_by_one>OnebyOne</button>
 	<button class="btn btn-info btn-sm" type=submit name=get_data value=one_by_one_minus>-1</button>
-
+	</div>
 </form>';
 
 if(isset($_POST['get_data']))
@@ -72,13 +91,13 @@ if(isset($_POST['get_data']))
 			get_lj_display_parameter_date($link);
 		echo '</div>';
 	}
-	else if(	$_POST['get_data']=='one_by_one')
+	else if(	$_POST['get_data']=='one_by_one' || $_POST['get_data']=='one_by_one_plus' || $_POST['get_data']=='one_by_one_minus')
 	{
 
 		echo '<button class="btn btn-warning btn-sm"  onclick="toggle_display(\'compact\')">extra</button><br>';
 		echo '<div class="d-inline-block border rounded p-2 border-primary">';
 		//get_lj_display_parameter_date_time($link,$qc_levels);
-			show_lj_for_single_sample($link,$_POST['one_by_one_sample_id']);
+			show_lj_for_single_sample($link,$one_by_one_sample_id);
 		echo '</div>';
 	}
 }
@@ -125,6 +144,8 @@ function get_lj_display_parameter_sample_id($link,$qc_levels)
 		//get_examination_names($link);
 		get_examination_data($link);
 		echo '<button type=submit class="btn btn-primary" name=show_lj value="show_lj_sample_id">Show LJ</button>';
+		echo '<button type=submit class="btn btn-primary" name=show_lj formaction=export_lj.php formtarget=blank value="export_lj_sample">Export</button>';
+		
 		//echo '<button type=submit class="btn btn-primary" name=show_lj formaction=export_lj.php formtarget=blank value="export_lj_date">Export</button>';		
 	echo '</form>';
 }
@@ -134,6 +155,8 @@ function get_lj_display_parameter_date($link)
 {
 	echo '<form method=post>';
 		echo '<input type=hidden name=session_name value=\''.$_POST['session_name'].'\'>';
+		echo '<input type=text name=qc_equipment placeholder="QC Equipment">';
+		
 		echo '<input type=date name=from_date>';
 		echo '<input type=date name=to_date>';
 		get_examination_data($link);
@@ -218,7 +241,7 @@ function show_lj_today($link)
 
 function show_lj_date_range($link,$from_date,$to_date,$parameters)
 {
-	$sample_id_array=get_date_range_sample_id($link,$from_date,$to_date);
+	$sample_id_array=get_date_range_sample_id($link,$from_date,$to_date,$parameters);
 	//echo '<pre>';print_r($sample_id_array);echo '</pre>';
 	$ex_requested=explode(',',$parameters['list_of_selected_examination']);
 	show_lj_for_sample($link,$sample_id_array,$ex_requested);
@@ -232,7 +255,7 @@ function display_one_qc($link,$sample_id,$ex_requested)
 	$sample_requirement=get_one_ex_result($link,$sample_id,$GLOBALS['sample_requirement']);
 	$date=get_one_ex_result($link,$sample_id,$GLOBALS['Collection_Date']);
 	$time=get_one_ex_result($link,$sample_id,$GLOBALS['Collection_Time']);
-	$equipment=get_one_ex_result($link,$sample_id,$GLOBALS['qc_eqipment_ex_id']);
+	$equipment=get_one_ex_result($link,$sample_id,$GLOBALS['qc_equipment_ex_id']);
 	$comment=get_one_ex_result($link,$sample_id,$GLOBALS['remark']);
 
 	$sql='select * from primary_result where sample_id=\''.$sample_id.'\' order by uniq';
@@ -420,53 +443,5 @@ function display_one_qc($link,$sample_id,$ex_requested)
 		}
 	}
 }
-
-function echo_sample_id_button_for_remark($link,$sample_id)
-{
-	echo '<div class="modal>'.$sample_id.'</div>';
-	//echo'<form method=post action=export.php class="d-inline-block">
-	//<input type=hidden name=session_name value=\''.$_POST['session_name'].'\'>
-	//<input type=hidden name=sample_id value=\''.$sample_id_csv.'\'>
-	//<div class=print_hide><button type=submit class="btn btn-info  border-danger m-0 p-0" name=export>Export</button></div></form>';	
-}
-/*
-function get_date_range_sample_id($link,$from_date,$to_date)
-{
-	$sql='select mrd.sample_id 
-			from 
-				result mrd,
-				result date_range
-			 
-			where
-				mrd.examination_id=\''.$GLOBALS['mrd'].'\' 
-					and
-				mrd.result like "QC/%" 
-					and
-					
-				date_range.examination_id=\''.$GLOBALS['Collection_Date'].'\' 
-					and	
-				(date_range.result between 
-						\''.$from_date.'\'
-							and				
-						\''.$to_date.'\'
-				)	
-					and					
-					
-				mrd.sample_id=date_range.sample_id
-			
-			order by mrd.sample_id	
-			limit 500';
-				
-	//echo $sql;
-	$result=run_query($link,$GLOBALS['database'],$sql);
-	$data=array();
-	while($ar=get_single_row($result))
-	{
-		$data[]=$ar['sample_id'];
-	}
-	//echo '<pre>';print_r($data);echo '</pre>';	
-	return $data;
-}*/
-
 
 ?>
