@@ -299,7 +299,7 @@ function display_one_qc($link,$sample_id,$ex_requested)
 
 			
 			echo '<tr class=\''.$tr_class.'\'>';
-			
+			$modified_mrd_num=$mrd_num;
 			if(substr($mrd_num,0,strlen($GLOBALS['normal_qc_str']))==$GLOBALS['normal_qc_str'])
 			{
 				$modified_mrd_num=substr_replace(
@@ -308,20 +308,20 @@ function display_one_qc($link,$sample_id,$ex_requested)
 						);
 				$tick=$GLOBALS['normal_qc_tick'];
 			}
-			else
+			elseif(substr($mrd_num,0,strlen($GLOBALS['abnormal_qc_str']))==$GLOBALS['abnormal_qc_str'])
 			{
 				$modified_mrd_num=substr_replace(
 						$mrd_num,'<span class="bg-light text-dark">'.$GLOBALS['abnormal_qc_str'].'</span>',
 						0,strlen($GLOBALS['abnormal_qc_str'])
 						);
 				$tick=$GLOBALS['abnormal_qc_tick'];
-			}					
+			}
 			echo '<td>'.$modified_mrd_num.'</td>';
-			//sample_id button for remark modal popup		
+			//sample_id button for remark modal popup
 				echo '<td  class=\''.$sample_class.'\'>';
 				echo '<button id=\'button_'.$sample_id.'\'
 						class="btn btn-sm '.$sample_class.' "
-						data-toggle="modal" 
+						data-toggle="modal"
 						data-target=\'#modal_'.$sample_id.$ar['examination_id'].'\'   >'.$sample_id.'</button>';
 				echo '<div id=\'modal_'.$sample_id.$ar['examination_id'].'\' class="modal">';
 					echo '<div class="modal-dialog">';
