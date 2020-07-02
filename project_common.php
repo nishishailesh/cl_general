@@ -20,7 +20,7 @@ function main_menu()
 					<div class="text-center">--Bio-</div>
 					<button class="btn btn-outline-primary m-0 p-0 " formaction=new_specific_biochemistry.php type=submit name=action value=direct>New Direct(Age/Sex)</button>
 					<button class="btn btn-outline-primary m-0 p-0 " formaction=new_covid_biochemistry.php type=submit name=action value=direct>New Covid(MRD)</button>
-					<button class="btn btn-outline-primary m-0 p-0 " formaction=new_covid_biochemistry_stem.php type=submit name=action value=direct>New Covid(Stem)</button>
+		<!-- <button class="btn btn-outline-primary m-0 p-0 " formaction=new_covid_biochemistry_stem.php type=submit name=action value=direct>New Covid(Stem)</button> -->
 					<button class="btn btn-outline-primary m-0 p-0 " formaction=new_qc_biochemistry.php type=submit name=action value=qc>New QC</button>
 				</div>
 			</div>
@@ -2090,7 +2090,7 @@ echo '<div class="basic_form">';
         echo '  <label class="my_label text-danger" for="mrd">MRD</label>
 			<input size=13 id=mrd name=__ex__'.$GLOBALS['mrd'].' class="form-control text-danger" required="required" 
 				type=text placeholder=""  \>
-                        <p class="help">MRD Example -> SUR/20/00123456 <br>COVID Example -> 5/123</span</p>';
+                        <p class="help">MRD Example -> SUR/20/00123456</span</p>';
 echo '</div>';
 echo '</div>';
 }
