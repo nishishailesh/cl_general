@@ -5032,6 +5032,8 @@ function get_date_range_sample_id($link,$from_date,$to_date,$parameters)
 				)	
 					and					
 					
+				equipment.examination_id=\''.$GLOBALS['qc_equipment_ex_id'].'\'
+					and
 				equipment.result like \'%'.$parameters['qc_equipment'].'%\'
 					and	
 										

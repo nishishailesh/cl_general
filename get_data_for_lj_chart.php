@@ -108,6 +108,7 @@ if(isset($_POST['show_lj']))
 
 	if($_POST['show_lj']=='show_lj_sample_id')
 	{
+		echo '<h2>'.$_POST['from_sample_id'].' to '.$_POST['to_sample_id'].'</h2>';
 		show_lj($link,$_POST);
 	}
 
@@ -119,7 +120,7 @@ if(isset($_POST['show_lj']))
 
 	if($_POST['show_lj']=='show_lj_date')
 	{	
-		echo '<h2>'.$_POST['from_date'].' to '.$_POST['from_date'].'</h2>';
+		echo '<h2>'.$_POST['from_date'].' to '.$_POST['to_date'].'</h2>';
 		show_lj_date_range($link,$_POST['from_date'],$_POST['to_date'],$_POST);
 	}
 }

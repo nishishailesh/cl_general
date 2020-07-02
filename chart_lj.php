@@ -13,57 +13,109 @@ function init(all_data)
 	
 	//c.innerHTML=all_data
 	console.log(all_data)
-	ss=["#FF0000","#00FF00","#0000FF","#AA0000","#00AA00","#0000AA","#330000"];
+	ss=["#FF0000","#00FF00","#0000FF",
+		"#AA0000","#00AA00","#0000AA",
+		"#BB0000","#00BB00","#0000BB",
+		"#CC0000","#00BB00","#0000BB",
+		"#DD0000","#00CC00","#0000CC",];
 	ss_count=0;
 	
 	//0
+	ctx.setLineDash([5, 3])
+	ctx.beginPath();
+	ctx.strokeStyle = "#000000";
 	ctx.moveTo(0,200);
 	ctx.lineTo(800,200);
+	ctx.stroke();
+	
+	//ctx.strokeStyle = "#000000";
+	//ctx.strokeText(0,0,200)
+	
+	ctx.setLineDash([])
 
-	//-1s
+	////-1s
+	ctx.beginPath();
 	ctx.moveTo(0,250);
 	ctx.lineTo(800,250);
-
-	//-2s
+	ctx.strokeStyle = "#000000";	
+	ctx.stroke();
+	
+	////-2s
+	ctx.beginPath();	
 	ctx.moveTo(0,300);
 	ctx.lineTo(800,300);
+	ctx.strokeStyle = "#FF9A14";	
+	ctx.stroke();
 
-	//-3s
+	ctx.strokeStyle = "#000000";	
+	ctx.strokeText(-2,0,300)	
+
+	////-3s
+	ctx.beginPath();	
 	ctx.moveTo(0,350);
 	ctx.lineTo(800,350);
+	ctx.strokeStyle = "#FF0000";	
+	ctx.stroke();
 
-	//-4s
+	ctx.strokeStyle = "#000000";	
+	ctx.strokeText(-3,0,350)		
+
+	////-4s
+	
+	ctx.beginPath();
 	ctx.moveTo(0,400);
 	ctx.lineTo(800,400);
+	ctx.strokeStyle = "#000000";	
+	ctx.stroke();
 		
-	//1s
+	////+1s
+	ctx.beginPath();
 	ctx.moveTo(0,150);
 	ctx.lineTo(800,150);
-
-	//2s
+	ctx.strokeStyle = "#000000";	
+	ctx.stroke();
+	
+	////-2s
+	ctx.beginPath();	
 	ctx.moveTo(0,100);
 	ctx.lineTo(800,100);
+	ctx.strokeStyle = "#FF9A14";	
+	ctx.stroke();
 
-	//2s
+	ctx.strokeStyle = "#000000";	
+	ctx.strokeText(2,0,100)	
+
+	////-3s
+	ctx.beginPath();	
 	ctx.moveTo(0,50);
 	ctx.lineTo(800,50);
+	ctx.strokeStyle = "#FF0000";	
+	ctx.stroke();
 
+	ctx.strokeStyle = "#000000";	
+	ctx.strokeText(3,0,50)		
 
-	//4s
+	////-4s
+	
+	ctx.beginPath();
 	ctx.moveTo(0,0);
 	ctx.lineTo(800,0);
-					
+	ctx.strokeStyle = "#000000";	
+	ctx.stroke();
+	
+						
 	text_x=0
 	text_y=10
+	ctxx.font = "lighter Arial";
+	
 	for( var one_chart in all_data)	//one cahrt is key
 	{
 		
 		ctxx.strokeStyle=ss[ss_count];
 		ctx.strokeStyle=ss[ss_count];
-
-		console.log(one_chart+'--\>' + ss[ss_count])
+		//console.log(one_chart+'--\>' + ss[ss_count])
 		ctxx.strokeText(one_chart,text_x,text_y)
-		text_y=text_y+12
+		text_y=text_y+13
 		
 		ss_count=ss_count+1;
 		//console.log(x[one_chart])
@@ -84,46 +136,13 @@ function init(all_data)
 			//one day 86400 seconds =24 pixel
 			xpoint=((one_point-start_x)*24)/86400
 			
-			//xpoint_day=Math.abs(Math.round(one_point/1000000)-start_x)
-			//xpoint_hour=Math.abs(Math.round(one_point/1000000)-start_x)
 			ypoint=200-all_data[one_chart][one_point]*50
 			console.log(xpoint + '--\>' + ypoint)
-			//ctx.moveTo(prev_x,prev_y);
-			//ctx.lineTo(xpoint,ypoint);
-			//prev_x=xpoint			
-			//prev_y=ypoint			
-			//height=400, width=800
-			//one sd=50
-			//20200624093012
-			//2020062409 (same hour , same place)
-			//one day, 24 pixel
-			//30 days=720 pixel
-			//ctx.moveTo(xpoint,ypoint);
-			//ctx.lineTo(j * 20 +i*5, all_result[i][j]*40);
 			ctx.strokeText('x',xpoint,ypoint) 
 		}
-		ctx.strokeStyle = "#000000";
-		ctx.stroke();
+		//ctx.strokeStyle = "#000000";
+		//ctx.stroke();
 	}
-	/*
-	var c = document.getElementById("canvas");
-	var ctx = c.getContext("2d");
-	//ctx.font = "30px Arial";
-	//ctx.fillText(all_result, 10, 50); 
-	
-	ctx.beginPath();
-	
-	ctx.strokeStyle="#FF0666";
-	for (i=0;i<all_result.length;i++) 
-	{
-		for(j=0;j<all_result[i].length;j++) 
-		{
-			ctx.moveTo(j*20 +i*5 , 0);
-			ctx.lineTo(j * 20 +i*5, all_result[i][j]*40);
-		}
-	}
-	ctx.stroke();
-	*/
 	ctxx.stroke();
 }
 </script>
