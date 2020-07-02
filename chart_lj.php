@@ -1,40 +1,68 @@
 <script>
-
 function init(all_data)
 {
 	//all_result=[[5,10],[2,8]]	
 	var c = document.getElementById("canvas");
 	var ctx = c.getContext("2d");
 	ctx.font = "Serif"
-	var c = document.getElementById("output");
+	
+	var cc = document.getElementById("canvas_info");
+	var ctxx = cc.getContext("2d");
+	ctxx.font = "Serif"
+	
+	
 	//c.innerHTML=all_data
-	//console.log(x)
-	ss=["#FF0000","#00FF00","#0000FF","#FFFF99","#FF0666","#FF0666","#FF0666"];
+	console.log(all_data)
+	ss=["#FF0000","#00FF00","#0000FF","#AA0000","#00AA00","#0000AA","#330000"];
 	ss_count=0;
 	
+	//0
 	ctx.moveTo(0,200);
 	ctx.lineTo(800,200);
 
+	//-1s
 	ctx.moveTo(0,250);
 	ctx.lineTo(800,250);
 
+	//-2s
 	ctx.moveTo(0,300);
 	ctx.lineTo(800,300);
 
+	//-3s
+	ctx.moveTo(0,350);
+	ctx.lineTo(800,350);
+
+	//-4s
+	ctx.moveTo(0,400);
+	ctx.lineTo(800,400);
+		
+	//1s
 	ctx.moveTo(0,150);
 	ctx.lineTo(800,150);
 
+	//2s
 	ctx.moveTo(0,100);
 	ctx.lineTo(800,100);
+
+	//2s
+	ctx.moveTo(0,50);
+	ctx.lineTo(800,50);
+
+
+	//4s
+	ctx.moveTo(0,0);
+	ctx.lineTo(800,0);
 					
 	text_x=0
 	text_y=10
 	for( var one_chart in all_data)	//one cahrt is key
 	{
 		
+		ctxx.strokeStyle=ss[ss_count];
 		ctx.strokeStyle=ss[ss_count];
+
 		console.log(one_chart+'--\>' + ss[ss_count])
-		ctx.strokeText(one_chart,text_x,text_y)
+		ctxx.strokeText(one_chart,text_x,text_y)
 		text_y=text_y+12
 		
 		ss_count=ss_count+1;
@@ -74,6 +102,7 @@ function init(all_data)
 			//ctx.lineTo(j * 20 +i*5, all_result[i][j]*40);
 			ctx.strokeText('x',xpoint,ypoint) 
 		}
+		ctx.strokeStyle = "#000000";
 		ctx.stroke();
 	}
 	/*
@@ -95,6 +124,7 @@ function init(all_data)
 	}
 	ctx.stroke();
 	*/
+	ctxx.stroke();
 }
 </script>
 <?php
@@ -158,8 +188,8 @@ $gr=array();
 		foreach($ar as $v)
 		{
 			$time_num=strtotime($v['date'].' '.$v['time']);
-			$gr[	$v['mrd_num'].'|'.$v['examination_id'].'|'.$v['equipment'] ][$time_num]=$v['sdi'];
-			//$gr['"'.$v['mrd_num'].'|'.$v['examination_id'].'|'.$v['equipment'].'"' ]['"'.$v['uniq'].'"']='"'.$v['sdi'].'"';
+			$key_name=str_replace(" ","_",$v['mrd_num'].'|'.$v['examination_id'].'|'.$v['equipment']);
+			$gr[$key_name][$time_num]=$v['sdi'];
 		}
 	}
 	
@@ -167,13 +197,14 @@ $gr=array();
 //exit(0);
 //print_r($all_result);
 
+//$x=htmlentities(json_encode($gr,JSON_PRETTY_PRINT));
 $x=json_encode($gr);
+//echo json_last_error_msg();
 //echo $x;
 echo '
 <body onLoad=init('.$x.')>
-<div id=output></div>
-<canvas id=canvas height=400 width=800>
-</canvas>';
+<canvas id=canvas height=400 width=800></canvas>
+<canvas id=canvas_info height=200 width=800></canvas>';
 
 
 //////////////user code ends////////////////
