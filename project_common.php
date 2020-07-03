@@ -133,9 +133,13 @@ function mk_array_from_sql_kv($link,$sql,$field_name_k,$field_name_v)
 	return $ret;
 }
 
-function mk_select_from_sql($link,$sql,$field_name,$select_name,$select_id,$disabled='',$default='')
+function mk_select_from_sql($link,$sql,$field_name,$select_name,$select_id,$disabled='',$default='',$blank='no')
 {
 	$ar=mk_array_from_sql($link,$sql,$field_name);
+	if($blank=='yes')
+	{
+		array_unshift($ar,"");
+	}
 	mk_select_from_array($select_name,$ar,$disabled,$default);
 }
 

@@ -44,7 +44,8 @@ function get_data_specific($link)
 	
 		echo '<div id=basic class="tab-pane active">';
 			//get_basic_specific_no_restriction();	//MRD
-			get_one_field_for_insert($link,1001);	//mrd
+			get_qc_mrd($link);
+			//get_one_field_for_insert($link,1001);	//mrd
 			get_one_field_for_insert($link,1015);	//collection date
 			get_one_field_for_insert($link,1016);	//collection time
 			get_one_field_for_insert($link,9000);	//equipment
@@ -66,9 +67,19 @@ function get_data_specific($link)
 //////////////user code ends////////////////
 tail();
 
-echo '<pre>';print_r($_POST);echo '</pre>';
+//echo '<pre>';print_r($_POST);echo '</pre>';
 
 //////////////Functions///////////////////////
 
-
+function get_qc_mrd($link)
+{
+	$sql='SELECT DISTINCT `mrd` FROM `lab_reference_value` WHERE `end_date`>sysdate()';
+	echo '<div class="basic_form">';
+		echo '	<label class="my_label text-danger" for="mrd">MRD</label>';
+			mk_select_from_sql($link,$sql,'mrd','__ex__'.$GLOBALS['mrd'],'mrd','','','yes');
+		echo '<p class="help"><span class=text-danger>Must have</span> QC/n/ at start where n=0-9</p>';			
+	echo '</div>';
+	
+	
+}
 ?>
