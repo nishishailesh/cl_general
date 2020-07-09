@@ -25,6 +25,8 @@ $GLOBALS['pid_profile']=1;
 $GLOBALS['print_side_or_below']=100;
 $GLOBALS['max_non_ex_profile']=20;
 
+//$GLOBALS['ser']='BIOCHEMISTRY'; in /var/gmcs_config
+
 $GLOBALS['HI']=array('name'=>'New Civil Hospital Surat Laboratory Services',
 						'section'=>'Hematology and Immunology Section',
 						'address'=>'OPD-10, NCHS, Surat',

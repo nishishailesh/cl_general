@@ -4,7 +4,7 @@ require_once('tcpdf/tcpdf.php');
 
 function main_menu()
 {
-	echo '
+	echo '<span class="bg-warning">'.$GLOBALS['ser'].'</span>
 	<form method=post class="form-group m-0 p-0">
 	<input type=hidden name=session_name value=\''.session_name().'\'>
 	<div class="btn-group">
