@@ -13,9 +13,12 @@ main_menu();
 
 if(in_array('lock',$auth))
 {
-	delete_examination($link,$_POST['sample_id'],$GLOBALS['released_by']);
-	insert_one_examination_with_result($link,$_POST['sample_id'],
-			$GLOBALS['released_by'],$user['name'].' ('.strftime("%Y-%m-%d %H:%M").')');
+	//delete_examination($link,$_POST['sample_id'],$GLOBALS['released_by']);
+	//insert_one_examination_with_result($link,$_POST['sample_id'],
+	//		$GLOBALS['released_by'],$user['name'].' ('.strftime("%Y-%m-%d %H:%M").')');
+	
+	update_one_examination_with_result($link,$_POST['sample_id'],$GLOBALS['released_by'],$user['name'].' ('.strftime("%Y-%m-%d %H:%M").')');
+
 }
 else
 {

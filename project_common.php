@@ -3449,10 +3449,20 @@ function add_new_examination_and_profile($link,$sample_id,$list_of_selected_exam
 
 function set_lable($session_name,$sample_id,$examination_details,$examination_id,$frill=true)
 {
+	
+	$edit_specification=json_decode($examination_details['edit_specification'],true);
+	if(!$edit_specification){$edit_specification=array();}
+	$readonly=isset($edit_specification['readonly'])?$edit_specification['readonly']:'';
+	
 		echo '
 			<div class="my_lable">';
+		
 			
-		if($examination_details['examination_id']!=$GLOBALS['mrd'] && $examination_details['examination_id']!=$GLOBALS['sample_requirement'])
+		//if(	$examination_details['examination_id']!=$GLOBALS['mrd'] && 
+		//	$examination_details['examination_id']!=$GLOBALS['sample_requirement'] &&
+		//	$examination_details['examination_id']!=$GLOBALS['released_by']
+		//	)
+		if($readonly!='readonly')
 		{
 		if($frill)
 			{
@@ -3602,7 +3612,14 @@ function update_one_examination_with_result($link,$sample_id,$examination_id,$re
 	}
 	else
 	{
-		echo '<p>'.$sample_id.'|'.$examination_id.'|'.$result.'|Saved</p>';				
+		if(rows_affected($link)==1)
+		{
+			echo '<p>'.$sample_id.'|'.$examination_id.'|'.$result.'|Saved</p>';				
+		}
+		else
+		{
+			echo '<p>Result need no update/ No such examination</p>';
+		}
 	}
 }
 
@@ -3753,6 +3770,8 @@ function set_sample_id($link, $sample_required_array)
 			//echo 'pp';
 			//echo $GLOBALS['sample_requirement'];
 			insert_one_examination_with_result($link,$sample_id_array[$stype],$GLOBALS['sample_requirement'],$stype);
+			insert_one_examination_with_result($link,$sample_id_array[$stype],$GLOBALS['released_by'],'');
+			
 			//echo 'qq';
 		}
 	}
