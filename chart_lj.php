@@ -137,6 +137,8 @@ function init(all_data)
 			xpoint=((one_point-start_x)*24)/86400
 			
 			ypoint=200-all_data[one_chart][one_point]*50
+			if(ypoint>400){(ypoint=395);}
+			if(ypoint<0){(ypoint=5);}
 			console.log(xpoint + '--\>' + ypoint)
 			ctx.strokeText('x',xpoint,ypoint) 
 		}
@@ -171,7 +173,7 @@ $GLOBALS['Collection_Time']=1016;
 
 $link=get_link($GLOBALS['main_user'],$GLOBALS['main_pass']);
 
-if($_POST['show_lj']=='export_lj_date')
+if($_POST['show_lj']=='chart_lj_date')
 {
 	$array=get_date_range_sample_id($link,$_POST['from_date'],$_POST['to_date'],$_POST);
 }

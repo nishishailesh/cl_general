@@ -138,10 +138,11 @@ function get_lj_display_parameter_sample_id($link,$qc_levels)
 	echo '<form method=post>';
 		echo '<input type=hidden name=session_name value=\''.$_POST['session_name'].'\'>';
 		//read_checkbox($qc_levels);
+		echo '<input type=text name=qc_mrd placeholder="QC MRD" value=\'QC/\'">';
 		echo '<input type=text name=qc_equipment placeholder="QC Equipment">';
 		echo '<input type=number name=from_sample_id placeholder="from sample_id">';
 		echo '<input type=number name=to_sample_id placeholder="to sample_id">';
-		echo '<input type=checkbox name=compact>';
+		//echo '<input type=checkbox name=compact>';
 		//get_examination_names($link);
 		get_examination_data($link);
 		echo '<button type=submit class="btn btn-primary" name=show_lj value="show_lj_sample_id">Show LJ</button>';
@@ -157,6 +158,7 @@ function get_lj_display_parameter_date($link)
 {
 	echo '<form method=post>';
 		echo '<input type=hidden name=session_name value=\''.$_POST['session_name'].'\'>';
+		echo '<input type=text name=qc_mrd placeholder="QC MRD" value=\'QC/\'">';
 		echo '<input type=text name=qc_equipment placeholder="QC Equipment">';
 		
 		echo '<input type=date name=from_date>';
@@ -164,6 +166,7 @@ function get_lj_display_parameter_date($link)
 		get_examination_data($link);
 		echo '<button type=submit class="btn btn-primary" name=show_lj value="show_lj_date">Show LJ</button>';
 		echo '<button type=submit class="btn btn-primary" name=show_lj formaction=export_lj.php formtarget=blank value="export_lj_date">Export</button>';
+		echo '<button type=submit class="btn btn-primary" name=show_lj formaction=chart_lj.php formtarget=blank value="chart_lj_date">Chart</button>';
 	echo '</form>';
 }
 
@@ -304,18 +307,12 @@ function display_one_qc($link,$sample_id,$ex_requested)
 			
 			if(substr($mrd_num,0,strlen($GLOBALS['normal_qc_str']))==$GLOBALS['normal_qc_str'])
 			{
-				$modified_mrd_num=substr_replace(
-						$mrd_num,'<span class="bg-warning text-dark">'.$GLOBALS['normal_qc_str'].'</span>',
-						0,strlen($GLOBALS['normal_qc_str'])
-						);
+				$modified_mrd_num='<span class="bg-light text-danger">'.$mrd_num.'</span>';
 				$tick=$GLOBALS['normal_qc_tick'];
 			}
 			else
 			{
-				$modified_mrd_num=substr_replace(
-						$mrd_num,'<span class="bg-light text-dark">'.$GLOBALS['abnormal_qc_str'].'</span>',
-						0,strlen($GLOBALS['abnormal_qc_str'])
-						);
+				$modified_mrd_num='<span class="bg-light text-dark">'.$mrd_num.'</span>';
 				$tick=$GLOBALS['abnormal_qc_tick'];
 			}					
 			echo '<td>'.$modified_mrd_num.'</td>';

@@ -32,6 +32,7 @@ function main_menu()
 					<div class="btn-group-vertical  d-block">
 						<button class="btn btn-outline-primary m-0 p-0" formaction=view_database_id.php type=submit name=action value=get_dbid>View Sample ID</button>			
 						<button class="btn btn-outline-primary m-0 p-0" formaction=search.php type=submit name=action value=get_search_condition>Search</button>			
+						<button class="btn btn-outline-primary m-0 p-0" formaction=search_si.php type=submit name=action value=get_search_condition>Search-SI</button>			
 						<button class="btn btn-outline-primary m-0 p-0" formaction=report.php type=submit name=action value=get_search_condition>Report</button>			
 						<button class="btn btn-outline-primary m-0 p-0" formaction=view_worklist.php type=submit name=action value=get_sid_eid_for_worklist>Worklist</button>			
 					</div>
@@ -686,10 +687,10 @@ function view_sample_no_profile($link,$sample_id)
 	echo '</div>';
 }
 
-function sample_id_edit_button($sample_id)
+function sample_id_edit_button($sample_id,$target='',$label='Edit')
 {
-	echo '<div class="d-inline-block" ><form method=post action=edit_general.php class=print_hide>
-	<button class="btn btn-outline-primary btn-sm" name=sample_id value=\''.$sample_id.'\' >Edit</button>
+	echo '<div class="d-inline-block" ><form method=post '.$target.' action=edit_general.php class=print_hide>
+	<button class="btn btn-outline-primary btn-sm" name=sample_id value=\''.$sample_id.'\' >'.$label.'</button>
 	<input type=hidden name=session_name value=\''.$_POST['session_name'].'\'>
 	<input type=hidden name=action value=edit_general>
 	</form></div>';
@@ -5042,7 +5043,7 @@ function get_date_range_sample_id($link,$from_date,$to_date,$parameters)
 			where
 				mrd.examination_id=\''.$GLOBALS['mrd'].'\' 
 					and
-				mrd.result like "QC/%" 
+				mrd.result like \'%'.$parameters['qc_mrd'].'%\'
 					and
 
 					
@@ -5105,7 +5106,7 @@ function get_qc_sample_id_from_parameters($link,$parameters)
 			where
 				mrd.examination_id=\''.$GLOBALS['mrd'].'\' 
 					and
-				mrd.result like "QC/%" 
+				mrd.result like \'%'.$parameters['qc_mrd'].'%\'
 					and
 					
 				equipment.examination_id=\''.$GLOBALS['qc_equipment_ex_id'].'\' 
