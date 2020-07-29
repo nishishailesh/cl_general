@@ -59,11 +59,13 @@ elseif($_POST['action']=='search')
 			$released_by_local=get_one_ex_result($link,$sid,$GLOBALS['released_by']);
 			if(strlen($released_by_local)==0)
 			{
-				sample_id_edit_button($sid,'target=_blank',$sid.'<span class="bg-warning rounded">U</span>');
+				//sample_id_edit_button($sid,'target=_blank',$sid.'<span class="bg-warning rounded">U</span>');
+				sample_id_view_button($sid,'target=_blank',$sid.'<span class="bg-warning rounded">U</span>');
 			}
 			else
 			{
-				sample_id_edit_button($sid,'target=_blank',$sid.'<span class="bg-danger rounded">R</span>');
+				//sample_id_edit_button($sid,'target=_blank',$sid.'<span class="bg-danger rounded">R</span>');
+				sample_id_view_button($sid,'target=_blank',$sid.'<span class="bg-danger rounded">R</span>');
 			}
 		}	
 	}

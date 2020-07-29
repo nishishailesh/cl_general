@@ -2,8 +2,58 @@
 //require_once 'Evaluator.php';
 require_once('tcpdf/tcpdf.php');
 
+function requestonly_check($link)
+{
+	$user=get_user_info($link,$_SESSION['login']);
+	$auth=explode(',',$user['authorization']);
+	if(in_array('requestonly',$auth))
+	{
+		return true;
+	}
+	else
+	{
+		return false;
+	}
+}
+
 function main_menu()
 {
+	$link=get_link($GLOBALS['main_user'],$GLOBALS['main_pass']);
+	$user=get_user_info($link,$_SESSION['login']);
+	$auth=explode(',',$user['authorization']);
+	if(in_array('requestonly',$auth))
+	{
+		echo '<span class="bg-warning">'.$GLOBALS['ser'].'</span>
+		<form method=post class="form-group m-0 p-0">
+		<input type=hidden name=session_name value=\''.session_name().'\'>
+
+		<div class="btn-group">
+			<div class="dropdown m-0 p-0">
+				<button class="btn btn-outline-primary dropdown-toggle m-0 p-0" type="button" data-toggle="dropdown">New</button>
+				<div class="dropdown-menu m-0 p-0 ">
+					<div class="btn-group-vertical d-block">
+						<button class="btn btn-outline-primary m-0 p-0 " formaction=new_requestonly.php type=submit name=action value=direct>New Request(Doctor)</button>
+					</div>
+				</div>
+			</div>
+
+
+			<div class="dropdown m-0 p-0">
+				<button class="btn btn-outline-primary dropdown-toggle m-0 p-0" type="button" data-toggle="dropdown">View</button>
+					<div class="dropdown-menu m-0 p-0">
+						<div class="btn-group-vertical  d-block">
+							<button class="btn btn-outline-primary m-0 p-0" formaction=view_database_id.php type=submit name=action value=get_dbid>View Sample ID</button>
+							<button class="btn btn-outline-primary m-0 p-0" formaction=search_si.php type=submit name=action value=get_search_condition>Search-SI</button>			
+						</div>
+					</div>
+			</div>
+		</div>
+
+
+		</form>';		
+		return;
+	}
+		
 	echo '<span class="bg-warning">'.$GLOBALS['ser'].'</span>
 	<form method=post class="form-group m-0 p-0">
 	<input type=hidden name=session_name value=\''.session_name().'\'>
@@ -227,6 +277,22 @@ function show_all_buttons_for_sample($link,$sample_id)
 {
 	$released_by=get_one_ex_result($link,$sample_id,$GLOBALS['released_by']);
 	$interim_released_by=get_one_ex_result($link,$sample_id,$GLOBALS['interim_released_by']);
+		
+	if(requestonly_check($link))		//no interim, no release, allow edit/delete no print
+	{
+		sample_id_barcode_button($sample_id);
+		sample_id_prev_button($sample_id);
+		sample_id_view_button($sample_id);
+		sample_id_next_button($sample_id);
+		if(strlen($released_by)!=0 || strlen($interim_released_by)!=0)
+		{
+			sample_id_print_button($sample_id);						
+		}
+		return;
+	}
+	
+
+	
 	if(strlen($released_by)==0 && strlen($interim_released_by)==0)		//no interim, no release, allow edit/delete no print
 	{
 		sample_id_barcode_button($sample_id);
@@ -733,10 +799,10 @@ function sample_id_verify_button($sample_id)
 	<input type=hidden name=action value=verify>
 	</form></div>';
 }
-function sample_id_view_button($sample_id,$target='')
+function sample_id_view_button($sample_id,$target='',$label='View')
 {
 	echo '<div class="d-inline-block" ><form method=post action=view_single.php class=print_hide target=\''.$target.'\'>
-	<button class="btn btn-outline-success btn-sm" name=sample_id value=\''.$sample_id.'\' >View</button>
+	<button class="btn btn-outline-success btn-sm" name=sample_id value=\''.$sample_id.'\' >'.$label.'</button>
 	<input type=hidden name=session_name value=\''.$_POST['session_name'].'\'>
 	<input type=hidden name=action value=view_single>
 	</form></div>';
@@ -4198,6 +4264,7 @@ function get_profile_wise_ex_list($link,$sample_id)
 
 function dashboard($link)
 {
+	if(requestonly_check($link)){return;}
 	$sql='select * from dashboard order by priority desc';
 	
 	echo '<span data-toggle="collapse" class="sh badge badge-warning d-inline" href=#dashboard >DashBoard</span><div></div><div></div>';
@@ -4297,6 +4364,7 @@ class ACCOUNT1 extends TCPDF {
 
 function show_dashboard($link)
 {
+	if(requestonly_check($link)){return;}
 	get_sql($link);
 	
 }
