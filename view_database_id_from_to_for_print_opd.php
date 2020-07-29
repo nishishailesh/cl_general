@@ -32,7 +32,7 @@ tail();
 
 //////////////Functions///////////////////////
 
-function get_dbid()
+function get_dbid($link)
 {
 
 echo '<form method=post action=print_from_to_opd.php target=_blank>';
@@ -43,7 +43,10 @@ echo '<div class="basic_form">';
 	echo '	<label class="my_label text-danger" for="to">To Sample ID</label>
 			<input type=number size=13 id=from name=to class="form-control text-danger" required="required" \>
 			<p class="help"><span class=text-danger>Must be</span> number</p>';
+		
 echo '</div>';
+get_one_field_for_insert($link,1006);	//OPD/Ward
+
 echo '<button type=submit class="btn btn-primary form-control" name=action value=view_dbid>Print</button>';
 echo '<input type=hidden name=session_name value=\''.session_name().'\'>';
 echo '</form>';

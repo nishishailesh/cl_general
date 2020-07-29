@@ -13,6 +13,10 @@ $pdf=get_pdf_link_for_barcode();
 foreach($sample_id_array as $sample_id)
 {
 	prepare_sample_barcode($link,$sample_id,$pdf);
+	if($_POST['action']=='two_barcode')
+	{	
+		prepare_sample_barcode_for_tube($sample_id,$pdf);
+	}
 }
 print_pdf($pdf,'barcode.pdf');
 

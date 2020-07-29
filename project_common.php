@@ -67,7 +67,7 @@ function main_menu()
 					<button class="btn btn-outline-primary m-0 p-0 " formaction=new_s1.php type=submit name=action value=direct>New Direct(Patho)</button>
 					<button class="btn btn-outline-primary m-0 p-0 " formaction=new_covid_patho_stem.php type=submit name=action value=direct>New Covid(Stem) Patho</button>
 
-					<div class="text-center">--Bio-</div>
+					<div class="text-center">--Bio--</div>
 					<button class="btn btn-outline-primary m-0 p-0 " formaction=new_specific_biochemistry.php type=submit name=action value=direct>New Direct(Age/Sex)</button>
 					<button class="btn btn-outline-primary m-0 p-0 " formaction=new_covid_biochemistry.php type=submit name=action value=direct>New Covid(MRD)</button>
 		<!-- <button class="btn btn-outline-primary m-0 p-0 " formaction=new_covid_biochemistry_stem.php type=submit name=action value=direct>New Covid(Stem)</button> -->
@@ -94,7 +94,7 @@ function main_menu()
 				<div class="dropdown-menu m-0 p-0">
 					<div class="btn-group-vertical  d-block">
 						<button class="btn btn-outline-primary m-0 p-0" formaction=view_database_id_from_to_for_print.php type=submit name=action value=get_from_to>Print From-To</button>			
-						<button class="btn btn-outline-primary m-0 p-0" formaction=view_database_id_from_to_for_print_opd.php type=submit name=action value=get_from_to>Print From-To(OPD)</button>			
+						<button class="btn btn-outline-primary m-0 p-0" formaction=view_database_id_from_to_for_print_opd.php type=submit name=action value=get_from_to>Print From-To(Location)</button>			
 						<button class="btn btn-outline-primary m-0 p-0" formaction=search_and_print.php type=submit name=action value=get_search_condition>Search & Print</button>
 						<button class="btn btn-outline-primary m-0 p-0" formaction=print_multiple_scanned_barcode.php type=submit name=action value=get_scan>Scan & Print</button>						
 					</div>
@@ -765,20 +765,26 @@ function sample_id_edit_button($sample_id,$target='',$label='Edit')
 
 function sample_id_barcode_button($sample_id)
 {
-	echo '<div class="d-inline-block" ><form method=post target=_blank action=print_single_barcode.php class=print_hide>
-	<button class="btn btn-outline-primary btn-sm" name=sample_id value=\''.$sample_id.'\' >|||||||</button>
+	echo '<div class="d-inline-block" >
+	<form method=post target=_blank action=print_single_barcode.php class=print_hide>
+	<button class="btn btn-outline-primary btn-sm" name=action value=one_barcode >[1]||||</button>
+	<button class="btn btn-outline-primary btn-sm" name=action value=two_barcode >[2]||||</button>
 	<input type=hidden name=session_name value=\''.$_POST['session_name'].'\'>
-	<input type=hidden name=action value=print_barcode>
+	<input type=hidden name=sample_id value=\''.$sample_id.'\'>
 	</form></div>';
 }
 
 function sample_id_barcode_button_array($sample_id_array)
 {
 	$serialized=base64_encode(serialize($sample_id_array));
-	echo '<div class="d-inline-block" ><form method=post target=_blank action=print_multiple_barcode.php class=print_hide>
-	<button class="btn btn-outline-primary btn-sm" name=sample_id_array value=\''.$serialized.'\' >[|||||||]  [||||||]</button>
+	echo '<div class="d-inline-block" >
+	<form method=post target=_blank action=print_multiple_barcode.php class=print_hide>
+
+	<button class="btn btn-outline-primary btn-sm" name=action value=one_barcode >[1]||||,||||</button>
+	<button class="btn btn-outline-primary btn-sm" name=action value=two_barcode >[2]||||,||||</button>
+		
 	<input type=hidden name=session_name value=\''.$_POST['session_name'].'\'>
-	<input type=hidden name=action value=print_barcode>
+	<input type=hidden name=sample_id_array value=\''.$serialized.'\'>
 	</form></div>';
 }
 

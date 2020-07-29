@@ -12,6 +12,7 @@ $at_least_one_sample=false;
 
 $link=get_link($GLOBALS['main_user'],$GLOBALS['main_pass']);
 //echo '<pre>';print_r($_POST);echo '</pre>';
+//exit();
 
 $pdf = new ACCOUNT1('P', 'mm', 'A4', true, 'UTF-8', false);
 //$pdf = new ACCOUNT1(PDF_PAGE_ORIENTATION, PDF_UNIT, PDF_PAGE_FORMAT, true, 'UTF-8', false);
@@ -22,7 +23,10 @@ for ($i=$_POST['from'];$i<=$_POST['to'];$i++)
 	$ow=get_one_ex_result($link,$i,$GLOBALS['OPD/Ward']);
 
 	//echo 'xxx'.$i.$released_by;
-	if($ow=='OPD')
+	//[__ex__1006] => E2(508)
+	
+	$location_post='__ex__'.$GLOBALS['OPD/Ward'];
+	if($ow==$_POST[$location_post])
 	{
 		if(strlen($released)!=0 || strlen($interim_released)!=0 )
 		{

@@ -49,7 +49,7 @@ function get_data_specific($link)
 	echo '<div class="tab-content">';
 	
 		echo '<div id=basic class="tab-pane active">';
-			get_basic_specific_no_restriction();	//MRD
+			get_basic_specific();	//MRD
 			get_one_field_for_insert($link,1002);	//Name
 
 			get_one_field_for_insert($link,1004);	//Department

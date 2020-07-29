@@ -8,7 +8,10 @@ $link=get_link($GLOBALS['main_user'],$GLOBALS['main_pass']);
 
 $pdf=get_pdf_link_for_barcode();
 prepare_sample_barcode($link,$_POST['sample_id'],$pdf);
-prepare_sample_barcode_for_tube($_POST['sample_id'],$pdf);
+if($_POST['action']=='two_barcode')
+{
+	prepare_sample_barcode_for_tube($_POST['sample_id'],$pdf);
+}
 print_pdf($pdf,'barcode.pdf');
 
 //echo '<pre>';print_r($_POST);echo '</pre>';
