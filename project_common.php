@@ -80,11 +80,13 @@ function main_menu()
 			<button class="btn btn-outline-primary dropdown-toggle m-0 p-0" type="button" data-toggle="dropdown">View</button>
 				<div class="dropdown-menu m-0 p-0">
 					<div class="btn-group-vertical  d-block">
-						<button class="btn btn-outline-primary m-0 p-0" formaction=view_database_id.php type=submit name=action value=get_dbid>View Sample ID</button>			
-						<button class="btn btn-outline-primary m-0 p-0" formaction=search.php type=submit name=action value=get_search_condition>Search</button>			
-						<button class="btn btn-outline-primary m-0 p-0" formaction=search_si.php type=submit name=action value=get_search_condition>Search-SI</button>			
-						<button class="btn btn-outline-primary m-0 p-0" formaction=report.php type=submit name=action value=get_search_condition>Report</button>			
+						<!-- <button class="btn btn-outline-primary m-0 p-0" formaction=view_database_id.php type=submit name=action value=get_dbid>View Sample ID</button>			-->
+						<button class="btn btn-outline-primary m-0 p-0" formaction=view_database_id_from_to.php type=submit name=action value=get_dbids>by Sample ID(s)</button>			
+						<!-- <button class="btn btn-outline-primary m-0 p-0" formaction=search.php type=submit name=action value=get_search_condition>by Search Conditions</button>			-->
+						<button class="btn btn-outline-primary m-0 p-0" formaction=search_si.php type=submit name=action value=get_search_condition>by Search Conditions</button>			
 						<button class="btn btn-outline-primary m-0 p-0" formaction=view_worklist.php type=submit name=action value=get_sid_eid_for_worklist>Worklist</button>			
+						<button class="btn btn-outline-primary m-0 p-0" formaction=report.php type=submit name=action value=get_search_condition>Report</button>			
+						
 					</div>
 				</div>
 		</div>
@@ -93,10 +95,10 @@ function main_menu()
 			<button class="btn btn-outline-primary dropdown-toggle m-0 p-0" type="button" data-toggle="dropdown">Print</button>
 				<div class="dropdown-menu m-0 p-0">
 					<div class="btn-group-vertical  d-block">
-						<button class="btn btn-outline-primary m-0 p-0" formaction=view_database_id_from_to_for_print.php type=submit name=action value=get_from_to>Print From-To</button>			
-						<button class="btn btn-outline-primary m-0 p-0" formaction=view_database_id_from_to_for_print_opd.php type=submit name=action value=get_from_to>Print From-To(Location)</button>			
-						<button class="btn btn-outline-primary m-0 p-0" formaction=search_and_print.php type=submit name=action value=get_search_condition>Search & Print</button>
-						<button class="btn btn-outline-primary m-0 p-0" formaction=print_multiple_scanned_barcode.php type=submit name=action value=get_scan>Scan & Print</button>						
+						<!-- <button class="btn btn-outline-primary m-0 p-0" formaction=view_database_id_from_to_for_print.php type=submit name=action value=get_from_to>Print From-To</button>			-->
+						<button class="btn btn-outline-primary m-0 p-0" formaction=view_database_id_from_to_for_print_opd.php type=submit name=action value=get_from_to>by Sample ID(s)</button>			
+						<button class="btn btn-outline-primary m-0 p-0" formaction=search_and_print.php type=submit name=action value=get_search_condition>by Search Conditions</button>
+						<button class="btn btn-outline-primary m-0 p-0" formaction=print_multiple_scanned_barcode.php type=submit name=action value=get_scan>by Scanning Barcode</button>						
 					</div>
 				</div>
 		</div>
@@ -113,7 +115,16 @@ function main_menu()
 					</div>
 				</div>
 		</div>
-				
+
+		<!-- <div class="dropdown m-0 p-0">
+			<button class="btn btn-outline-primary dropdown-toggle m-0 p-0" type="button" data-toggle="dropdown">Support</button>
+				<div class="dropdown-menu m-0 p-0">
+					<div class="btn-group-vertical  d-block">
+						<a target="_blank"  href="/proj1/dementia/all_records">Reminders</a>
+					</div>
+				</div>
+		</div> -->
+    				
 		<button class="btn btn-outline-primary m-0 p-0" formaction=copy_prototype.php type=submit name=action value=copy_prototype>Copy Prototype</button>			
 		<button class="btn btn-outline-primary m-0 p-0" formaction=start.php type=submit name=action value=home><img src=img/home.jpeg height=20></button>
 		<button class="btn btn-outline-primary m-0 p-0" formaction=start.php type=submit formtarget=_blank name=action value=home>+</button>
@@ -3744,19 +3755,25 @@ function echo_class_button($link,$class)
 function get_search_condition($link)
 {
 	echo '<form method=post>';
-	echo '<button type=submit class="btn btn-primary form-control" name=action value=set_search>Set Search</button>';
+	echo '<button type=submit class="btn btn-primary form-control" name=action value=set_search>Set Search Conditions</button>';
 	echo '<div class="basic_form">';
 	get_examination_data($link);
 	echo '</div>';
-	echo '<button type=submit class="btn btn-primary form-control" name=action value=set_search>Set Search</button>';
+	echo '<button type=submit class="btn btn-primary form-control" name=action value=set_search>Set Search Conditions</button>';
 	echo '<input type=hidden name=session_name value=\''.session_name().'\'>';
 	echo '</form>';
 }
 
-function set_search($link,$action='')
+function set_search($link,$action='',$for_print='')
 {
-	$ex_requested=explode(',',$_POST['list_of_selected_examination']);
+	$ex_requested=array_filter(explode(',',$_POST['list_of_selected_examination']));
 	//print_r($ex_requested);
+
+	if(count($ex_requested)==0)
+	{
+		echo '<h3>No meaningful search conditions provided!!</h3>';
+		return false;
+	}
 	echo '<form method=post '.$action.'>';
 		foreach($ex_requested as $v)
 		{
@@ -3771,10 +3788,21 @@ function set_search($link,$action='')
 					<p class="help">Enter details for search</p>';
 			echo '</div>';
 		}
-	echo '<button type=submit class="btn btn-primary form-control" name=action value=search>Search</button>';
+	
+	if($for_print=='')
+	{	
+		echo '<button type=submit class="btn btn-primary form-control m-1" name=action value=search_summary>Search (Summary View)</button>';
+		echo '<button type=submit class="btn btn-primary form-control m-1" name=action value=search_detail>Search (Detailed View)</button>';
+	}
+	else
+	{
+		echo '<button type=submit class="btn btn-primary form-control m-1" name=action value=print>Print</button>';		
+	}
 	echo '<input type=hidden name=session_name value=\''.session_name().'\'>';
 	echo '</form>';
+	return true;
 }
+
 
 function prepare_search_array($link)
 {
@@ -5256,4 +5284,16 @@ function get_today_sample_id($link)
 	return $data;
 }
 
+function show_sid_button_release_status($link,$sid)
+{
+	$released_by_local=get_one_ex_result($link,$sid,$GLOBALS['released_by']);
+	if(strlen($released_by_local)==0)
+	{
+		sample_id_view_button($sid,'target=_blank','<span class="text-danger rounded">'.$sid.'</span>');
+	}
+	else
+	{
+		sample_id_view_button($sid,'target=_blank','<span class="text-dark rounded">'.$sid.'</span>');
+	}
+}
 ?>

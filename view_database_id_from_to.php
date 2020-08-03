@@ -11,9 +11,9 @@ $link=get_link($GLOBALS['main_user'],$GLOBALS['main_pass']);
 //it is not by mrd
 //it is by databaase ID
 main_menu();
-echo '<h3>Print Reports between two sample_id and Specific Location</h3>';
+echo '<h3>View Reports between two sample_id and Specific Location</h3>';
 
-if($_POST['action']=='get_from_to')
+if($_POST['action']=='get_dbids')
 {
 	get_dbid($link);
 }
@@ -35,7 +35,7 @@ tail();
 function get_dbid($link)
 {
 
-echo '<form method=post action=print_from_to_opd.php target=_blank>';
+echo '<form method=post action=view_from_to_opd.php >';
 echo '<div class="basic_form">';
 	echo '	<label class="my_label text-danger" for="from">From Sample ID</label>
 			<input type=number size=13 id=from name=from class="form-control text-danger" required="required" \>
@@ -43,10 +43,12 @@ echo '<div class="basic_form">';
 	echo '	<label class="my_label text-danger" for="to">To Sample ID</label>
 			<input type=number size=13 id=from name=to class="form-control text-danger"\>
 			<p class="help"><span class=text-danger>Must be</span> number</p>';
+		
 echo '</div>';
 get_one_field_for_insert($link,1006);	//OPD/Ward
 
-echo '<button type=submit class="btn btn-primary form-control" name=action value=view_dbid>Print</button>';
+echo '<button type=submit class="btn btn-primary form-control m-1" name=action value=view_dbid_summary>View (Summary)</button>';
+echo '<button type=submit class="btn btn-primary form-control m-1" name=action value=view_dbid_detail>View (Detail)</button>';
 echo '<input type=hidden name=session_name value=\''.session_name().'\'>';
 echo '</form>';
 echo 	'<ul>

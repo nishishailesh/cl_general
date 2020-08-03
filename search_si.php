@@ -8,7 +8,7 @@ echo '		  <link rel="stylesheet" href="project_common.css">
 $link=get_link($GLOBALS['main_user'],$GLOBALS['main_pass']);
 
 main_menu();
-echo '<h3>Search and display editable sample_IDs</h3>';
+echo '<h3>Search and display Sample IDs</h3>';
 //echo '<pre>';print_r($GLOBALS);
 //echo '</pre>';
 
@@ -22,57 +22,129 @@ elseif($_POST['action']=='set_search')
 {
 	set_search($link);
 }
-elseif($_POST['action']=='search')
+elseif($_POST['action']=='search_summary')
 {
 	$search_array=prepare_search_array($link);
+	if(count($search_array)==0)
+	{
+		echo '<h3>No meaningful search conditions provided!!</h3>';
+		exit(0);
+	}
+	
+	//echo '<pre>';	
 	//print_r($_POST);
+	//print_r($search_array);
 
-	$display='';
+	
+	
+	$from=' ';
+	$counter=0;
 	foreach ($search_array as $kd=>$vd)
 	{
-		$ex_name=get_name_of_ex_id($link,$kd);
-		$display=$display.$ex_name.'='.$vd.' , ';
+		$tn='r'.$counter;
+		$from=$from.' result '.$tn.' ,';
+		$counter++;
 	}
-	echo '<h3>'.$display.'</h3>	';
+	if(substr($from,-1,1)==',')
+	{
+		$from=substr($from,0,-1);
+	}
 	
-	$first=TRUE;
-	$temp=array();
-	foreach ($search_array as $sk=>$sv)
+	$counter=0;
+	$w=' ';
+	foreach ($search_array as $kd=>$vd)
 	{
-	//print_r($temp);
-		$temp=get_sample_with_condition($link,$sk,$sv,$temp,$first);
-	//print_r($temp);
-		$first=FALSE;
-	}
-	//print_r($temp);
-	if(count($temp)>0)
-	{
+		$tn='r'.$counter;
 		
-
-		//$sample_id_csv = implode(',', $temp);
-		//echo_export_button($sample_id_csv);
-		//echo_class_button($link,'OGDC')	;
-		foreach ($temp as $sid)
+		$w= $w. ' ('.$tn.'.examination_id=\''.$kd.'\' and '.$tn.'.result like \'%'.$vd.'%\' ) and ';
+		if($counter>0)
 		{
-			//view_sample($link,$sid);
+			$tp=' r'.($counter-1);
+			$w=$w.' '.$tn.'.sample_id='.$tp.'.sample_id and ';
+		}
+		$counter++;
+	}
 
-			$released_by_local=get_one_ex_result($link,$sid,$GLOBALS['released_by']);
-			if(strlen($released_by_local)==0)
-			{
-				//sample_id_edit_button($sid,'target=_blank',$sid.'<span class="bg-warning rounded">U</span>');
-				sample_id_view_button($sid,'target=_blank',$sid.'<span class="bg-warning rounded">U</span>');
-			}
-			else
-			{
-				//sample_id_edit_button($sid,'target=_blank',$sid.'<span class="bg-danger rounded">R</span>');
-				sample_id_view_button($sid,'target=_blank',$sid.'<span class="bg-danger rounded">R</span>');
-			}
-		}	
-	}
-	else
+	if(substr($w,-4,4)=='and ')
 	{
-		echo '<h3>No Sample matching // Nothing meaningful provided!!</h3>';
+		$w=substr($w,0,-4);
 	}
+			
+	$sql='select * from '.$from.' where '.$w;
+	//echo $sql; 
+	$ret=array();
+	$result=run_query($link,$GLOBALS['database'],$sql);
+		while($ar=get_single_row($result))
+		{
+			show_sid_button_release_status($link,$ar['sample_id']);
+		}
+	
+	//print_r($ret);
+	
+	//echo '</pre>';
+}
+
+
+elseif($_POST['action']=='search_detail')
+{
+	$search_array=prepare_search_array($link);
+	if(count($search_array)==0)
+	{
+		echo '<h3>No meaningful search conditions provided!!</h3>';
+		exit(0);
+	}
+	
+	//echo '<pre>';	
+	//print_r($_POST);
+	//print_r($search_array);
+
+	
+	
+	$from=' ';
+	$counter=0;
+	foreach ($search_array as $kd=>$vd)
+	{
+		$tn='r'.$counter;
+		$from=$from.' result '.$tn.' ,';
+		$counter++;
+	}
+	if(substr($from,-1,1)==',')
+	{
+		$from=substr($from,0,-1);
+	}
+	
+	$counter=0;
+	$w=' ';
+	foreach ($search_array as $kd=>$vd)
+	{
+		$tn='r'.$counter;
+		
+		$w= $w. ' ('.$tn.'.examination_id=\''.$kd.'\' and '.$tn.'.result like \'%'.$vd.'%\' ) and ';
+		if($counter>0)
+		{
+			$tp=' r'.($counter-1);
+			$w=$w.' '.$tn.'.sample_id='.$tp.'.sample_id and ';
+		}
+		$counter++;
+	}
+
+	if(substr($w,-4,4)=='and ')
+	{
+		$w=substr($w,0,-4);
+	}
+			
+	$sql='select * from '.$from.' where '.$w;
+	//echo $sql; 
+	$ret=array();
+	$result=run_query($link,$GLOBALS['database'],$sql);
+		while($ar=get_single_row($result))
+		{
+			view_sample($link,$ar['sample_id']);
+		}
+	
+	//print_r($ret);
+	
+	//echo '</pre>';
 }
 
 //////////////user code ends////////////////
@@ -81,5 +153,6 @@ tail();
 //echo '<pre>';print_r($_POST);echo '</pre>';
 
 //////////////Functions///////////////////////
+
 
 ?>
