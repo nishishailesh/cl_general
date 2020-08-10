@@ -6,6 +6,7 @@ $GLOBALS['serum_TBIL']=5009;
 $GLOBALS['serum_DBIL']=5010;
 $GLOBALS['serum_IBIL']=5024;
 $GLOBALS['Remark']=5098;
+$GLOBALS['Critical_Alert']=5097;
 
 function verify_sample($link,$sample_id)
 {
@@ -25,11 +26,37 @@ function verify_sample($link,$sample_id)
 
 function any_examination_id($link,$sample_id,$eid,$eval)
 {
+	$examination_details=get_one_examination_details($link,$eid);		
+
 	if(strlen($eval)==0)
 	{
-		echo '<span class="text-danger d-block">'.$eid.' result is empty. [NOT OK]</span>';return;
+		echo '<span class="text-danger d-block">('.$eid.'-'.$examination_details['name'].') result is empty. [NOT OK]</span>';return;
+	}
+
+	if($GLOBALS['critical_autoinsert']=='yes')
+	{
+		$edit_specification=json_decode($examination_details['edit_specification'],true);
+
+		$interval_l=isset($edit_specification['interval_l'])?$edit_specification['interval_l']:'';
+		$cinterval_l=isset($edit_specification['cinterval_l'])?$edit_specification['cinterval_l']:'';
+		$ainterval_l=isset($edit_specification['ainterval_l'])?$edit_specification['ainterval_l']:'';
+		$interval_h=isset($edit_specification['interval_h'])?$edit_specification['interval_h']:'';
+		$cinterval_h=isset($edit_specification['cinterval_h'])?$edit_specification['cinterval_h']:'';
+		$ainterval_h=isset($edit_specification['ainterval_h'])?$edit_specification['ainterval_h']:'';
+
+		$alert=decide_alert($eval,$interval_l,$cinterval_l,$ainterval_l,$interval_h,$cinterval_h,$ainterval_h);
+		if($alert==$GLOBALS['critical_low_message'] || $alert==$GLOBALS['critical_high_message'])
+		{
+			echo '<span class="text-danger d-block">('.$eid.'-'.$examination_details['name'].') result is critical.[Inform and update remark]</span>';
+
+			//insert, or update(but actually donot change existing value)
+			//upto user to decide what to write, email/Phone to_whom , date,time etc
+			$cr=get_one_ex_result($link,$sample_id,$GLOBALS['Critical_Alert']);
+			insert_update_one_examination_with_result($link,$sample_id,$GLOBALS['Critical_Alert'],$cr);
+		}
 	}
 	
+
 }
 
 //Plasma Glucose
@@ -79,7 +106,7 @@ function f_5010($link,$sample_id,$ex_id)
 		}
 		else
 		{
-			
+			echo '<span class="text-success d-block">TBIL is numeric. Going next step</span>';				
 			if(	$ex_result_array[$GLOBALS['serum_TBIL']] >= $ex_result_array[$GLOBALS['serum_DBIL']] )
 			{
 				echo '<span class="text-success">TBIL > DBIL [OK]</span>';
@@ -114,6 +141,5 @@ Otherwise, Result may be considered absurd and repeat sample collection is advis
 		}
 	}	
 }
-
 
 ?>

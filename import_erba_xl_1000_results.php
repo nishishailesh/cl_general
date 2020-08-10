@@ -69,9 +69,13 @@ function csv_to_sql($link,$file_data,$equipment)
 	$f=fopen($file_data['tmp_name'],'r');
 	
 	$f_data=fread($f,$file_data['size']);
-	$f_data_final=substr($f_data,2);							//remove byte-order-mark FF FE
-	$f_data_final_ascii=iconv('UTF16LE','ASCII',$f_data_final);	//convert to ascii
-	//echo $f_data_final_ascii;
+	$f_data_final=substr($f_data,2);	//remove byte-order-mark FF FE
+	$f_data_final_ascii=iconv('UTF16LE','ASCII//IGNORE',$f_data_final);	//convert to ascii
+	
+	//echo '.A.<br>'.$f_data;
+	//echo '.B.<br>'.$f_data_final;
+	//echo '.C.<br>'.$f_data_final_ascii;
+	
 	//return;
 	$lines = explode(PHP_EOL, $f_data_final_ascii);
 	
@@ -102,6 +106,19 @@ function csv_to_sql($link,$file_data,$equipment)
 		
 		if(count($ar)>=8)
 		{
+			//05/29/2020 10:29:59 to YYMMDDHHMMSS format
+			$tkd=preg_split('/[:\/\s]+/',$ar[7]);
+			//echo '<br>'.$ar[7];
+			//Array ( [0] => 08 [1] => 01 [2] => 2020 [3] => 14 [4] => 03 [5] => 07 ) 
+			if(count($tkd)>=6)
+			{
+				$my_date=$tkd[2].$tkd[0].$tkd[1].$tkd[3].$tkd[4].$tkd[5];
+			}
+			else
+			{
+				$my_date='';
+			}
+			//echo '<br>'.$my_date;
 			//only for given sample_id
 			$sample_code_to_ex=get_examination_codes($link,$equipment,$ar[1]);
 			if(count($sample_code_to_ex)==0)
@@ -127,10 +144,10 @@ function csv_to_sql($link,$file_data,$equipment)
 					$sql=	'insert into primary_result
 								(sample_id,examination_id,result,uniq)
 								values
-								(\''.$ar[1].'\',\''.$examination_id.'\',\''.$ar[4].'\',\''.$ar[7].'\')
+								(\''.$ar[1].'\',\''.$examination_id.'\',\''.$ar[4].'\',\''.$my_date.'\')
 							on duplicate key
 							update result=\''.$ar[4].'\'';							
-					//echo $sql.'<br>';
+					echo $sql.'<br>';
 					if($result=run_query($link,$GLOBALS['database'],$sql))
 					{
 						echo '<span class="text-success">Records inserted/updated='.rows_affected($link).'<br></span>';
@@ -139,7 +156,7 @@ function csv_to_sql($link,$file_data,$equipment)
 			}
 			else
 			{
-				echo '<span class="text-danger">('.$ar[1].')->('.$ar[3].') have no corresponding code in host_code table<br></span>';
+				echo '<span class="text-danger">('.$ar[1].')->('.$ar[3].') have no corresponding code in host_code table / No such examination requested<br></span>';
 			}
 			
 		}

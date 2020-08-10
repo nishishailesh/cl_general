@@ -20,15 +20,16 @@ echo '</div><div class="d-inline-block">';
 get_dbid_small();
 echo '</div>';
 
-
 if($_SESSION['display_style']=='full')
 {
 	view_sample($link,$_POST['sample_id']);
+	calculate_tat($link,$_POST['sample_id']);
 }
 else
 {
 	view_sample_compact($link,$_POST['sample_id']);
 }
+
 
 //////////////user code ends////////////////
 tail();

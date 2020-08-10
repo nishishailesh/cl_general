@@ -25,6 +25,8 @@ else
 	echo '<h3>You are not authorized to release report</h3>';
 }
 view_sample($link,$_POST['sample_id']);
+calculate_tat($link,$_POST['sample_id']);
+
 //////////////user code ends////////////////
 tail();
 

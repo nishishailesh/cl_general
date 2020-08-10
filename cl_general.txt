@@ -1,45 +1,56 @@
-Total Sample On a Day
-=====================
-select count(examination_id) as Total_Sample from result where examination_id=1017 and result="2020-02-13"
+autoverify
 
-Sample with receipt date
-========================
-select r1.sample_id,r1.examination_id,r2.sample_id,r2.examination_id,r2.result from result r1,result r2 where r1.sample_id=r2.sample_id and r2.examination_id=1017 and r2.result="2020-02-13"
-
-
-test with received on
-======================
-select 
-	r1.sample_id,r1.examination_id,e1.name, 
-	r2.sample_id,r2.examination_id,e2.name ,
-	r2.result 
-from 
-	examination e1,examination e2, 
-	result r1,result r2 
-where 
-	r1.sample_id=r2.sample_id and 
-	r2.examination_id=1017 and 
-	r2.result="2020-02-13" and
-	e1.examination_id=r1.examination_id and 
-	e2.examination_id=r2.examination_id 
-order by r1.sample_id
+#critical
+# as part of verfication
+# autoremark inserted if configured in config.php
+# result messages stored in config files
 
 
-test count with date received on
-======================
-select 
-	r1.examination_id, e1.name, 
-	r2.examination_id, e2.name ,
-	r2.result,
-	count(r2.result)
-from 
-	examination e1,examination e2, 
-	result r1,result r2 
-where 
-	r1.sample_id=r2.sample_id and 
-	r2.examination_id=1017 and 
-	r2.result="2020-02-13" and
-	e1.examination_id=r1.examination_id and 
-	e2.examination_id=r2.examination_id 
-group by r1.examination_id
-order by r1.examination_id
+TAT (no new data, only from sample data)
+	time of MRD is request time
+	collection time
+	receipt time
+	analysis compate_time
+	release time
+		calculate
+		compare with standard
+		insert apology
+
+ 
+delta check
+
+
+independent tables
+==================
+equipment log
+temperature
+environment para
+equipment records
+NC
+Calibration
+all docs
+Reagent
+
+
+	
+		
+Scope
+print lables
+reminders
+Status of samples
+
+QC - manufacturer's value
+
+
+#Datetime stored in result uniq tab is changed to following format in exported/manual entry to match ASTM
+#20200531233109
+
+
+record_types = sample_types (Equipment-Records-BI)
+
+	
+records
+	id sample_id
+	recorded_by
+	recording_time
+

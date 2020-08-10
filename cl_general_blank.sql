@@ -47,92 +47,40 @@ CREATE TABLE `dashboard` (
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
--- Table structure for table `dementia_dementia`
+-- Table structure for table `dementia`
 --
 
-DROP TABLE IF EXISTS `dementia_dementia`;
+DROP TABLE IF EXISTS `dementia`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `dementia_dementia` (
+CREATE TABLE `dementia` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
-  `Minutes` varchar(10) NOT NULL,
-  `Hours` varchar(10) NOT NULL,
-  `DayM` varchar(10) NOT NULL,
-  `Month` varchar(10) NOT NULL,
-  `DayW` varchar(10) NOT NULL,
-  `Text` varchar(200) NOT NULL,
+  `Minutes` varchar(10) DEFAULT NULL,
+  `Hours` varchar(10) DEFAULT NULL,
+  `DayM` varchar(10) DEFAULT NULL,
+  `Month` varchar(10) DEFAULT NULL,
+  `DayW` varchar(10) DEFAULT NULL,
+  `Text` varchar(200) DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB AUTO_INCREMENT=26 DEFAULT CHARSET=utf8mb4;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
--- Table structure for table `django_admin_log`
+-- Table structure for table `equipment_records`
 --
 
-DROP TABLE IF EXISTS `django_admin_log`;
+DROP TABLE IF EXISTS `equipment_records`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `django_admin_log` (
+CREATE TABLE `equipment_records` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
-  `action_time` datetime(6) NOT NULL,
-  `object_id` longtext DEFAULT NULL,
-  `object_repr` varchar(200) NOT NULL,
-  `action_flag` smallint(5) unsigned NOT NULL,
-  `change_message` longtext NOT NULL,
-  `content_type_id` int(11) DEFAULT NULL,
-  `user_id` int(11) NOT NULL,
-  PRIMARY KEY (`id`),
-  KEY `django_admin_log_content_type_id_c4bce8eb_fk_django_co` (`content_type_id`),
-  CONSTRAINT `django_admin_log_content_type_id_c4bce8eb_fk_django_co` FOREIGN KEY (`content_type_id`) REFERENCES `django_content_type` (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Table structure for table `django_content_type`
---
-
-DROP TABLE IF EXISTS `django_content_type`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `django_content_type` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
-  `app_label` varchar(100) NOT NULL,
-  `model` varchar(100) NOT NULL,
-  PRIMARY KEY (`id`),
-  UNIQUE KEY `django_content_type_app_label_model_76bd3d3b_uniq` (`app_label`,`model`)
-) ENGINE=InnoDB AUTO_INCREMENT=8 DEFAULT CHARSET=utf8mb4;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Table structure for table `django_migrations`
---
-
-DROP TABLE IF EXISTS `django_migrations`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `django_migrations` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
-  `app` varchar(255) NOT NULL,
-  `name` varchar(255) NOT NULL,
-  `applied` datetime(6) NOT NULL,
+  `equipment_name` varchar(100) DEFAULT NULL,
+  `record_type` varchar(100) DEFAULT NULL,
+  `remark` varchar(1000) DEFAULT NULL,
+  `attachment` mediumblob DEFAULT NULL,
+  `attachment_name` varchar(100) DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=20 DEFAULT CHARSET=utf8mb4;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Table structure for table `django_session`
---
-
-DROP TABLE IF EXISTS `django_session`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `django_session` (
-  `session_key` varchar(40) NOT NULL,
-  `session_data` longtext NOT NULL,
-  `expire_date` datetime(6) NOT NULL,
-  PRIMARY KEY (`session_key`),
-  KEY `django_session_expire_date_a5c62663` (`expire_date`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB AUTO_INCREMENT=47 DEFAULT CHARSET=utf8mb4;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -277,6 +225,20 @@ CREATE TABLE `prototype_data` (
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
+-- Table structure for table `record_tables`
+--
+
+DROP TABLE IF EXISTS `record_tables`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `record_tables` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `table_name` varchar(100) DEFAULT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=15 DEFAULT CHARSET=utf8mb4;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
 -- Table structure for table `reminder`
 --
 
@@ -366,25 +328,6 @@ CREATE TABLE `sample_id_strategy` (
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
--- Table structure for table `schedule`
---
-
-DROP TABLE IF EXISTS `schedule`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `schedule` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
-  `min` varchar(5) NOT NULL,
-  `hour` varchar(5) NOT NULL,
-  `day` varchar(5) NOT NULL,
-  `month` varchar(5) NOT NULL,
-  `week` varchar(5) NOT NULL,
-  `text` varchar(100) NOT NULL,
-  PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
 -- Table structure for table `super_profile`
 --
 
@@ -398,6 +341,23 @@ CREATE TABLE `super_profile` (
   `extra` varchar(300) DEFAULT NULL,
   `edit_specification` varchar(500) NOT NULL,
   PRIMARY KEY (`super_profile_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Table structure for table `table_fields_specifications`
+--
+
+DROP TABLE IF EXISTS `table_fields_specifications`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `table_fields_specifications` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `tname` varchar(100) NOT NULL,
+  `fname` varchar(100) NOT NULL,
+  `specifications` varchar(5000) DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `tname_fname` (`tname`,`fname`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -443,4 +403,4 @@ CREATE TABLE `view_info_data` (
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2020-08-03 23:36:19
+-- Dump completed on 2020-08-10 10:38:57

@@ -112,6 +112,7 @@ function main_menu()
 						<button class="btn btn-outline-primary m-0 p-0" formaction=import_erba_xl_1000_results.php type=submit name=action value=get_file>Import XL-1000 Result</button>											
 						<button class="btn btn-outline-primary m-0 p-0" formaction=get_id_range_for_small_barcode.php type=submit name=action value=get_sample_id_range>Sample Tube Barcode</button>					
 						<button class="btn btn-outline-primary m-0 p-0" formaction=get_data_for_lj_chart.php type=submit name=action value=get_data>LJ Chart</button>					
+						<button class="btn btn-outline-primary m-0 p-0" formaction=single_table_edit.php type=submit name=action value=get_record_list>Records</button>
 					</div>
 				</div>
 		</div>
@@ -341,6 +342,24 @@ function show_all_buttons_for_sample($link,$sample_id)
 		sample_id_email_button($sample_id);
 	}
 }
+
+function sample_exist($link,$sample_id)
+{
+	$ex_list=get_result_of_sample_in_array($link,$sample_id);
+	//print_r($ex_list);
+	$rblob=get_result_blob_of_sample_in_array($link,$sample_id);
+	//print_r($rblob);
+	$result_plus_blob_requested=$ex_list+$rblob;
+	//print_r($result_plus_blob_requested);
+
+	if(count($result_plus_blob_requested)!=0)
+	{
+		return true;
+	}	
+	return false;
+}
+
+
 
 function view_sample($link,$sample_id)
 {
@@ -1093,6 +1112,7 @@ function get_result_of_sample_in_array($link,$sample_id)
 	return $result_array;
 }
 
+//never used
 function get_primary_result_of_sample_in_array($link,$sample_id)
 {
 	$sql='select * from primary_result where sample_id=\''.$sample_id.'\'';
@@ -1105,6 +1125,20 @@ function get_primary_result_of_sample_in_array($link,$sample_id)
 	//print_r($result_array);
 	return $result_array;
 }
+
+function get_primary_result_rows_of_sample_in_array($link,$sample_id)
+{
+	$sql='select * from primary_result where sample_id=\''.$sample_id.'\'';
+	$result=run_query($link,$GLOBALS['database'],$sql);
+	$result_array=array();
+	while($ar=get_single_row($result))
+	{
+		$result_array[]=$ar;
+	}
+	//print_r($result_array);
+	return $result_array;
+}
+
 
 function get_result_blob_of_sample_in_array($link,$sample_id)
 {
@@ -1221,7 +1255,7 @@ function get_primary_result($link,$sample_id,$examination_id)
 							echo '<input type=hidden name=examination_id value=\''.$examination_id.'\'>';
 								
 							get_one_field_for_insert_in_primary_result($link,$sample_id,$examination_id);
-							echo '<input type=text name=uniq value=\''.strftime("%Y-%m-%d %H:%M:%S").'\'>';
+							echo '<input type=text name=uniq value=\''.strftime("%Y%m%d%H%M%S").'\'>';
 						  	echo '<button 
 						  			id=\'submit_'.$sample_id.$examination_id.'\' 
 						  			type=submit
@@ -1572,6 +1606,8 @@ function edit_field($link,$examination_id,$result_array,$sample_id,$readonly='',
 	}
 	elseif($type=='date' || $type=='time')
 	{
+		if($type=='date'){$default=strftime("%Y-%m-%d");}
+		elseif($type=='time'){$default=strftime("%H:%M");}
 		//////
 		echo '<div class="basic_form  m-0 p-0 no-gutters">';
 			////
@@ -1594,6 +1630,7 @@ function edit_field($link,$examination_id,$result_array,$sample_id,$readonly='',
 				echo '</div>';
 				echo '<div class="d-inline  no-gutters">';
 					if($frill){get_primary_result($link,$sample_id,$examination_id);}
+					show_source_button($element_id,$default);
 				echo '</div>';
 			echo '</div>';
 			echo '<div class="help"><pre>'.$help.'</pre></div>';	
@@ -1833,7 +1870,7 @@ function decide_alert($result,$interval_l,$cinterval_l,$ainterval_l,$interval_h,
 	{
 		if($result<$ainterval_l)
 		{
-			return $alert='<--Absurd Low';
+			return $alert=$GLOBALS['absurd_low_message'];
 			//return $alert='<--'.$result.'<'.$ainterval_l.' Absurd Low';
 		}
 	}
@@ -1842,7 +1879,7 @@ function decide_alert($result,$interval_l,$cinterval_l,$ainterval_l,$interval_h,
 	{
 		if($result>$ainterval_h)
 		{
-			return $alert='<--Absurd High';
+			return $alert=$GLOBALS['absurd_high_message'];
 			//return $alert='<--'.$result.'>'.$ainterval_h.' Absurd high';
 		}
 		
@@ -1852,7 +1889,7 @@ function decide_alert($result,$interval_l,$cinterval_l,$ainterval_l,$interval_h,
 	{
 		if($result<$cinterval_l)
 		{
-			return $alert='<--Critical Low';
+			return $alert=$GLOBALS['critical_low_message'];
 			//return $alert='<--'.$result.'<'.$cinterval_l.' Critical Low';
 
 		}
@@ -1863,7 +1900,7 @@ function decide_alert($result,$interval_l,$cinterval_l,$ainterval_l,$interval_h,
 		if($result>$cinterval_h)
 		{
 			//return $alert='<--'.$result.'>'.$cinterval_h.' Critical High';
-			return $alert='<--Critical High';
+			return $alert=$GLOBALS['critical_high_message'];;
 		}
 	}
 
@@ -1873,7 +1910,7 @@ function decide_alert($result,$interval_l,$cinterval_l,$ainterval_l,$interval_h,
 		if($result<$interval_l)
 		{
 			//return $alert='<--'.$result.'<'.$interval_l.' Abnormal Low';
-			return $alert='<--Abnormal Low';
+			return $alert=$GLOBALS['abnormal_low_message'];;
 		}
 	}
 
@@ -1882,7 +1919,7 @@ function decide_alert($result,$interval_l,$cinterval_l,$ainterval_l,$interval_h,
 		if($result>$interval_h)
 		{
 			//return $alert='<--'.$result.'>'.$interval_h.' Abnormal high';
-			return $alert='<--Abnormal High';
+			return $alert=$GLOBALS['abnormal_high_message'];;
 		}
 	}
 
@@ -3424,6 +3461,14 @@ function get_one_ex_result($link,$sample_id,$examination_id)
 		{
 			return false;
 		}
+}
+
+function get_one_ex_result_row($link,$sample_id,$examination_id)
+{
+		$sql='select * from result where sample_id=\''.$sample_id.'\' and examination_id=\''.$examination_id.'\'';
+		$result=run_query($link,$GLOBALS['database'],$sql);
+		return $ar=get_single_row($result);
+
 }
 
 function get_one_ex_result_blob($link,$sample_id,$examination_id)
@@ -5295,5 +5340,118 @@ function show_sid_button_release_status($link,$sid)
 	{
 		sample_id_view_button($sid,'target=_blank','<span class="text-dark rounded">'.$sid.'</span>');
 	}
+}
+
+function calculate_tat($link,$sample_id)
+{
+	//Prepare
+
+	//1. Request entry time is MRD entry time
+	$rq=get_one_ex_result_row($link,$sample_id,$GLOBALS['mrd']); //generally 1001
+
+	//2. Collection date and time
+	$cd=get_one_ex_result_row($link,$sample_id,$GLOBALS['collection_date']); //generally 1015
+	$ct=get_one_ex_result_row($link,$sample_id,$GLOBALS['collection_time']); //generally 1016
+	
+	//3. Receipt date time
+	$rd=get_one_ex_result_row($link,$sample_id,$GLOBALS['receipt_date']); //generally 1017
+	$rt=get_one_ex_result_row($link,$sample_id,$GLOBALS['receipt_time']); //generally 1018
+
+	//4. Analysis time
+	$pr=get_primary_result_rows_of_sample_in_array($link,$sample_id);
+	
+	//5. Release date time
+	$rl=get_one_ex_result_row($link,$sample_id,$GLOBALS['released_by']); //generally 1018	
+		
+	echo '<pre>';
+	echo '<br>TAT for :'.$sample_id;
+	
+			//print_r($rq);
+	echo '<br>'.'request_time:'.$rq['recording_time']; //MRD is added first, always and never modified
+	$rq_stamp=strtotime($rq['recording_time']);
+			//$rq_time=getDate($rq_stamp);
+			//print_r($rq_time);
+
+		
+	if($cd!=null and $ct!=null)
+	{
+		echo '<br>'.'collection_time:'.$cd['result'].' '.$ct['result'];
+		$c_stamp=strtotime($cd['result'].' '.$ct['result']);
+	//$c_time=getDate($c_stamp);
+	//print_r($c_time);
+
+		$ct_rq=round(($c_stamp-$rq_stamp)/3600);
+	//echo '<br>'.$c_stamp.'->'.$rq_stamp.'--> Collection-Request differance:'.$ct_rq.' Hours';
+		echo '<br>Collection-Request differance:'.$ct_rq.' Hours';
+	}
+	else
+	{
+		echo '<br>Collection date and Time not available';
+	}	
+
+
+
+	if($rd!=null and $rt!=null)
+	{
+		echo '<br>'.'receipt_time:'.$rd['result'].' '.$rt['result'];
+		$rc_stamp=strtotime($rd['result'].' '.$rt['result']);
+	}
+	else
+	{
+		echo '<br>Receipt date and Time not available';
+	}	
+	
+		
+	if($rd!=null and $rt!=null and $cd!=null and $ct!=null )
+	{
+		$rc_ct=round(($rc_stamp-$c_stamp)/3600,1);
+		//echo '<br>'.$rc_stamp.'->'.$c_stamp.'-->Receipt - Collection differance:'.$rc_ct.' Hours';
+		echo '<br>Receipt - Collection differance:'.$rc_ct.' Hours';
+	}
+	else
+	{
+		echo '<br>Receipt - Collection differance can not be calculated. Date and time of Collection/Receipt not available';
+	}
+		
+	//print_r($pr);
+	foreach ($pr as $ex_data)
+	{
+		echo '<br>'.$ex_data['examination_id'].' completed_time:'.$ex_data['uniq'];
+	}
+
+	if(strlen($rl['result'])>0)
+	{
+		echo '<br>'.'released_time:'.$rl['result'].'-->'.$rl['recording_time'];
+		$rl_stamp=strtotime($rl['recording_time']);
+	}
+	else
+	{
+		echo '<br>report not released';
+	}
+	
+	//print_r($rl);
+	if(strlen($rl['result'])>0 and $rd!=null and $rt!=null)
+	{
+		$rl_rc=round(($rl_stamp-$rc_stamp)/3600,1);
+		echo '<br>Release - SampleReceipt differance:'.$rl_rc.' Hours';
+	}
+	else
+	{
+		echo '<br>Release - SampleReceipt differance can not be calculated: (report not released / receipt date and time not avialable)';
+	}
+		
+	if(strlen($rl['result'])>0)
+	{
+		$final_tat=round(($rl_stamp-$rq_stamp)/3600,1);
+		echo '<br>Release - Request differance:'.$final_tat.' Hours';
+		return $final_tat;
+	}
+	else
+	{
+		echo '<br>Release - Request differance can not be calculated';
+	}
+	echo '</pre>';
+	
+	return false;
 }
 ?>

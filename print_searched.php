@@ -73,27 +73,30 @@ while($ar=get_single_row($result))
 	$sid=$ar['sample_id'];
 	$released=get_one_ex_result($link,$sid,$GLOBALS['released_by']);
 	$interim_released=get_one_ex_result($link,$sid,$GLOBALS['interim_released_by']);
-	if(strlen($released)!=0 || strlen($interim_released)!=0 )
+
+	if(sample_exist($link,$sid))
 	{
-		$at_least_one_sample=true;
-		print_sample($link,$sid,$pdf);
-	}
-	else
-	{
-		echo '<div class="d-inline-block">Sample _ID='.$sid.' is [ not released / does not exist ]</div>';
-		sample_id_view_button($sid,'_blank');
-		echo '<br>';
-	}
+		if(strlen($released)!=0 || strlen($interim_released)!=0 )
+		{
+				$at_least_one_sample=true;
+				print_sample($link,$sid,$pdf);
+		}
+		else
+		{
+				sample_id_view_button($sid,'_blank',$sid.' is not released');
+				$error=true;
+		}
+	}	
 }
 
-
+//echo '|'.$error.'|'.$at_least_one_sample.'|';
 if($error===false && $at_least_one_sample!==false)
 {
 	$pdf->Output('report.pdf', 'I');
 }
 else
 {
-	echo 'nothing to print. Can I go Home? Sir/Madam?';
+	echo 'nothing to print. Can I Hibernate?';
 }
 //print_r($ret);
 //echo '</pre>';
