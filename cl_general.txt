@@ -18,7 +18,7 @@ TAT (no new data, only from sample data)
 
  
 delta check
-
+reflex testing
 
 independent tables
 ==================
@@ -44,13 +44,4 @@ QC - manufacturer's value
 
 #Datetime stored in result uniq tab is changed to following format in exported/manual entry to match ASTM
 #20200531233109
-
-
-record_types = sample_types (Equipment-Records-BI)
-
-	
-records
-	id sample_id
-	recorded_by
-	recording_time
 

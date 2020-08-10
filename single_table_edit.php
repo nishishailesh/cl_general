@@ -34,8 +34,9 @@ if(isset($_POST['tname']))
 {
 	echo '<h3>'.$_POST['tname'].'</h3>';
 	$tname=$_POST['tname'];
-	show_crud_button($tname,'add');
+	show_crud_button($tname,'add', 'Add Blank');
 	show_crud_button($tname,'search');	//edit, remove inside it
+	show_crud_button($tname,'list');	//edit, remove inside it
 }
 
 //A done
@@ -50,6 +51,8 @@ elseif($_POST['action']=='edit')
 {
 	echo '<h5>'.$_POST['action'].'</h5>';
 	edit($link,$_POST['tname'],$_POST['id'],'yes');
+	
+	
 }
 
 //C done
@@ -91,6 +94,12 @@ elseif($_POST['action']=='or_select')
 	echo '<h5>'.$_POST['action'].'</h5>';	
 	select($link,$_POST['tname'],$join='or');
 }
+//3c
+elseif($_POST['action']=='list')
+{
+	echo '<h5>'.$_POST['action'].'</h5>';	
+	select($link,$_POST['tname']);
+}
 
 //4 done
 elseif($_POST['action']=='delete')
@@ -104,6 +113,21 @@ elseif($_POST['action']=='delete')
 	}
 }	
 
+
+echo '
+<h5>Table managed in this utility must have following properties</h5>
+<ul>
+	<li>auto-incremented primary key named <b>id</b></li>
+	<li>All except <b>id</b> must be able to take null value</li>
+	<li>two fields <b>recording_time</b> of datetime type and <b> recorded_by </b> of varchar type are mandatory</li>
+	<li>id,recording_time and recorded_by are not user editable</li>
+	<li>all blob fields named <b>xyz</b> must have <b>xyz_name</b> field for storing uploaded file name</li>
+
+
+</ul>
+
+
+';
 //////////////user code ends////////////////
 tail();
 
@@ -120,10 +144,11 @@ function show_manage_single_table_button($tname)
 	</form></div>';
 }
 
-function show_crud_button($tname,$type)
+function show_crud_button($tname,$type,$label='')
 {
+	if(strlen($label)==0){$label=$type;}
 	echo '<div class="d-inline-block" ><form method=post class=print_hide>
-	<button class="btn btn-outline-primary btn-sm" name=action value=\''.$type.'\' >'.$type.'</button>
+	<button class="btn btn-outline-primary btn-sm" name=action value=\''.$type.'\' >'.$label.'</button>
 	<input type=hidden name=session_name value=\''.$_POST['session_name'].'\'>
 	<input type=hidden name=tname value=\''.$tname.'\'>
 	</form></div>';
@@ -133,7 +158,10 @@ function add($link,$tname)
 {
 	run_query($link,$GLOBALS['database'],'insert into `'.$tname.'` () values()');
 	$id=last_autoincrement_insert($link);
-	edit($link,$tname,$id,$header='yes');
+	//edit($link,$tname,$id,$header='yes');
+	echo '<table class="table table-striped table-sm table-bordered">';
+		view_row($link,$tname,$id,'yes');
+	echo '</table>';
 }
 
 function view_row($link,$tname,$pk,$header='no')
@@ -160,9 +188,10 @@ function view_row($link,$tname,$pk,$header='no')
 		{
 			echo '
 			<td>';
+		
 				ste_id_edit_button($link,$tname,$v);
 				ste_id_delete_button($link,$tname,$v);
-			echo '</td>';
+			echo '<span class="round round-0 bg-warning" >'.$v.'</span></td>';
 		}
 		elseif(substr(get_field_type($link,$tname,$k),-4)=='blob')
 		{
@@ -247,8 +276,12 @@ function search($link,$tname)
 			echo '<td>Blob</td>';
 		}
 		else
-		{
-			echo '<td><input type=text name=\''.$field['Field'].'\'></td>';
+		{	
+			echo '<td>';		
+				read_field($link,$tname,$field['Field'],'');
+				//echo '<td><input type=text name=\''.$field['Field'].'\'></td>';
+			echo '</td>';		
+
 		}
 	}
 	
@@ -256,7 +289,7 @@ function search($link,$tname)
 			type=submit
 			name=action
 			value=and_select>and Search</button>';
-		echo '<button class="btn btn-info  btn-sm"  
+	echo '<button class="btn btn-info  btn-sm"  
 			type=submit
 			name=action
 			value=or_select>or Search</button></td>';
@@ -299,7 +332,7 @@ function select($link,$tname,$join='and')
 	}
 	else
 	{
-		$sql='select id from `'.$tname.'` order by id desc limit 50';
+		$sql='select id from `'.$tname.'` order by id desc limit '.$GLOBALS['all_records_limit'];
 	}
 	
 	//echo $sql;
@@ -322,7 +355,9 @@ function ste_id_edit_button($link,$tname,$id)
 	echo 
 	'<div class="d-inline-block" >
 		<form method=post>
-			<button class="btn btn-outline-success btn-sm" name=id value=\''.$id.'\' >'.$id.'</button>
+			<button class="btn btn-outline-success btn-sm m-0 p-0" name=id value=\''.$id.'\' >
+				<img class="m-0 p-0" src=img/edit.png alt=E width="15" height="15">
+			</button>
 			<input type=hidden name=session_name value=\''.$_POST['session_name'].'\'>
 			<input type=hidden name=action value=edit>
 			<input type=hidden name=tname value=\''.$tname.'\'>
@@ -336,7 +371,11 @@ function ste_id_delete_button($link,$tname,$id)
 	echo 
 	'<div class="d-inline-block" >
 		<form method=post>
-			<button class="btn btn-outline-success btn-sm" name=id value=\''.$id.'\' >X</button>
+			<button class="btn btn-outline-success btn-sm m-0 p-0" 
+				onclick="return confirm(\'R U Sure to delete ??\')"
+				name=id value=\''.$id.'\' >
+				<img class="m-0 p-0" src=img/delete.png alt=X width="15" height="15">
+			</button>
 			<input type=hidden name=session_name value=\''.$_POST['session_name'].'\'>
 			<input type=hidden name=action value=delete>
 			<input type=hidden name=tname value=\''.$tname.'\'>
@@ -349,7 +388,7 @@ function ste_id_update_button($link,$tname,$id)
 	echo 
 	'<div class="d-inline-block" >
 		<form method=post>
-			<button class="btn btn-outline-success btn-sm" name=id value=\''.$id.'\' >update('.$id.')</button>
+			<button class="btn btn-outline-success btn-sm m-0 p-0" name=id value=\''.$id.'\' >update('.$id.')</button>
 			<input type=hidden name=session_name value=\''.$_POST['session_name'].'\'>
 			<input type=hidden name=action value=update>
 			<input type=hidden name=tname value=\''.$tname.'\'>
@@ -365,7 +404,7 @@ function edit($link,$tname,$pk,$header='no')
 	$ar=get_single_row($result);
 	
 	echo '<form method=post class="d-inline" enctype="multipart/form-data">';
-
+    echo '<div class="table-responsive">';
 	echo '<table class="table table-striped table-sm table-bordered">';
 	if($header=='yes')
 	{
@@ -392,49 +431,84 @@ function edit($link,$tname,$pk,$header='no')
 				echo '<input type=file name=\''.$k.'\' >';
 			echo '</td>';
 		}
+		elseif(in_array($k,array('recording_time','recorded_by')))
+		{
+			echo '<td>'.$v.'</td>';
+		}
 		else
 		{
-			echo '<td><input type=text name=\''.$k.'\' value=\''.$v.'\'></td>';
+			echo '<td>';		
+				read_field($link,$tname,$k,$v);
+			echo '</td>';
 		}
 	}
 	echo '</tr>';
 	echo '</table>';
-
+	echo '</div>';
 	echo'</form>';
 
 }
 
-function update_one_field($link,$tname,$fname,$pk)
+function get_field_spec($link,$tname,$fname)
 {
-		$sql='update `'.$tname.'`
-			set 
-				`'.$fname.'` =\''.$_POST[$fname].'\'
-			where 
-				id=\''.$pk.'\' ';
-		//echo $sql;
-	
-	if(!$result=run_query($link,$GLOBALS['database'],$sql))
+	$sql='select * from table_field_specification  where tname=\''.$tname.'\' and fname=\''.$fname.'\'';
+	$result=run_query($link,$GLOBALS['database'],$sql);
+	return $ar=get_single_row($result);	//return only first row, if mutiple, only forst one is returned
+}
+
+function read_field($link,$tname,$field,$value)
+{
+	$ftype=get_field_details($link,$tname,$field);
+	$fspec=get_field_spec($link,$tname,$field);
+	//print_r($fspec);
+	if($fspec)
 	{
-		echo '<p>Data not updated</p>';
+		if($fspec['ftype']=='table')
+		{
+			mk_select_from_sql($link,'select `'.$fspec['table'].'` from `'.$fspec['table'].'`',
+					$fspec['fname'],$fspec['fname'],$fspec['fname'],'',$value,$blank='yes');
+		}
+		elseif($fspec['ftype']=='date')
+		{
+			echo '<input type=date name=\''.$field.'\' value=\''.$value.'\'>';
+		}
+		elseif($fspec['ftype']=='textarea')
+		{
+			echo '<textarea name=\''.$field.'\' >'.$value.'</textarea>';
+		}	
+		else
+		{
+			echo 'not implimented';
+		}
 	}
 	else
 	{
-		if(rows_affected($link)==1)
-		{
-			//echo '<p>Saved</p>';				
-		}
-		else
-		{
-			//echo '<p>Result need no update</p>';
-		}
+		echo '<input type=text name=\''.$field.'\' value=\''.$value.'\'>';
 	}
+}
+
+
+function update_one_field($link,$tname,$fname,$pk)
+{
+	if(strlen($_POST[$fname])==0)
+	{
+		$value=' NULL ';
+	}
+	else
+	{
+		$value=' \''.$_POST[$fname].'\' ';
+	}
+	
+	update_one_field_with_value($link,$tname,$fname,$pk,$value);
 }
 
 function update_one_field_with_value($link,$tname,$fname,$pk,$value)
 {
 		$sql='update `'.$tname.'`
 			set 
-				`'.$fname.'` =\''.$value.'\'
+				`'.$fname.'` ='.$value.',
+				recording_time=now(),
+				recorded_by=\''.$_SESSION['login'].'\'
 			where 
 				id=\''.$pk.'\' ';
 		//echo $sql;
@@ -459,9 +533,12 @@ function update_one_field_with_value($link,$tname,$fname,$pk,$value)
 function update_one_field_blob($link,$tname,$fname,$name_fname,$pk)
 {
 	$data=file_to_str($link,$_FILES[$fname]);
+	if(strlen($data)==0){return;}
 	$sql='update `'.$tname.'`
 		set 
-			`'.$fname.'` =\''.$data.'\'
+			`'.$fname.'` =\''.$data.'\',
+			recording_time=now(),
+			recorded_by=\''.$_SESSION['login'].'\'			
 		where 
 			id=\''.$pk.'\' ';
 
@@ -474,7 +551,7 @@ function update_one_field_blob($link,$tname,$fname,$name_fname,$pk)
 		if(rows_affected($link)==1)
 		{
 			//echo '<p>Saved</p>';
-			update_one_field_with_value($link,$tname,$name_fname,$pk,$_FILES[$fname]['name']);				
+			update_one_field_with_value($link,$tname,$name_fname,$pk,'\''.$_FILES[$fname]['name'].'\'');				
 		}
 		else
 		{
@@ -487,14 +564,14 @@ function update($link,$tname)
 {
 	foreach($_POST as $k=>$v)
 	{
-		if(!in_array($k,array('action','tname','session_name','id')))
+		if(!in_array($k,array('action','tname','session_name','id','recording_time','recorded_by')))
 		{
 			update_one_field($link,$tname,$k,$_POST['id']);
 		}
 	}
 	foreach($_FILES as $k=>$v)
 	{
-		if(!in_array($k,array('action','tname','session_name','id')))
+		if(!in_array($k,array('action','tname','session_name','id','recording_time','recorded_by')))
 		{
 			update_one_field_blob($link,$tname,$k,$k.'_name',$_POST['id']);
 		}

@@ -16,28 +16,26 @@
 /*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
 
 --
--- Table structure for table `report`
+-- Table structure for table `equipment_record_type`
 --
 
-DROP TABLE IF EXISTS `report`;
+DROP TABLE IF EXISTS `equipment_record_type`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `report` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
-  `report_name` varchar(100) NOT NULL,
-  `examination_id` varchar(1000) DEFAULT NULL,
-  PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4;
+CREATE TABLE `equipment_record_type` (
+  `equipment_record_type` varchar(100) NOT NULL,
+  PRIMARY KEY (`equipment_record_type`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
--- Dumping data for table `report`
+-- Dumping data for table `equipment_record_type`
 --
 
-LOCK TABLES `report` WRITE;
-/*!40000 ALTER TABLE `report` DISABLE KEYS */;
-INSERT INTO `report` VALUES (1,'Haemogram','1001,3,2,4,5,6,7,8,1,9');
-/*!40000 ALTER TABLE `report` ENABLE KEYS */;
+LOCK TABLES `equipment_record_type` WRITE;
+/*!40000 ALTER TABLE `equipment_record_type` DISABLE KEYS */;
+INSERT INTO `equipment_record_type` VALUES ('a. identity'),('b. manufacturer , model, serial number'),('c. contect'),('d1. date of receiving'),('d2. date of entering into service'),('e. location'),('f. condition when received'),('g. manufacturer’s instructions'),('h. schedule for preventive maintenance and calibration'),('i. conformation of initial acceptability for use (initial calibration/verification)'),('j. conformation of ongoing acceptability for use (ongoing calibration/verification)'),('k. maintenance aggrement'),('l. maintenance carried out'),('m. damage, malfunction, modification, repair'),('n. Schedule of quality check after repair');
+/*!40000 ALTER TABLE `equipment_record_type` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
 
@@ -49,4 +47,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2020-08-11  0:09:44
+-- Dump completed on 2020-08-11  0:09:45

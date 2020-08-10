@@ -61,26 +61,58 @@ CREATE TABLE `dementia` (
   `Month` varchar(10) DEFAULT NULL,
   `DayW` varchar(10) DEFAULT NULL,
   `Text` varchar(200) DEFAULT NULL,
+  `recording_time` datetime DEFAULT NULL ON UPDATE current_timestamp(),
+  `recorded_by` varchar(100) DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=26 DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB AUTO_INCREMENT=28 DEFAULT CHARSET=utf8mb4;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
--- Table structure for table `equipment_records`
+-- Table structure for table `equipment`
 --
 
-DROP TABLE IF EXISTS `equipment_records`;
+DROP TABLE IF EXISTS `equipment`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `equipment_records` (
+CREATE TABLE `equipment` (
+  `equipment` varchar(100) NOT NULL,
+  PRIMARY KEY (`equipment`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Table structure for table `equipment_record`
+--
+
+DROP TABLE IF EXISTS `equipment_record`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `equipment_record` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
-  `equipment_name` varchar(100) DEFAULT NULL,
-  `record_type` varchar(100) DEFAULT NULL,
-  `remark` varchar(1000) DEFAULT NULL,
+  `date` date DEFAULT NULL,
+  `equipment` varchar(100) DEFAULT NULL,
+  `equipment_record_type` varchar(100) DEFAULT NULL,
+  `description` varchar(6000) DEFAULT NULL,
   `attachment` mediumblob DEFAULT NULL,
   `attachment_name` varchar(100) DEFAULT NULL,
-  PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=47 DEFAULT CHARSET=utf8mb4;
+  `recording_time` datetime DEFAULT NULL,
+  `recorded_by` varchar(100) DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  KEY `equipment` (`equipment`)
+) ENGINE=InnoDB AUTO_INCREMENT=19 DEFAULT CHARSET=utf8mb4;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Table structure for table `equipment_record_type`
+--
+
+DROP TABLE IF EXISTS `equipment_record_type`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `equipment_record_type` (
+  `equipment_record_type` varchar(100) NOT NULL,
+  PRIMARY KEY (`equipment_record_type`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -234,23 +266,28 @@ DROP TABLE IF EXISTS `record_tables`;
 CREATE TABLE `record_tables` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `table_name` varchar(100) DEFAULT NULL,
+  `recording_time` datetime DEFAULT NULL ON UPDATE current_timestamp(),
+  `recorded_by` varchar(100) DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=15 DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB AUTO_INCREMENT=16 DEFAULT CHARSET=utf8mb4;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
--- Table structure for table `reminder`
+-- Table structure for table `reminders`
 --
 
-DROP TABLE IF EXISTS `reminder`;
+DROP TABLE IF EXISTS `reminders`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `reminder` (
+CREATE TABLE `reminders` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `reminder` varchar(100) NOT NULL,
-  `response` varchar(100) NOT NULL,
+  `datetime` datetime NOT NULL,
+  `response` varchar(100) DEFAULT NULL,
+  `recording_time` varchar(100) DEFAULT NULL,
+  `recorded_by` varchar(100) DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB AUTO_INCREMENT=774 DEFAULT CHARSET=utf8mb4;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -345,20 +382,23 @@ CREATE TABLE `super_profile` (
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
--- Table structure for table `table_fields_specifications`
+-- Table structure for table `table_field_specification`
 --
 
-DROP TABLE IF EXISTS `table_fields_specifications`;
+DROP TABLE IF EXISTS `table_field_specification`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `table_fields_specifications` (
+CREATE TABLE `table_field_specification` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
-  `tname` varchar(100) NOT NULL,
-  `fname` varchar(100) NOT NULL,
-  `specifications` varchar(5000) DEFAULT NULL,
+  `tname` varchar(100) DEFAULT NULL,
+  `fname` varchar(100) DEFAULT NULL,
+  `ftype` varchar(50) DEFAULT NULL,
+  `option` varchar(50) DEFAULT NULL,
+  `table` varchar(50) DEFAULT NULL,
+  `input_type` varchar(50) DEFAULT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `tname_fname` (`tname`,`fname`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb4;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -403,4 +443,4 @@ CREATE TABLE `view_info_data` (
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2020-08-10 10:38:57
+-- Dump completed on 2020-08-11  0:09:44

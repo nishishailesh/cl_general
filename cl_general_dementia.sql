@@ -16,28 +16,34 @@
 /*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
 
 --
--- Table structure for table `report`
+-- Table structure for table `dementia`
 --
 
-DROP TABLE IF EXISTS `report`;
+DROP TABLE IF EXISTS `dementia`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `report` (
+CREATE TABLE `dementia` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
-  `report_name` varchar(100) NOT NULL,
-  `examination_id` varchar(1000) DEFAULT NULL,
+  `Minutes` varchar(10) DEFAULT NULL,
+  `Hours` varchar(10) DEFAULT NULL,
+  `DayM` varchar(10) DEFAULT NULL,
+  `Month` varchar(10) DEFAULT NULL,
+  `DayW` varchar(10) DEFAULT NULL,
+  `Text` varchar(200) DEFAULT NULL,
+  `recording_time` datetime DEFAULT NULL ON UPDATE current_timestamp(),
+  `recorded_by` varchar(100) DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB AUTO_INCREMENT=28 DEFAULT CHARSET=utf8mb4;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
--- Dumping data for table `report`
+-- Dumping data for table `dementia`
 --
 
-LOCK TABLES `report` WRITE;
-/*!40000 ALTER TABLE `report` DISABLE KEYS */;
-INSERT INTO `report` VALUES (1,'Haemogram','1001,3,2,4,5,6,7,8,1,9');
-/*!40000 ALTER TABLE `report` ENABLE KEYS */;
+LOCK TABLES `dementia` WRITE;
+/*!40000 ALTER TABLE `dementia` DISABLE KEYS */;
+INSERT INTO `dementia` VALUES (1,'*/20','*','*','*','*','do verification','2020-08-10 21:59:26','3'),(2,'1','*','*','*','*','Every hour','2020-08-10 23:17:33','3'),(27,'*/5','*','*','*','*','After setting files and help','2020-08-10 22:33:02','3');
+/*!40000 ALTER TABLE `dementia` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
 
@@ -49,4 +55,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2020-08-11  0:09:44
+-- Dump completed on 2020-08-11  0:09:45

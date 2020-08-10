@@ -112,7 +112,7 @@ function main_menu()
 						<button class="btn btn-outline-primary m-0 p-0" formaction=import_erba_xl_1000_results.php type=submit name=action value=get_file>Import XL-1000 Result</button>											
 						<button class="btn btn-outline-primary m-0 p-0" formaction=get_id_range_for_small_barcode.php type=submit name=action value=get_sample_id_range>Sample Tube Barcode</button>					
 						<button class="btn btn-outline-primary m-0 p-0" formaction=get_data_for_lj_chart.php type=submit name=action value=get_data>LJ Chart</button>					
-						<button class="btn btn-outline-primary m-0 p-0" formaction=single_table_edit.php type=submit name=action value=get_record_list>Records</button>
+						<button class="btn btn-outline-primary m-0 p-0" formaction=single_table_edit.php type=submit name=action value=get_record_list>Tables</button>
 					</div>
 				</div>
 		</div>
@@ -198,6 +198,7 @@ function mk_array_from_sql_kv($link,$sql,$field_name_k,$field_name_v)
 
 function mk_select_from_sql($link,$sql,$field_name,$select_name,$select_id,$disabled='',$default='',$blank='no')
 {
+	//echo '<h1>'.$blank.'</h1>';
 	$ar=mk_array_from_sql($link,$sql,$field_name);
 	if($blank=='yes')
 	{

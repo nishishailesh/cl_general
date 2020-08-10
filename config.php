@@ -83,6 +83,9 @@ $GLOBALS['receipt_time']=1018;
 #for records
 $GLOBALS['record_tables']='record_tables';
 
+#for STE
+$GLOBALS['all_records_limit']=100;
+
 //20200531233109 date format for XL ASTM communication
 //08/01/2020 14:02:40 date format for XL export communication
 

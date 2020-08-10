@@ -8,6 +8,10 @@ import sys
 sys.path.append('/var/gmcs_config')
 import astm_var
 
+####Settings for update_reminders.py script
+update_reminders_path="/usr/share/smp/cl_general/extra/update_reminders.py "
+#####
+
 class my_sql(object):
   def get_link(self,my_host,my_user,my_pass,my_db):
     con=MySQLdb.connect(my_host,my_user,my_pass,my_db)
@@ -39,7 +43,7 @@ class my_sql(object):
 def refresh_crontab():
   m=my_sql()
   link=m.get_link('127.0.0.1',astm_var.my_user,astm_var.my_pass,'cl_general')
-  prepared_sql='select * from dementia_dementia'
+  prepared_sql='select * from dementia'
   data_tpl=tuple()
   cur=m.run_query(link,prepared_sql,data_tpl)
   cron_text=''
@@ -53,7 +57,7 @@ def refresh_crontab():
                   one_c['DayM'] +' ' + \
                   one_c['Month'] + ' ' +\
                   one_c['DayW'] + ' ' +  \
-                  "/root/doit" + " '" + one_c['Text'] + "'\n"
+                  update_reminders_path + " '" + one_c['Text'] + "'\n"
                   
     one_c=m.get_single_row(cur)
     #print("cron_text=", cron_text)
