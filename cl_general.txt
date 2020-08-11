@@ -15,7 +15,6 @@ TAT (no new data, only from sample data)
 		calculate
 		compare with standard
 		insert apology
-
  
 delta check
 reflex testing
@@ -30,14 +29,14 @@ NC
 Calibration
 all docs
 Reagent
+reminders and schedules
 
 
 	
 		
 Scope
 print lables
-reminders
-Status of samples
+Status of samples -statistics
 
 QC - manufacturer's value
 

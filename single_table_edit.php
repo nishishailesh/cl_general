@@ -19,11 +19,10 @@ if(in_array('requestonly',$auth))
 
 main_menu();
 
-//Tables_in_cl_general
-$column_name='Tables_in_'.$GLOBALS['database'];
-
 $sql='select * from '.$GLOBALS['record_tables'];
 $result=run_query($link,$GLOBALS['database'],$sql);
+echo '<h3>List of Available Tables</h3>';
+
 while($ar=get_single_row($result))
 {
 	//print_r($ar);
@@ -32,7 +31,7 @@ while($ar=get_single_row($result))
 
 if(isset($_POST['tname']))
 {
-	echo '<h3>'.$_POST['tname'].'</h3>';
+	echo '<h3>'.$_POST['tname'].': Choose any action below</h3>';
 	$tname=$_POST['tname'];
 	show_crud_button($tname,'add', 'Add Blank');
 	show_crud_button($tname,'search');	//edit, remove inside it
@@ -278,7 +277,7 @@ function search($link,$tname)
 		else
 		{	
 			echo '<td>';		
-				read_field($link,$tname,$field['Field'],'');
+				read_field($link,$tname,$field['Field'],'','yes');
 				//echo '<td><input type=text name=\''.$field['Field'].'\'></td>';
 			echo '</td>';		
 
@@ -456,7 +455,7 @@ function get_field_spec($link,$tname,$fname)
 	return $ar=get_single_row($result);	//return only first row, if mutiple, only forst one is returned
 }
 
-function read_field($link,$tname,$field,$value)
+function read_field($link,$tname,$field,$value,$search='no')
 {
 	$ftype=get_field_details($link,$tname,$field);
 	$fspec=get_field_spec($link,$tname,$field);
@@ -470,7 +469,14 @@ function read_field($link,$tname,$field,$value)
 		}
 		elseif($fspec['ftype']=='date')
 		{
-			echo '<input type=date name=\''.$field.'\' value=\''.$value.'\'>';
+			if($search=='yes')
+			{
+				echo '<input type=text name=\''.$field.'\' value=\''.$value.'\'>';
+			}
+			else
+			{
+				echo '<input type=date name=\''.$field.'\' value=\''.$value.'\'>';
+			}
 		}
 		elseif($fspec['ftype']=='textarea')
 		{
