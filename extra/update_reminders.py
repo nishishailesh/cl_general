@@ -46,7 +46,7 @@ def update_reminders():
   m=my_sql()
   link=m.get_link('127.0.0.1',astm_var.my_user,astm_var.my_pass,database)
   current_time=datetime.datetime.now()
-  prepared_sql='insert into reminder \
+  prepared_sql='insert into reminders \
   					(reminder,datetime) values \
   					(%s , %s)';
   data_tpl=(sys.argv[1],current_time)
