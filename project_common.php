@@ -113,6 +113,7 @@ function main_menu()
 						<button class="btn btn-outline-primary m-0 p-0" formaction=get_id_range_for_small_barcode.php type=submit name=action value=get_sample_id_range>Sample Tube Barcode</button>					
 						<button class="btn btn-outline-primary m-0 p-0" formaction=get_data_for_lj_chart.php type=submit name=action value=get_data>LJ Chart</button>					
 						<button class="btn btn-outline-primary m-0 p-0" formaction=single_table_edit.php type=submit name=action value=get_record_list>Tables</button>
+						<button class="btn btn-outline-primary m-0 p-0" formaction=reminders.php type=submit name=action value=reminders>Reminders</button>
 					</div>
 				</div>
 		</div>

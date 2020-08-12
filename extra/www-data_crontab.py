@@ -10,6 +10,13 @@ import astm_var
 
 ####Settings for update_reminders.py script
 update_reminders_path="/usr/share/smp/cl_general/extra/update_reminders.py "
+
+'''
+following is example line in /etc/crontab
+Donot add it in root crontab, because it will be overwritten by this script
+
+*  *    * * *   root    /usr/share/smp/cl_general/extra/www-data_crontab.py 1 >>/var/log/www-data_crontab.log 2>>/var/log/www-data_crontab.log
+'''
 #####
 
 class my_sql(object):

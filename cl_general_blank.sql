@@ -281,9 +281,10 @@ DROP TABLE IF EXISTS `reminders`;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `reminders` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
-  `reminder` varchar(100) NOT NULL,
-  `datetime` datetime NOT NULL,
+  `reminder` varchar(100) DEFAULT NULL,
+  `datetime` datetime DEFAULT NULL,
   `response` varchar(100) DEFAULT NULL,
+  `completed` int(11) DEFAULT NULL,
   `recording_time` varchar(100) DEFAULT NULL,
   `recorded_by` varchar(100) DEFAULT NULL,
   PRIMARY KEY (`id`)
@@ -443,4 +444,4 @@ CREATE TABLE `view_info_data` (
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2020-08-12  0:23:22
+-- Dump completed on 2020-08-13  0:41:54
