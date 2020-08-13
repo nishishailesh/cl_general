@@ -1,0 +1,12 @@
+echo 'press a key to take backup from main folder'
+read x
+cp /usr/share/nchs/cl_general "/root/misc/cl_general_from_here/cl_general.`date`" -Rvf
+
+echo 'press a key to take new from git'
+read x
+cd cl_general_from_git
+git pull https://github.com/nishishailesh/cl_general
+
+echo 'press a key to copy git to main folder'
+read x
+cp * /usr/share/nchs/cl_general -Rvf

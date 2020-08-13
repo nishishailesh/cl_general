@@ -1,8 +1,8 @@
--- MySQL dump 10.17  Distrib 10.3.23-MariaDB, for debian-linux-gnu (x86_64)
+-- MySQL dump 10.17  Distrib 10.3.22-MariaDB, for debian-linux-gnu (x86_64)
 --
 -- Host: localhost    Database: cl_general
 -- ------------------------------------------------------
--- Server version	10.3.23-MariaDB-1
+-- Server version	10.3.22-MariaDB-0+deb10u1
 
 /*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
 /*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
@@ -23,9 +23,13 @@ DROP TABLE IF EXISTS `equipment`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `equipment` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
   `equipment` varchar(100) NOT NULL,
-  PRIMARY KEY (`equipment`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+  `recording_time` datetime DEFAULT NULL,
+  `recorded_by` varchar(100) DEFAULT NULL,
+  PRIMARY KEY (`equipment`),
+  UNIQUE KEY `id` (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=51 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -34,7 +38,7 @@ CREATE TABLE `equipment` (
 
 LOCK TABLES `equipment` WRITE;
 /*!40000 ALTER TABLE `equipment` DISABLE KEYS */;
-INSERT INTO `equipment` VALUES ('11_REFRIGERATOR_HE_78_SAMSUNG'),('12_REFRIGERATOR_HE_78_SAMSUNG'),('13_REFRIGERATOR_HE_78_SAMSUNG'),('5KVA UPS Arrow'),('Centrfuge Remi PR-23 HOSP-EQ-P-138-VCDB-4172_not working'),('Centrfuge Remi PR-23 HOSP-EQ-P-138-VCDB-4173'),('Centrfuge Remi PR-23 HOSP-EQ-P-138-VCDB-4174'),('Centrfuge Remi PR-23 HOSP-EQ-P-138-VCDB-4175_not in Use but working'),('Centrfuge Remi PR-23 HOSP-EQ-P-52-ZEHN 25664'),('Centrfuge Remi PR-23 HOSP-EQ-P-52-ZEHN 25665'),('Centrfuge Remi PR-23 HOSP-EQ-P-52-ZEHN 25666'),('Centrfuge Remi PR-23 HOSP-EQ-P-52-ZEHN 25667'),('Centrfuge Remi PR-24 HOSP-EQ-P-51-ZCBN 4721'),('D.I.Water Plant COLL EQ Pg 03'),('Deep freezer(-40) HOSP-EQ-P-136_not in use but working'),('Digital display thermometer'),('Digital Tachometer'),('Digital Thermometer'),('Erba Chem 5 Plus semiauto 1 HOSP-EQ-P-3-1 '),('Erba Chem 5 Plus semiauto 2 HOSP-EQ-P-3-2 '),('Erba Chem 5 Plus semiauto 3 HOSP-EQ-P-3-3 '),('Erba XL-640 HOSP-EQ-P-10'),('Haier chest freezer: HOSP-EQ-P-136'),('HP Server COLL-EQ-P-133'),('Laboratory Fume hood COLL-EQ-P-15'),('Laminar air flow COLL-EQ-P-15'),('Maruti Calibrated weights (1kg & 2Kg) COLL EQ Pg-05'),('Neer R.O.Water Plant COLL-EQ-Pg-02'),('Pipettes'),('Prolyte Electrolyte Analyzer HOSP-EQ-P-40-81001755_Not working'),('Remi Centrifuge R-8C BL HOSP-EQ-P-50-BCLC-682_Not working'),('Remi Centrifuge R-8C BL HOSP-EQ-P-50-HCLC-3959_Not working'),('Remi Centrifuge R-8C DX HOSP-EQ-P-50-DBLC-3586_Not working'),('Remi Centrifuge R-8C DX HOSP-EQ-P-50-EBLC-5162_Not working '),('Remi Cooling Incubator CI-35 HOSP-EQ-P-71-IHC-3182'),('remi quick freezer(-20) Biochemistry: HOSP-EQ-P-138'),('Reptech weighing machine COLL-EQ-P-05'),('Ricoh Printer MP 2000 L2 COLL EQ P-123-17126750553'),('Ricoh printer MP 2001 L COLL EQ-P-123-E343MB50051'),('Sartorius  Weight'),('Shimadzu Analytic Balance HOSP-EQ-P-21Shimadzu Sci'),('Shimadzu Analytic Balance HOSP-EQ-P-21Shimadzu Sci_D450028778'),('SYSTRONICS Digital Electrophoresis power supply HOSP-EQ-P-139-850'),('Thermo_Hygrometers'),('volumetric flask'),('Water Treatment Plant - Clinical Laboratory'),('Water Treatment Plant - Research Lab'),('Yorco Hot air oven YSI431D HOSP-EQ-P-69-14B5312'),('Zebra Technologies ZTC _GC420t_Barcode Printer'),('Zebra tip 2844 Barcode Printer');
+INSERT INTO `equipment` VALUES (1,'11_REFRIGERATOR_HE_78_SAMSUNG',NULL,NULL),(2,'12_REFRIGERATOR_HE_78_SAMSUNG',NULL,NULL),(3,'13_REFRIGERATOR_HE_78_SAMSUNG',NULL,NULL),(4,'5KVA UPS Arrow',NULL,NULL),(5,'Centrfuge Remi PR-23 HOSP-EQ-P-138-VCDB-4172_not working',NULL,NULL),(6,'Centrfuge Remi PR-23 HOSP-EQ-P-138-VCDB-4173',NULL,NULL),(7,'Centrfuge Remi PR-23 HOSP-EQ-P-138-VCDB-4174',NULL,NULL),(8,'Centrfuge Remi PR-23 HOSP-EQ-P-138-VCDB-4175_not in Use but working',NULL,NULL),(9,'Centrfuge Remi PR-23 HOSP-EQ-P-52-ZEHN 25664',NULL,NULL),(10,'Centrfuge Remi PR-23 HOSP-EQ-P-52-ZEHN 25665',NULL,NULL),(11,'Centrfuge Remi PR-23 HOSP-EQ-P-52-ZEHN 25666',NULL,NULL),(12,'Centrfuge Remi PR-23 HOSP-EQ-P-52-ZEHN 25667',NULL,NULL),(13,'Centrfuge Remi PR-24 HOSP-EQ-P-51-ZCBN 4721',NULL,NULL),(14,'D.I.Water Plant COLL EQ Pg 03',NULL,NULL),(15,'Deep freezer(-40) HOSP-EQ-P-136_not in use but working',NULL,NULL),(16,'Digital display thermometer',NULL,NULL),(17,'Digital Tachometer',NULL,NULL),(18,'Digital Thermometer',NULL,NULL),(19,'Erba Chem 5 Plus semiauto 1 HOSP-EQ-P-3-1 ',NULL,NULL),(20,'Erba Chem 5 Plus semiauto 2 HOSP-EQ-P-3-2 ',NULL,NULL),(21,'Erba Chem 5 Plus semiauto 3 HOSP-EQ-P-3-3 ',NULL,NULL),(22,'Erba XL-640 HOSP-EQ-P-10',NULL,NULL),(23,'Haier chest freezer: HOSP-EQ-P-136',NULL,NULL),(24,'HP Server COLL-EQ-P-133',NULL,NULL),(25,'Laboratory Fume hood COLL-EQ-P-15',NULL,NULL),(26,'Laminar air flow COLL-EQ-P-15',NULL,NULL),(27,'Maruti Calibrated weights (1kg & 2Kg) COLL EQ Pg-05',NULL,NULL),(28,'Neer R.O.Water Plant COLL-EQ-Pg-02',NULL,NULL),(29,'Pipettes',NULL,NULL),(30,'Prolyte Electrolyte Analyzer HOSP-EQ-P-40-81001755_Not working',NULL,NULL),(31,'Remi Centrifuge R-8C BL HOSP-EQ-P-50-BCLC-682_Not working',NULL,NULL),(32,'Remi Centrifuge R-8C BL HOSP-EQ-P-50-HCLC-3959_Not working',NULL,NULL),(33,'Remi Centrifuge R-8C DX HOSP-EQ-P-50-DBLC-3586_Not working',NULL,NULL),(34,'Remi Centrifuge R-8C DX HOSP-EQ-P-50-EBLC-5162_Not working ',NULL,NULL),(35,'Remi Cooling Incubator CI-35 HOSP-EQ-P-71-IHC-3182',NULL,NULL),(36,'remi quick freezer(-20) Biochemistry: HOSP-EQ-P-138',NULL,NULL),(37,'Reptech weighing machine COLL-EQ-P-05',NULL,NULL),(38,'Ricoh Printer MP 2000 L2 COLL EQ P-123-17126750553',NULL,NULL),(39,'Ricoh printer MP 2001 L COLL EQ-P-123-E343MB50051',NULL,NULL),(40,'Sartorius  Weight',NULL,NULL),(41,'Shimadzu Analytic Balance HOSP-EQ-P-21Shimadzu Sci',NULL,NULL),(42,'Shimadzu Analytic Balance HOSP-EQ-P-21Shimadzu Sci_D450028778',NULL,NULL),(43,'SYSTRONICS Digital Electrophoresis power supply HOSP-EQ-P-139-850',NULL,NULL),(44,'Thermo_Hygrometers',NULL,NULL),(45,'volumetric flask',NULL,NULL),(46,'Water Treatment Plant - Clinical Laboratory',NULL,NULL),(47,'Water Treatment Plant - Research Lab',NULL,NULL),(48,'Yorco Hot air oven YSI431D HOSP-EQ-P-69-14B5312',NULL,NULL),(49,'Zebra Technologies ZTC _GC420t_Barcode Printer',NULL,NULL),(50,'Zebra tip 2844 Barcode Printer',NULL,NULL);
 /*!40000 ALTER TABLE `equipment` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
@@ -47,4 +51,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2020-08-13 21:51:46
+-- Dump completed on 2020-08-13 22:37:28

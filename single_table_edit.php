@@ -466,7 +466,7 @@ function read_field($link,$tname,$field,$value,$search='no')
 		if($fspec['ftype']=='table')
 		{
 			mk_select_from_sql($link,'select distinct `'.$fspec['field'].'` from `'.$fspec['table'].'`',
-					$fspec['fname'],$fspec['fname'],$fspec['fname'],'',$value,$blank='yes');
+					$fspec['field'],$fspec['fname'],$fspec['fname'],'',$value,$blank='yes');
 		}
 		elseif($fspec['ftype']=='date')
 		{
