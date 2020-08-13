@@ -288,7 +288,7 @@ CREATE TABLE `reminders` (
   `recording_time` varchar(100) DEFAULT NULL,
   `recorded_by` varchar(100) DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=1162 DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB AUTO_INCREMENT=1281 DEFAULT CHARSET=utf8mb4;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -394,9 +394,8 @@ CREATE TABLE `table_field_specification` (
   `tname` varchar(100) DEFAULT NULL,
   `fname` varchar(100) DEFAULT NULL,
   `ftype` varchar(50) DEFAULT NULL,
-  `option` varchar(50) DEFAULT NULL,
   `table` varchar(50) DEFAULT NULL,
-  `input_type` varchar(50) DEFAULT NULL,
+  `field` varchar(50) DEFAULT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `tname_fname` (`tname`,`fname`)
 ) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb4;
@@ -444,4 +443,4 @@ CREATE TABLE `view_info_data` (
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2020-08-13  0:43:52
+-- Dump completed on 2020-08-13 21:51:46

@@ -25,12 +25,12 @@ $limit=50;
 main_menu();
 
 
-	
+	//just skip this if 'show'
 	if($_POST['action']=='save')
 	{
 		foreach($_POST as $k=>$v)
 		{
-			if(!in_array($k,array('action','session_name')))
+			if(!in_array($k,array('action','session_name','start')))
 			{
 				$ex=explode('_',$k);
 				if($ex[0]=='response')
@@ -39,7 +39,8 @@ main_menu();
 				}
 				elseif($ex[0]=='completed')
 				{
-					if(update_one_field_with_value($link,'reminders',$ex[0],$ex[1],'\''.$v.'\'')==1)
+					$completed=($v=='')?0:$v;
+					if(update_one_field_with_value($link,'reminders',$ex[0],$ex[1],'\''.$completed.'\'')==1)
 					{					
 						update_one_field_with_value($link,'reminders','recording_time',$ex[1],strftime("%Y%m%d%H%M%S"));
 						update_one_field_with_value($link,'reminders','recorded_by',$ex[1],$_SESSION['login']);
@@ -50,12 +51,13 @@ main_menu();
 		}
 	}
 	
-	
-	
-	$result=run_query($link,$GLOBALS['database'],'select * from reminders  order by completed, datetime desc limit '.$limit);
+	//all time show fifty
+	echo '<h5>Reminders: 50 uncompleted latest reminders are shown first. Use Skip to see older records</h5>';
+	$result=run_query($link,$GLOBALS['database'],'select * from reminders  order by completed, datetime desc limit '.$start.' , '.$limit);
 	echo '<table class="table table-striped table-sm table-bordered">';
 		echo '<tr><th>id</th><th>reminder</th><th>datetime</th><th>response</th><th>completed</th><th>recording time</th><th>recorded by</th></tr>';
 	echo '<form method=post>';
+	echo 'Skip:<input type=text name=start value=\''.$start.'\'>';
 	while($ar=get_single_row($result))
 	{
 		if($ar['completed']==1){$checked='checked';}else{$checked='';}
@@ -72,6 +74,7 @@ main_menu();
 		echo '</tr>';
 	}
 	echo '<input type=submit name=action value=save>';
+	echo '<input type=submit name=action value=show>';
 	echo '	<input type=hidden name=session_name value=\''.$_POST['session_name'].'\'>';
 
 	echo '</form>';
@@ -79,7 +82,7 @@ main_menu();
 //////////////user code ends////////////////
 tail();
 
-echo '<pre>';print_r($_POST);print_r($_FILES);echo '</pre>';
+//echo '<pre>';print_r($_POST);print_r($_FILES);echo '</pre>';
 
 //////////////Functions///////////////////////
 

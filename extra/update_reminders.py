@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/bin/python3
 import crontab
 import MySQLdb
 import logging
@@ -47,9 +47,9 @@ def update_reminders():
   link=m.get_link('127.0.0.1',astm_var.my_user,astm_var.my_pass,database)
   current_time=datetime.datetime.now()
   prepared_sql='insert into reminders \
-  					(reminder,datetime) values \
-  					(%s , %s)';
-  data_tpl=(sys.argv[1],current_time)
+  					(reminder,datetime,completed) values \
+  					(%s , %s, %s)';
+  data_tpl=(sys.argv[1],current_time,0)
   #print(prepared_sql)
   #print(data_tpl)
   cur=m.run_query(link,prepared_sql,data_tpl)

@@ -277,6 +277,7 @@ function search($link,$tname)
 		else
 		{	
 			echo '<td>';		
+				//'yes' to ensure date dropdown is not displayed
 				read_field($link,$tname,$field['Field'],'','yes');
 				//echo '<td><input type=text name=\''.$field['Field'].'\'></td>';
 			echo '</td>';		
@@ -464,7 +465,7 @@ function read_field($link,$tname,$field,$value,$search='no')
 	{
 		if($fspec['ftype']=='table')
 		{
-			mk_select_from_sql($link,'select `'.$fspec['table'].'` from `'.$fspec['table'].'`',
+			mk_select_from_sql($link,'select distinct `'.$fspec['field'].'` from `'.$fspec['table'].'`',
 					$fspec['fname'],$fspec['fname'],$fspec['fname'],'',$value,$blank='yes');
 		}
 		elseif($fspec['ftype']=='date')
