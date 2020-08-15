@@ -8,7 +8,7 @@ echo '		  <link rel="stylesheet" href="project_common.css">
 
 
 $link=get_link($GLOBALS['main_user'],$GLOBALS['main_pass']);
-main_menu();
+main_menu($link);
 
 //echo '<pre>';print_r($_POST);echo '</pre>';
 //exit();

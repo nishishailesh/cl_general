@@ -2,7 +2,7 @@
 //require_once 'Evaluator.php';
 require_once('tcpdf/tcpdf.php');
 
-function main_menu()
+function main_menu($link)
 {
 	echo '
 	<form method=post class="form-group m-0 p-0">

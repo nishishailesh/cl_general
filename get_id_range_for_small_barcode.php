@@ -10,7 +10,7 @@ $link=get_link($GLOBALS['main_user'],$GLOBALS['main_pass']);
 /////Note////
 //it is not by mrd
 //it is by databaase ID
-main_menu();
+main_menu($link);
 echo '<div id=response></div>';
 
 if($_POST['action']=='get_sample_id_range')

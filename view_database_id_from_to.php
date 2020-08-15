@@ -10,7 +10,7 @@ $link=get_link($GLOBALS['main_user'],$GLOBALS['main_pass']);
 /////Note////
 //it is not by mrd
 //it is by databaase ID
-main_menu();
+main_menu($link);
 echo '<h3>View Reports between two sample_id and Specific Location</h3>';
 
 if($_POST['action']=='get_dbids')

@@ -7,7 +7,7 @@ echo '		  <link rel="stylesheet" href="project_common.css">
 		  <script src="project_common.js"></script>';	
 $link=get_link($GLOBALS['main_user'],$GLOBALS['main_pass']);
 
-main_menu();
+main_menu($link);
 
 $sql='delete from result where sample_id=\''.$_POST['sample_id'].'\'';
 $result=run_query($link,$GLOBALS['database'],$sql);

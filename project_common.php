@@ -16,9 +16,20 @@ function requestonly_check($link)
 	}
 }
 
-function main_menu()
+function get_incomplete_reminder_count($link)
 {
-	$link=get_link($GLOBALS['main_user'],$GLOBALS['main_pass']);
+	if(!isset($GLOBALS['reminders_table'])){return false;}
+	
+	$sql='select count(id) incomplete_reminders from `'.$GLOBALS['reminders_table'].'` where completed=0';
+	$result=run_query($link,$GLOBALS['database'],$sql);
+	$ar=get_single_row($result);
+	return($ar['incomplete_reminders']);
+}
+//select count(id) from reminders where completed=0
+
+function main_menu($link)
+{
+	//$link=get_link($GLOBALS['main_user'],$GLOBALS['main_pass']);
 	$user=get_user_info($link,$_SESSION['login']);
 	$auth=explode(',',$user['authorization']);
 	if(in_array('requestonly',$auth))
@@ -114,7 +125,7 @@ function main_menu()
 						<button class="btn btn-outline-primary m-0 p-0" formaction=get_id_range_for_small_barcode.php type=submit name=action value=get_sample_id_range>Sample Tube Barcode</button>					
 						<button class="btn btn-outline-primary m-0 p-0" formaction=get_data_for_lj_chart.php type=submit name=action value=get_data>LJ Chart</button>					
 						<button class="btn btn-outline-primary m-0 p-0" formaction=single_table_edit.php type=submit name=action value=get_record_list>Tables</button>
-						<button class="btn btn-outline-primary m-0 p-0" formaction=reminders.php type=submit name=action value=reminders>Reminders</button>
+						<button class="btn btn-outline-primary m-0 p-0" formaction=reminders.php type=submit name=action value=reminders>Reminders('.get_incomplete_reminder_count($link).')</button>
 					</div>
 				</div>
 		</div>

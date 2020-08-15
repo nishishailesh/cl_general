@@ -17,16 +17,29 @@ if(in_array('requestonly',$auth))
 	exit(0);
 }
 
-main_menu();
-
-$sql='select * from '.$GLOBALS['record_tables'];
-$result=run_query($link,$GLOBALS['database'],$sql);
-echo '<h3>List of Available Tables</h3>';
-
-while($ar=get_single_row($result))
+main_menu($link);
+if($_POST['action']=='get_record_list')
 {
-	//print_r($ar);
-	show_manage_single_table_button($ar['table_name']);
+	list_available_tables($link);
+}
+
+function list_available_tables($link)
+{
+	$sql_level='select distinct level from '.$GLOBALS['record_tables'].' order by level';
+	$result_level=run_query($link,$GLOBALS['database'],$sql_level);
+	echo '<h3>List of Available Tables</h3>';
+	while($ar_level=get_single_row($result_level))
+	{
+		$sql='select * from '.$GLOBALS['record_tables'].' where level=\''.$ar_level['level'].'\'';
+		$result=run_query($link,$GLOBALS['database'],$sql);
+
+		while($ar=get_single_row($result))
+		{
+			//print_r($ar);
+			show_manage_single_table_button($ar['table_name']);
+		}
+		echo '<hr>';
+	}
 }
 
 if(isset($_POST['tname']))
@@ -485,7 +498,7 @@ function read_field($link,$tname,$field,$value,$search='no')
 		}	
 		else
 		{
-			echo 'not implimented';
+			echo 'not implemented';
 		}
 	}
 	else
@@ -503,7 +516,7 @@ function update_one_field($link,$tname,$fname,$pk)
 	}
 	else
 	{
-		$value=' \''.$_POST[$fname].'\' ';
+		$value=' \''.my_safe_string($link,$_POST[$fname]).'\' ';
 	}
 	
 	update_one_field_with_value($link,$tname,$fname,$pk,$value);

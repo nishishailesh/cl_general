@@ -10,7 +10,7 @@ echo '		  <link rel="stylesheet" href="project_common.css">
 $link=get_link($GLOBALS['main_user'],$GLOBALS['main_pass']);
 $user=get_user_info($link,$_SESSION['login']);
 
-main_menu();
+main_menu($link);
 
 if($_POST['action']=='direct')
 {

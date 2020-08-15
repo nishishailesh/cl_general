@@ -10,7 +10,7 @@ echo '	<link rel="stylesheet" href="project_common.css">
 		  <script src="project_common.js"></script>';	
 $link=get_link($GLOBALS['main_user'],$GLOBALS['main_pass']);
 
-main_menu();
+main_menu($link);
 echo '<div id=response></div>';
 if($_POST['action']=='edit_general')
 {

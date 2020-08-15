@@ -4,7 +4,7 @@ require_once 'base/verify_login.php';
 require_once 'project_common.php';
 $link=get_link($GLOBALS['main_user'],$GLOBALS['main_pass']);
 
-		main_menu(); 
+		main_menu($link); 
 		dashboard($link);
 		show_dashboard($link);
 		

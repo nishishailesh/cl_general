@@ -22,7 +22,6 @@ if(in_array('requestonly',$auth))
 $start=isset($_POST['start'])?$_POST['start']:0;
 $limit=50;
 
-main_menu();
 
 
 	//just skip this if 'show'
@@ -50,6 +49,9 @@ main_menu();
 			}
 		}
 	}
+
+//show menu after save
+main_menu($link);
 	
 	//all time show fifty
 	echo '<h5>Reminders: 50 uncompleted latest reminders are shown first. Use Skip to see older records</h5>';

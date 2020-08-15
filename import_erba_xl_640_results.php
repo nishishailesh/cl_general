@@ -7,7 +7,7 @@ echo '		  <link rel="stylesheet" href="project_common.css">
 		  <script src="project_common.js"></script>';	
 $link=get_link($GLOBALS['main_user'],$GLOBALS['main_pass']);
 
-main_menu();
+main_menu($link);
 echo '<h2 class="bg-success">Import XL-640 Results</h2>';
 
 if($_POST['action']=='get_file')

@@ -10,7 +10,7 @@ echo '            <link rel="stylesheet" href="project_common.css">
 				<script src="project_common.js"></script>';  
                   
 $link=get_link($GLOBALS['main_user'],$GLOBALS['main_pass']);
-main_menu();
+main_menu($link);
 $pdf = new ACCOUNT1('P', 'mm', 'A4', true, 'UTF-8', false);
 
 print_sample($link,$_POST['sample_id'],$pdf);

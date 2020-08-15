@@ -9,7 +9,7 @@ $link=get_link($GLOBALS['main_user'],$GLOBALS['main_pass']);
 $user=get_user_info($link,$_SESSION['login']);
 $auth=explode(',',$user['authorization']);
 
-main_menu();
+main_menu($link);
 
 if(in_array('unlock',$auth))
 {

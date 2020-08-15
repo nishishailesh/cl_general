@@ -8,7 +8,7 @@ echo '		  <link rel="stylesheet" href="project_common.css">
 		  <script src="project_common.js"></script>';
 $link=get_link($GLOBALS['main_user'],$GLOBALS['main_pass']);
 //print_r($_POST);
-main_menu();
+main_menu($link);
 echo '<div id=response></div>';
 
 if($_POST['action']=='get_search_condition')

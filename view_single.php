@@ -12,7 +12,7 @@ $_SESSION['display_style']=isset($_POST['display_style'])?$_POST['display_style'
 
 if($_SESSION['display_style']=='full')
 {
-	main_menu();
+	main_menu($link);
 }
 echo '<div class="d-inline-block">';
 select_display_style();
