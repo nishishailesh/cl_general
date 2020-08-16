@@ -433,7 +433,7 @@ CREATE TABLE `record_tables` (
   `level` int(11) DEFAULT NULL,
   `recorded_by` varchar(100) DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=23 DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB AUTO_INCREMENT=24 DEFAULT CHARSET=utf8mb4;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -471,7 +471,7 @@ CREATE TABLE `table_field_specification` (
 
 LOCK TABLES `table_field_specification` WRITE;
 /*!40000 ALTER TABLE `table_field_specification` DISABLE KEYS */;
-INSERT INTO `table_field_specification` VALUES (1,'equipment_record','equipment','table','equipment','equipment'),(2,'equipment_record','equipment_record_type','table','equipment_record_type','equipment_record_type'),(3,'equipment_record','date','date','',''),(4,'equipment_record','description','textarea','',''),(5,'calibration','date','date','',''),(6,'calibration','cal_equipment','table','cal_equipment','cal_equipment'),(7,'calibration','remarks','textarea','',''),(8,'calibration','correlation','textarea','',''),(9,'calibration','cal_examination','table','host_code','code'),(10,'reagent','name','table','reagent_name','reagent_name'),(11,'reagent','date_of_preparation','date','',''),(12,'reagent','date_of_expiry','date','',''),(13,'reagent','date_of_receipt','date','',''),(14,'reagent','date_of_opening','date','',''),(15,'reagent','unit','table','unit_name','unit_name');
+INSERT INTO `table_field_specification` VALUES (1,'equipment_record','equipment','table','equipment','equipment'),(2,'equipment_record','equipment_record_type','table','equipment_record_type','equipment_record_type'),(3,'equipment_record','date','date','',''),(4,'equipment_record','description','textarea','',''),(5,'calibration','date','date','',''),(6,'calibration','cal_equipment','table','cal_equipment','cal_equipment'),(7,'calibration','remarks','textarea','',''),(8,'calibration','correlation','textarea','',''),(9,'calibration','cal_examination','table','host_code','code'),(10,'reagent','name','table','reagent_name','reagent_name'),(11,'reagent','date_of_preparation','date','',''),(12,'reagent','date_of_expiry','date','',''),(13,'reagent','date_of_receipt','date','',''),(14,'reagent_date_of_opening','date_of_opening','date','',''),(15,'reagent','unit','table','unit_name','unit_name');
 /*!40000 ALTER TABLE `table_field_specification` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -508,7 +508,7 @@ CREATE TABLE `reagent` (
 
 LOCK TABLES `reagent` WRITE;
 /*!40000 ALTER TABLE `reagent` DISABLE KEYS */;
-INSERT INTO `reagent` VALUES (1,'ALTR1','001',100,'ml',5,'2020-08-05','2020-08-27','me','2020-08-11','4','2020-08-27','ok','2020-08-16 01:08:38','3');
+INSERT INTO `reagent` VALUES (1,'ALTR1','001',100,'ml',5,'2020-08-05','2020-08-27','me','2020-08-11','4\'\'\'\'\'C','2020-08-16','ok','2020-08-16 15:40:35','3');
 /*!40000 ALTER TABLE `reagent` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -563,6 +563,58 @@ LOCK TABLES `unit_name` WRITE;
 INSERT INTO `unit_name` VALUES (1,'ml',NULL,NULL);
 /*!40000 ALTER TABLE `unit_name` ENABLE KEYS */;
 UNLOCK TABLES;
+
+--
+-- Table structure for table `cal_equipment`
+--
+
+DROP TABLE IF EXISTS `cal_equipment`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `cal_equipment` (
+  `cal_equipment` varchar(100) NOT NULL,
+  PRIMARY KEY (`cal_equipment`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `cal_equipment`
+--
+
+LOCK TABLES `cal_equipment` WRITE;
+/*!40000 ALTER TABLE `cal_equipment` DISABLE KEYS */;
+/*!40000 ALTER TABLE `cal_equipment` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `reagent_use`
+--
+
+DROP TABLE IF EXISTS `reagent_use`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `reagent_use` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `reagent_id` int(11) DEFAULT NULL,
+  `count` int(11) DEFAULT NULL,
+  `date_of_opening` date DEFAULT NULL,
+  `recording_time` datetime DEFAULT NULL,
+  `recorded_by` varchar(100) DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `reagent_id_count` (`reagent_id`,`count`),
+  CONSTRAINT `reagent_use_ibfk_1` FOREIGN KEY (`reagent_id`) REFERENCES `reagent` (`id`) ON UPDATE CASCADE
+) ENGINE=InnoDB AUTO_INCREMENT=22 DEFAULT CHARSET=utf8mb4;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `reagent_use`
+--
+
+LOCK TABLES `reagent_use` WRITE;
+/*!40000 ALTER TABLE `reagent_use` DISABLE KEYS */;
+INSERT INTO `reagent_use` VALUES (3,1,1,'2020-08-17','2020-08-17 00:22:44','3');
+/*!40000 ALTER TABLE `reagent_use` ENABLE KEYS */;
+UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
 
 /*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
@@ -573,4 +625,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2020-08-16  1:26:38
+-- Dump completed on 2020-08-17  0:25:55

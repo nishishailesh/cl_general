@@ -115,17 +115,39 @@ function main_menu($link)
 				</div>
 		</div>
 
+		<button class="btn btn-outline-primary m-0 p-0" formaction=copy_prototype.php type=submit name=action value=copy_prototype>Copy Prototype</button>			
 
+
+
+		<div class="dropdown m-0 p-0">
+			<button class="btn btn-outline-primary dropdown-toggle m-0 p-0" type="button" data-toggle="dropdown">QC</button>
+				<div class="dropdown-menu m-0 p-0">
+					<div class="btn-group-vertical  d-block">
+						<button class="btn btn-outline-primary m-0 p-0" formaction=get_data_for_lj_chart.php type=submit name=action value=get_data>LJ Chart</button>					
+					</div>
+				</div>
+		</div>
+
+		<div class="dropdown m-0 p-0">
+			<button class="btn btn-outline-primary dropdown-toggle m-0 p-0" type="button" data-toggle="dropdown">Misc</button>
+				<div class="dropdown-menu m-0 p-0">
+					<div class="btn-group-vertical  d-block">
+						<button class="btn btn-outline-primary m-0 p-0" formaction=single_table_edit.php type=submit name=action value=get_record_list>Tables</button>
+						<button class="btn btn-outline-primary m-0 p-0" formaction=reminders.php type=submit name=action value=reminders>Reminders('.get_incomplete_reminder_count($link).')</button>
+						<button class="btn btn-outline-primary m-0 p-0" formaction=open_reagent.php type=submit name=action value=get_id>Open Reagent</button>
+						<button class="btn btn-outline-primary m-0 p-0" formaction=get_id_range_for_small_barcode.php type=submit name=action value=get_sample_id_range>Sample Tube Barcode</button>					
+						<button class="btn btn-outline-primary m-0 p-0" formaction=get_4_line.php type=submit name=action value=get_4_line>4 Line Label</button>
+					</div>
+				</div>
+		</div>
+				
 		<div class="dropdown m-0 p-0">
 			<button class="btn btn-outline-primary dropdown-toggle m-0 p-0" type="button" data-toggle="dropdown">Biochemistry</button>
 				<div class="dropdown-menu m-0 p-0">
 					<div class="btn-group-vertical  d-block">
 						<button class="btn btn-outline-primary m-0 p-0" formaction=import_erba_xl_640_results.php type=submit name=action value=get_file>Import XL-640 Result</button>					
 						<button class="btn btn-outline-primary m-0 p-0" formaction=import_erba_xl_1000_results.php type=submit name=action value=get_file>Import XL-1000 Result</button>											
-						<button class="btn btn-outline-primary m-0 p-0" formaction=get_id_range_for_small_barcode.php type=submit name=action value=get_sample_id_range>Sample Tube Barcode</button>					
-						<button class="btn btn-outline-primary m-0 p-0" formaction=get_data_for_lj_chart.php type=submit name=action value=get_data>LJ Chart</button>					
-						<button class="btn btn-outline-primary m-0 p-0" formaction=single_table_edit.php type=submit name=action value=get_record_list>Tables</button>
-						<button class="btn btn-outline-primary m-0 p-0" formaction=reminders.php type=submit name=action value=reminders>Reminders('.get_incomplete_reminder_count($link).')</button>
+
 					</div>
 				</div>
 		</div>
@@ -139,7 +161,6 @@ function main_menu($link)
 				</div>
 		</div> -->
     				
-		<button class="btn btn-outline-primary m-0 p-0" formaction=copy_prototype.php type=submit name=action value=copy_prototype>Copy Prototype</button>			
 		<button class="btn btn-outline-primary m-0 p-0" formaction=start.php type=submit name=action value=home><img src=img/home.jpeg height=20></button>
 		<button class="btn btn-outline-primary m-0 p-0" formaction=start.php type=submit formtarget=_blank name=action value=home>+</button>
 	</div>
@@ -4517,6 +4538,7 @@ function get_sql($link)
         echo '</table>';
     
 }
+
 function prepare_result_from_view_data_id($link,$id)
 {
 
@@ -4644,10 +4666,13 @@ function echo_export_button_dashboard($link,$id,$p1,$p2,$p3,$p4)
 		</form>';
 }
 	
-function display_sql_result_data($result)
+function display_sql_result_data($result,$show_hide='yes')
 {
-	echo '<button data-toggle="collapse" data-target="#sql_result" class="btn btn-dark">Show/Hide Result</button>';
-	echo '<div id="sql_result" class="collapse show">';		
+	if($show_hide=='yes')
+	{
+		echo '<button data-toggle="collapse" data-target="#sql_result" class="btn btn-dark">Show/Hide Result</button>';
+		echo '<div id="sql_result" class="collapse show">';		
+	}
 		
 	
        echo '<table border=1 class="table-striped table-hover">';
@@ -5468,4 +5493,17 @@ function calculate_tat($link,$sample_id)
 	
 	return false;
 }
+
+
+
+function view_sql_result_as_table($link,$sql,$show_hide='yes')
+{
+	if(!$result=run_query($link,$GLOBALS['database'],$sql))
+	{
+		 echo '<h1>Problem</h1>';
+		 return false;
+	}
+	display_sql_result_data($result,$show_hide);
+}
+
 ?>

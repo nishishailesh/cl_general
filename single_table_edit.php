@@ -418,45 +418,45 @@ function edit($link,$tname,$pk,$header='no')
 	
 	echo '<form method=post class="d-inline" enctype="multipart/form-data">';
     echo '<div class="table-responsive">';
-	echo '<table class="table table-striped table-sm table-bordered">';
-	if($header=='yes')
-	{
-		echo '<tr>';
-		foreach($ar as $k=>$v)
-		{
-			echo '<td>'.$k.'</td>';
-		}
-		echo '</tr>';
-	}
-	
-	echo '<tr>';
-	foreach($ar as $k =>$v)
-	{
-		if($k=='id')
-		{
-			echo '<td>';
-				ste_id_update_button($link,$tname,$v);
-			echo '</td>';
-		}
-		elseif(substr(get_field_type($link,$tname,$k),-4)=='blob')
-		{
-			echo '<td>';
-				echo '<input type=file name=\''.$k.'\' >';
-			echo '</td>';
-		}
-		elseif(in_array($k,array('recording_time','recorded_by')))
-		{
-			echo '<td>'.$v.'</td>';
-		}
-		else
-		{
-			echo '<td>';		
-				read_field($link,$tname,$k,$v);
-			echo '</td>';
-		}
-	}
-	echo '</tr>';
-	echo '</table>';
+		echo '<table class="table table-striped table-sm table-bordered table-condensed">';
+			if($header=='yes')
+			{
+				echo '<tr>';
+				foreach($ar as $k=>$v)
+				{
+					echo '<td>'.$k.'</td>';
+				}
+				echo '</tr>';
+			}
+			
+			echo '<tr>';
+			foreach($ar as $k =>$v)
+			{
+				if($k=='id')
+				{
+					echo '<td>';
+						ste_id_update_button($link,$tname,$v);
+					echo '</td>';
+				}
+				elseif(substr(get_field_type($link,$tname,$k),-4)=='blob')
+				{
+					echo '<td>';
+						echo '<input type=file name=\''.$k.'\' >';
+					echo '</td>';
+				}
+				elseif(in_array($k,array('recording_time','recorded_by')))
+				{
+					echo '<td>'.$v.'</td>';
+				}
+				else
+				{
+					echo '<td>';		
+						read_field($link,$tname,$k,$v);
+					echo '</td>';
+				}
+			}
+			echo '</tr>';
+		echo '</table>';
 	echo '</div>';
 	echo'</form>';
 
@@ -503,7 +503,7 @@ function read_field($link,$tname,$field,$value,$search='no')
 	}
 	else
 	{
-		echo '<input type=text name=\''.$field.'\' value=\''.$value.'\'>';
+		echo '<input type=text name=\''.$field.'\' value=\''.htmlentities($value,ENT_QUOTES).'\'>';
 	}
 }
 

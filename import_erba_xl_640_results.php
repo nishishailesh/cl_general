@@ -73,6 +73,22 @@ function csv_to_sql($link,$file_data,$equipment)
 		
 		if(count($ar)>=8)
 		{
+			
+			//05/29/2020 10:29:59 to YYMMDDHHMMSS format
+			$tkd=preg_split('/[:\/\s]+/',$ar[8]);		//640=8 1000=7
+			//echo '<br>'.$ar[7];
+			//Array ( [0] => 08 [1] => 01 [2] => 2020 [3] => 14 [4] => 03 [5] => 07 ) 
+			if(count($tkd)>=6)
+			{
+				$my_date=$tkd[2].$tkd[0].$tkd[1].$tkd[3].$tkd[4].$tkd[5];
+			}
+			else
+			{
+				$my_date='';
+			}
+			
+			
+			
 			//only for given sample_id
 			$sample_code_to_ex=get_examination_codes($link,$equipment,$ar[2]);
 			if(count($sample_code_to_ex)==0)
@@ -98,7 +114,7 @@ function csv_to_sql($link,$file_data,$equipment)
 					$sql=	'insert into primary_result
 								(sample_id,examination_id,result,uniq)
 								values
-								(\''.$ar[2].'\',\''.$examination_id.'\',\''.$ar[5].'\',\''.$ar[8].'\')
+								(\''.$ar[2].'\',\''.$examination_id.'\',\''.$ar[5].'\',\''.$my_date.'\')
 							on duplicate key
 							update result=\''.$ar[5].'\'';							
 					//echo $sql.'<br>';

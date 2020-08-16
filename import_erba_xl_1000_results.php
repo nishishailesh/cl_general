@@ -107,7 +107,7 @@ function csv_to_sql($link,$file_data,$equipment)
 		if(count($ar)>=8)
 		{
 			//05/29/2020 10:29:59 to YYMMDDHHMMSS format
-			$tkd=preg_split('/[:\/\s]+/',$ar[7]);
+			$tkd=preg_split('/[:\/\s]+/',$ar[7]); //640=8 1000=7
 			//echo '<br>'.$ar[7];
 			//Array ( [0] => 08 [1] => 01 [2] => 2020 [3] => 14 [4] => 03 [5] => 07 ) 
 			if(count($tkd)>=6)
