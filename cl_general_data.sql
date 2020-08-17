@@ -494,12 +494,11 @@ CREATE TABLE `reagent` (
   `prepared_by` varchar(50) DEFAULT NULL,
   `date_of_receipt` date DEFAULT NULL,
   `condition_on_receipt` varchar(50) DEFAULT NULL,
-  `date_of_opening` date DEFAULT NULL,
   `remark` varchar(100) DEFAULT NULL,
   `recording_time` datetime DEFAULT NULL,
   `recorded_by` varchar(100) DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -508,7 +507,7 @@ CREATE TABLE `reagent` (
 
 LOCK TABLES `reagent` WRITE;
 /*!40000 ALTER TABLE `reagent` DISABLE KEYS */;
-INSERT INTO `reagent` VALUES (1,'ALTR1','001',100,'ml',5,'2020-08-05','2020-08-27','me','2020-08-11','4\'\'\'\'\'C','2020-08-16','ok','2020-08-16 15:40:35','3');
+INSERT INTO `reagent` VALUES (1,'ALTR1','001',100,'ml',5,'2020-08-05','2020-08-27','me','2020-08-11','4\'\'\'\'\'C','ok','2020-08-16 15:40:35','3'),(2,'ALTR2','ER454',30,'ml',4,'2020-08-17','2020-08-17','me','2020-08-18','ok',NULL,'2020-08-17 21:36:26','3');
 /*!40000 ALTER TABLE `reagent` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -603,7 +602,7 @@ CREATE TABLE `reagent_use` (
   PRIMARY KEY (`id`),
   UNIQUE KEY `reagent_id_count` (`reagent_id`,`count`),
   CONSTRAINT `reagent_use_ibfk_1` FOREIGN KEY (`reagent_id`) REFERENCES `reagent` (`id`) ON UPDATE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=23 DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB AUTO_INCREMENT=42 DEFAULT CHARSET=utf8mb4;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -612,7 +611,7 @@ CREATE TABLE `reagent_use` (
 
 LOCK TABLES `reagent_use` WRITE;
 /*!40000 ALTER TABLE `reagent_use` DISABLE KEYS */;
-INSERT INTO `reagent_use` VALUES (3,1,1,'2020-08-17','2020-08-17 00:22:44','3');
+INSERT INTO `reagent_use` VALUES (3,1,1,'2020-08-17','2020-08-17 23:13:40','3'),(26,2,1,'2020-08-17','2020-08-17 20:12:43','3'),(28,2,3,'2020-08-17','2020-08-17 20:12:35','3'),(30,2,2,'2020-08-17','2020-08-17 22:06:41','3'),(31,2,4,'2020-08-17','2020-08-17 20:12:53','3'),(37,1,2,'2020-08-17','2020-08-17 23:09:30','3');
 /*!40000 ALTER TABLE `reagent_use` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
@@ -625,4 +624,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2020-08-17 15:43:29
+-- Dump completed on 2020-08-17 23:22:40

@@ -9,9 +9,6 @@ echo '		  <link rel="stylesheet" href="project_common.css">
 $link=get_link($GLOBALS['main_user'],$GLOBALS['main_pass']);
 $user=get_user_info($link,$_SESSION['login']);
 $auth=explode(',',$user['authorization']);
-//print_r($auth);
-
-
 
 if(in_array('requestonly',$auth))
 {
@@ -20,33 +17,17 @@ if(in_array('requestonly',$auth))
 
 main_menu($link);
 
+echo '	
+<form method=post class="form-group m-0 p-0">
+	<input type=hidden name=session_name value=\''.session_name().'\'>
+	<button class="btn btn-outline-primary m-0 p-0" formaction=get_id_range_for_small_barcode.php type=submit name=action value=get_sample_id_range>Sample Tube Barcode</button>					
+	<button class="btn btn-outline-primary m-0 p-0" formaction=get_4_line.php type=submit name=action value=get_4_line>4 Line Label</button>
+</form>';
 
-if($_POST['action']=='get_record_list')
-{
-	list_available_tables($link);
-}
-
-manage_stf($link,$_POST);
-
-echo '
-<h5>Table managed in this utility must have following properties</h5>
-<ul>
-	<li>auto-incremented primary key named <b>id</b></li>
-	<li>All except <b>id</b> must be able to take null value</li>
-	<li>two fields <b>recording_time</b> of datetime type and <b> recorded_by </b> of varchar type are mandatory</li>
-	<li>id,recording_time and recorded_by are not user editable</li>
-	<li>all blob fields named <b>xyz</b> must have <b>xyz_name</b> field for storing uploaded file name</li>
-
-
-</ul>
-
-
-';
 //////////////user code ends////////////////
 tail();
 
 //echo '<pre>';print_r($_POST);print_r($_FILES);echo '</pre>';
 
 //////////////Functions///////////////////////
-
 ?>
