@@ -62,7 +62,7 @@ function prepare_label($pdf,$from,$to)
 		'fontsize' => 8,
 		'stretchtext' => 4
 	);
-		if($from!=False && $to!=false)
+		if($from!=False && $to!=false && isset($_POST['range']))
 		{
 			for($counter=$from;$counter<=$to;$counter++)
 			{
