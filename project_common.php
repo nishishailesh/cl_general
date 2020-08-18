@@ -1822,7 +1822,7 @@ function edit_field($link,$examination_id,$result_array,$sample_id,$readonly='',
 			echo '<div class="m-0 p-0 no-gutters">';
 				////
 				echo '<div class="d-inline-block no-gutters">';
-				echo '<textarea rows=1 
+				echo '<PRE><textarea rows=1 
 					'.$readonly.'
 					id="'.$element_id.'" 
 					name="'.$examination_id.'" 
@@ -1835,7 +1835,7 @@ function edit_field($link,$examination_id,$result_array,$sample_id,$readonly='',
 					minlength=\''.$minlength.'\'';
 					if(strlen($required)>0)	{echo 'required=\''.$required.'\'';}
 					echo 'type=\''.$type.'\' >'.
-					htmlspecialchars($result,ENT_QUOTES).'</textarea>';
+					htmlspecialchars($result,ENT_QUOTES).'</textarea></PRE>';
 				echo '</div>';
 				echo '<div class="d-inline  no-gutters">';
 					if($frill){get_primary_result($link,$sample_id,$examination_id);}
@@ -4291,7 +4291,7 @@ function view_field_vr_p($link,$ex_id,$ex_result)
 		else
 		{
 
-				$formatted=nl2br(htmlspecialchars($ex_result.' '.decide_alert($ex_result,$interval,'','','','','')));
+				$formatted=htmlspecialchars($ex_result.' '.decide_alert($ex_result,$interval,'','','','',''));
 				$bold_formatted1=str_replace('(((','<b>',$formatted);
 				$bold_formatted2=str_replace(')))','</b>',$bold_formatted1);
 							
@@ -4303,16 +4303,11 @@ function view_field_vr_p($link,$ex_id,$ex_result)
 			}
 			else
 			{
-				//$formatted=nl2br(htmlspecialchars($ex_result.' '.decide_alert($ex_result,$interval,'','','','','')));
-				//$bold_formatted1=str_replace('(((','<b>',$formatted);
-				//$bold_formatted2=str_replace(')))','</b>',$bold_formatted1);
-				//$formatted=nl2br($ex_result.' '.decide_alert($ex_result,$interval,'','','','',''));
 				echo '	<tr>
 					<td colspan="3"><h3>'.$examination_details['name'].'</h3></td><td></td><td></td>
 				</tr>
 				<tr>
-					<td colspan="3">'.$bold_formatted2.'</td>
-					
+					<td colspan="3">'.nl2br(str_replace(' ','<font style="color:white;">_</font>',$bold_formatted2)).'</td>
 				</tr>';
 			}
 		}		
@@ -4349,9 +4344,7 @@ function view_field_vr($link,$ex_id,$ex_result)
 				echo '	<div>
 					<h4>'.$examination_details['name'].'</h4>
 				</div>
-				<div>
-					'.nl2br(htmlspecialchars($ex_result.' '.decide_alert($ex_result,$interval,'','','','',''))).'
-				</div>';
+				<div><PRE>'.htmlspecialchars($ex_result.' '.decide_alert($ex_result,$interval,'','','','','')).'</PRE></div>';
 			}
 		}		
 }	

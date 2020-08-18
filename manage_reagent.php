@@ -52,6 +52,20 @@ function get_opening_id()
 	echo '</table>';
 	echo '</div>';
 }	
+
+function get_unopened_count($link,$id)
+{
+	$rsql='select `count` as total from reagent where id=\''.$id.'\'';
+	$rresult=run_query($link,$GLOBALS['database'],$rsql);
+	$rar=get_single_row($rresult);	
+	$usql='select count(id) as used FROM reagent_use where reagent_id=\''.$id.'\'';
+	$uresult=run_query($link,$GLOBALS['database'],$usql);
+	$uar=get_single_row($uresult);	
+	//print_r($rar);
+	//print_r($uar);
+	//echo ($rar['total']-$uar['used']);
+	return ($rar['total']-$uar['used']);
+}
 	
 function save_opening($link)
 {
@@ -61,6 +75,20 @@ function save_opening($link)
 		else
 		{
 			$ex=explode('^',$_POST['id']);
+			$unopened=get_unopened_count($link,$ex[0]);
+			if($unopened <= 0)
+			{
+				echo '<h3 class=text-danger>Failure!!! Unopened Reagent count for id='.$ex[0].' is: <span class="bg-warning">'.$unopened.'</span></h3>';
+				echo '<h5 class=text-success>Details of Reagent/Consumable ID:'.$ex[0].'</h5>';
+			
+				$vsql='select * from reagent where id=\''.$ex[0].'\'';
+				view_sql_result_as_table($link,$vsql,$show_hide='no');
+			
+				$usql='select * FROM reagent_use where reagent_id=\''.$ex[0].'\'';
+				view_sql_result_as_table($link,$usql,$show_hide='no');
+				return;
+			}
+
 			$sql='insert into reagent_use (reagent_id,count,date_of_opening,recording_time,recorded_by) 
 					values(	\''.$ex[0].'\', 
 							\''.$ex[1].'\', 
@@ -111,15 +139,16 @@ function get_id_for_details()
 }	
 
 function view_id_details($link)
-{
-	echo '<h5 class=text-danger>Details of Reagent/Consumable ID:'.$_POST['id'].'</h5>';
+{	
 	if($_POST['action']=='id_details')
 	{
-				$vsql='select * from reagent where id=\''.$_POST['id'].'\'';
-				view_sql_result_as_table($link,$vsql,$show_hide='no');
-			
-				$usql='select * FROM reagent_use where reagent_id=\''.$_POST['id'].'\'';
-				view_sql_result_as_table($link,$usql,$show_hide='no');
+		echo '<h5 class=text-danger>Details of Reagent/Consumable ID:'.$_POST['id'].'</h5>';
+		$vsql='select * from reagent where id=\''.$_POST['id'].'\'';
+		view_sql_result_as_table($link,$vsql,$show_hide='no');
+		
+		$usql='select * FROM reagent_use where reagent_id=\''.$_POST['id'].'\'';
+		view_sql_result_as_table($link,$usql,$show_hide='no');
+		echo '<h3 class=text-danger>Unopened Reagent count is: <span class="bg-warning">'.get_unopened_count($link,$_POST['id']).'</span></h3>';
 	}	
 }
 	
