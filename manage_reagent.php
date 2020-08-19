@@ -28,6 +28,10 @@ show_manage_single_table_button('reagent_use','Reagents Opened');
 echo '</div>';
 
 manage_stf($link,$_POST);
+
+	echo '<button data-toggle="collapse" data-target="#get_opening_id" class="btn btn-dark">Open Reagent</button>';
+	echo '<button data-toggle="collapse" data-target="#get_id_for_details" class="btn btn-dark">ID Details</button>';
+	
 get_opening_id();
 save_opening($link);
 get_id_for_details();
@@ -35,21 +39,25 @@ view_id_details($link);
 
 function get_opening_id()
 {
-	$default=strftime("%Y-%m-%d");
-	echo '<div class="border border-success m-2 p-2" >';
-	echo '<h5 class="text-success">Open Reagent/Consumable</h5>';
-	echo '<table class="table table-striped table-sm table-bordered">';
-		echo '<tr><th>id^count</th><th>date_of_opening</th></tr>';
-	echo '<form method=post>';
-		echo '<tr>';
-			echo '<td><input type=text name=id autofocus></td>';
-			echo '<td><input type=date name=date_of_opening value=\''.$default.'\'>';			
-		echo '</tr>';
-	echo '<tr><td colspan=2><input class="btn btn-sm btn-info"  type=submit name=action value=open></td></tr>';
-	echo '<input type=hidden name=session_name value=\''.$_POST['session_name'].'\'>';
 
-	echo '</form>';
-	echo '</table>';
+				echo '<div id="get_opening_id" class="collapse show">';
+
+		$default=strftime("%Y-%m-%d");
+		echo '<div class="border border-success m-2 p-2" >';
+		echo '<h5 class="text-success">Open Reagent/Consumable</h5>';
+		echo '<table class="table table-striped table-sm table-bordered">';
+			echo '<tr><th>id^count</th><th>date_of_opening</th></tr>';
+		echo '<form method=post>';
+			echo '<tr>';
+				echo '<td><input type=text name=id autofocus></td>';
+				echo '<td><input type=date name=date_of_opening value=\''.$default.'\'>';			
+			echo '</tr>';
+		echo '<tr><td colspan=2><input class="btn btn-sm btn-info"  type=submit name=action value=open></td></tr>';
+		echo '<input type=hidden name=session_name value=\''.$_POST['session_name'].'\'>';
+
+		echo '</form>';
+		echo '</table>';
+		echo '</div>';
 	echo '</div>';
 }	
 
@@ -122,34 +130,57 @@ function save_opening($link)
 
 function get_id_for_details()
 {
-	echo '<div class="border border-danger m-2 p-2">';
-		echo '<h5 class=text-danger>Details of Reagent/Consumable Received</h5>';
-		echo '<table class="table table-striped table-sm table-bordered">';
-			echo '<tr><th>id</th></tr>';
-		echo '<form method=post>';
-			echo '<tr>';
-				echo '<td><input type=text name=id ></td>';
-			echo '</tr>';
-		echo '<tr><td><button class="btn btn-sm btn-info" type=submit name=action value=id_details>Get Details</button></td></tr>';
-		echo '<input type=hidden name=session_name value=\''.$_POST['session_name'].'\'>';
 
-		echo '</form>';
-		echo '</table>';
+	echo '<div id="get_id_for_details" class="collapse hide">';		
+
+		echo '<div class="border border-danger m-2 p-2">';
+			echo '<h5 class=text-danger>Details of Reagent/Consumable Received</h5>';
+			echo '<table class="table table-striped table-sm table-bordered">';
+				echo '<tr><th>id</th></tr>';
+			echo '<form method=post>';
+				echo '<tr>';
+					echo '<td><input type=text name=id ></td>';
+				echo '</tr>';
+			echo '<tr><td><button class="btn btn-sm btn-info" type=submit name=action value=id_details>Get Details</button></td></tr>';
+			echo '<input type=hidden name=session_name value=\''.$_POST['session_name'].'\'>';
+
+			echo '</form>';
+			echo '</table>';
+		echo '</div>';
+	
 	echo '</div>';
+	
 }	
 
 function view_id_details($link)
 {	
 	if($_POST['action']=='id_details')
 	{
-		echo '<h5 class=text-danger>Details of Reagent/Consumable ID:'.$_POST['id'].'</h5>';
-		$vsql='select * from reagent where id=\''.$_POST['id'].'\'';
-		view_sql_result_as_table($link,$vsql,$show_hide='no');
+		echo '<div class="m-2 p-2">';
+			echo '<h5 class=text-danger>Details of Reagent/Consumable ID:'.$_POST['id'].'</h5>';
+			$vsql='select * from reagent where id=\''.$_POST['id'].'\'';
+			view_sql_result_as_table($link,$vsql,$show_hide='no');
+
+		echo '</div>';
+		echo '<div class="m-2 p-2">';
 		
-		$usql='select * FROM reagent_use where reagent_id=\''.$_POST['id'].'\'';
-		view_sql_result_as_table($link,$usql,$show_hide='no');
-		echo '<h3 class=text-danger>Unopened Reagent count is: <span class="bg-warning">'.get_unopened_count($link,$_POST['id']).'</span></h3>';
-	}	
+			$usql='select * FROM reagent_use where reagent_id=\''.$_POST['id'].'\'';
+			view_sql_result_as_table($link,$usql,$show_hide='no');
+			echo '<h3 class=text-danger>For ID:'.$_POST['id'].' Unopened Reagent count is: <span class="bg-warning">'.get_unopened_count($link,$_POST['id']).'</span></h3>';
+
+			//other_unopened_sql
+			$result=run_query($link,$GLOBALS['database'],$vsql);
+			$ar=get_single_row($result);
+			//print_r($ar);
+			$all_sql='select * from reagent where name=\''.$ar['name'].'\' order by id desc';
+			$all_result=run_query($link,$GLOBALS['database'],$all_sql);
+			while($all_ar=get_single_row($all_result))
+			{
+				$c=get_unopened_count($link,$all_ar['id']);
+				echo '<h5 class=text-info>'.$all_ar['name'].': --> ID:'.$all_ar['id'].':--> Unopened Reagent count is: <span class="bg-warning">'.$c.'</span></h5>';
+			}
+		echo '</div>';
+	}
 }
 	
 //////////////user code ends////////////////

@@ -128,7 +128,7 @@ function search($link,$tname)
 	
 	echo '<form method=post>';
 	echo '<table class="table table-striped table-sm table-bordered">';
-	echo '<tr>';
+	echo '<tr><td>Action</td>';
 	foreach($all_fields as $field)
 	{
 		echo '<td>'.$field['Field'].'</td>';
