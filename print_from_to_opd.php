@@ -26,32 +26,51 @@ for ($i=$_POST['from'];$i<=$to;$i++)
 	$ow=get_one_ex_result($link,$i,$GLOBALS['OPD/Ward']);
 	$location_post='__ex__'.$GLOBALS['OPD/Ward'];
 
-	if(sample_exist($link,$i))
+	if(sample_exist($link,$i))					//if there is such sample
 	{
-		if(strlen($released)!=0 || strlen($interim_released)!=0 )
+		if(strlen($_POST[$location_post])>0)	//if location given
 		{
-			if(strlen($_POST[$location_post])>0)
+			if($ow==$_POST[$location_post])		//if locaion match
 			{
-				if($ow==$_POST[$location_post])
+				if(strlen($released)!=0 || strlen($interim_released)!=0 )	//if released/interim
 				{
 					$at_least_one_sample=true;
 					print_sample($link,$i,$pdf);
 				}
+				else 														//else output html(no pdf)
+				{
+					//echo '<link rel="stylesheet" href="project_common.css">
+					//  <script src="project_common.js"></script>';
+					//echo '<div class="d-inline">Sample _ID='.$i.' is [ not released ]</div>';
+					sample_id_view_button($i,'_blank',$i.' is not released');
+					$error=true;
+				}
 			}
-			else
+			else 								//if location do not match
 			{
-				$at_least_one_sample=true;
-				print_sample($link,$i,$pdf);
+				//do nothing
 			}
 		}
-		else
+		else 									//location not given, print all
 		{
-			//echo '<link rel="stylesheet" href="project_common.css">
-			//  <script src="project_common.js"></script>';
-			//echo '<div class="d-inline">Sample _ID='.$i.' is [ not released ]</div>';
-			sample_id_view_button($i,'_blank',$i.' is not released');
-			$error=true;
-		}	
+				if(strlen($released)!=0 || strlen($interim_released)!=0 )	//if released/interim
+				{
+					$at_least_one_sample=true;
+					print_sample($link,$i,$pdf);
+				}
+				else 														//else output html(no pdf)
+				{
+					//echo '<link rel="stylesheet" href="project_common.css">
+					//  <script src="project_common.js"></script>';
+					//echo '<div class="d-inline">Sample _ID='.$i.' is [ not released ]</div>';
+					sample_id_view_button($i,'_blank',$i.' is not released');
+					$error=true;
+				}
+		}
+	}
+	else  //no such sample
+	{
+		//do nothing
 	}
 }
 
