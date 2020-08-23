@@ -40,24 +40,54 @@ echo '</div>';
 
 manage_stf($link,$_POST);
 
+echo '<div class="accordion" id="little_forms"">';
+	echo '<button data-toggle="collapse" data-target="#get_name_for_best_to_open" class="btn btn-dark">Get Best to Open</button>';
 	echo '<button data-toggle="collapse" data-target="#get_opening_id" class="btn btn-dark">Open Reagent</button>';
 	echo '<button data-toggle="collapse" data-target="#get_id_for_details" class="btn btn-dark">Reagent ID Details</button>';
 	echo '<button data-toggle="collapse" data-target="#get_name_for_details" class="btn btn-dark">Reagent Name Details</button>';
 
 	
 get_opening_id();
-save_opening($link);
+if($_POST['action']=='open')
+{
+	save_opening($link);
+}
+
 get_id_for_details();
-view_id_details($link);
+if($_POST['action']=='id_details')
+{
+	view_id_details($link,$_POST['id']);
+}
+
 get_name_for_details($link);
-view_reagent_summary_by_name($link);
-near_expiry_data($link);
-out_of_stock_data($link);
+if($_POST['action']=='name_details')
+{
+	view_reagent_summary_by_name($link);
+}
+
+if($_POST['action']=='near_expiry_data')
+{
+	near_expiry_data($link);
+}
+
+if($_POST['action']=='out_of_stock_data')
+{
+	out_of_stock_data($link);
+}
+
+get_name_for_best_to_open($link);
+if($_POST['action']=='get_name_for_best_to_open')
+{
+	find_best_to_open($link);
+}
+
+echo '</div>';
+
 
 function get_opening_id()
 {
 
-				echo '<div id="get_opening_id" class="collapse show">';
+				echo '<div id="get_opening_id" class="collapse show" data-parent="#little_forms" >';
 
 		$default=strftime("%Y-%m-%d");
 		echo '<div class="border border-success m-2 p-2" >';
@@ -94,8 +124,6 @@ function get_unopened_count($link,$id)
 	
 function save_opening($link)
 {
-	if($_POST['action']=='open')
-	{
 		if(strlen($_POST['date_of_opening'])==0){echo 'Date of Opening can not be empty';}
 		else
 		{
@@ -142,16 +170,15 @@ function save_opening($link)
 				view_sql_result_as_table($link,$usql,$show_hide='no');
 			}
 		}
-	}	
 }
 
 function get_id_for_details()
 {
 
-	echo '<div id="get_id_for_details" class="collapse hide">';		
+	echo '<div id="get_id_for_details" class="collapse hide" data-parent="#little_forms" >';		
 
 		echo '<div class="border border-danger m-2 p-2">';
-			echo '<h5 class=text-danger>Details of Reagent/Consumable Received</h5>';
+			echo '<h5 class=text-danger>(Details of an ID) Give ID of Reagent/Consumable Received</h5>';
 			echo '<table class="table table-striped table-sm table-bordered">';
 				echo '<tr><th>id</th></tr>';
 			echo '<form method=post>';
@@ -169,33 +196,31 @@ function get_id_for_details()
 	
 }	
 
-function view_id_details($link)
+function view_id_details($link,$id)
 {	
-	if($_POST['action']=='id_details')
-	{
+
 		echo '<div class="m-2 p-2">';
-			echo '<h5 class=text-danger>Details of Reagent/Consumable ID:'.$_POST['id'].'</h5>';
-			$vsql='select * from reagent where id=\''.$_POST['id'].'\'';
+			echo '<h5 class=text-danger>Details of Reagent/Consumable ID:'.$id.'</h5>';
+			$vsql='select * from reagent where id=\''.$id.'\'';
 			view_sql_result_as_table($link,$vsql,$show_hide='no');
 
 		echo '</div>';
 		echo '<div class="m-2 p-2">';
 		
-			$usql='select * FROM reagent_use where reagent_id=\''.$_POST['id'].'\'';
+			$usql='select * FROM reagent_use where reagent_id=\''.$id.'\'';
 			view_sql_result_as_table($link,$usql,$show_hide='no');
-			echo '<h3 class=text-danger>For ID:'.$_POST['id'].' Unopened Reagent count is: <span class="bg-warning">'.get_unopened_count($link,$_POST['id']).'</span></h3>';
+			echo '<h3 class=text-danger>For ID:'.$id.' Unopened Reagent count is: <span class="bg-warning">'.get_unopened_count($link,$id).'</span></h3>';
 		echo '</div>';
-	}
 }
 
 
 function get_name_for_details($link)
 {
 
-	echo '<div id="get_name_for_details" class="collapse hide">';		
+	echo '<div id="get_name_for_details" class="collapse hide" data-parent="#little_forms" >';		
 
 		echo '<div class="border border-danger m-2 p-2">';
-			echo '<h5 class=text-danger>Details of Reagent/Consumable Received</h5>';
+			echo '<h5 class=text-danger>(Get Details of a Reagent) Choose Name of Reagent/Consumable</h5>';
 			echo '<table class="table table-striped table-sm table-bordered">';
 				echo '<tr><th>id</th></tr>';
 			echo '<form method=post>';
@@ -216,27 +241,96 @@ function get_name_for_details($link)
 	
 }	
 
+function get_name_for_best_to_open($link)
+{
+	echo '<div id="get_name_for_best_to_open" class="collapse hide" data-parent="#little_forms" >';		
+
+		echo '<div class="border border-danger m-2 p-2">';
+			echo '<h5 class=text-danger>(Get best to open container) Choose Name of Reagent/Consumable</h5>';
+			echo '<table class="table table-striped table-sm table-bordered">';
+				echo '<tr><th>id</th></tr>';
+			echo '<form method=post>';
+				echo '<tr>';
+					$sql='select reagent_name from reagent_name';
+					echo '<td>';
+						mk_select_from_sql($link,$sql,'reagent_name','reagent_name','reagent_name','','',$blank='yes');
+					echo '</td>';
+				echo '</tr>';
+			echo '<tr><td><button class="btn btn-sm btn-info" type=submit name=action value=get_name_for_best_to_open>Find Best to Open</button></td></tr>';
+			echo '<input type=hidden name=session_name value=\''.$_POST['session_name'].'\'>';
+
+			echo '</form>';
+			echo '</table>';
+		echo '</div>';
+	
+	echo '</div>';
+	
+}	
+
+function get_best_container($link,$reagent_name)
+{
+	$all_sql='select * from reagent where name=\''.$_POST['reagent_name'].'\' order by date_of_expiry';
+	$all_result=run_query($link,$GLOBALS['database'],$all_sql);
+	$got_it='no';
+	while($all_ar=get_single_row($all_result))
+	{
+		$c=get_unopened_count($link,$all_ar['id']);	
+		$e=count_expiry_period_in_days($link,$all_ar['id']);
+		if($c>0 && $got_it=='no'){$got_it='yes';}	
+		if($got_it == 'yes')
+		{
+			$got_it='dead';
+			$max=$all_ar['count'];
+			//now find correct sequence
+			for($i=1;$i<=$max;$i++)
+			{
+				$usql='select * FROM reagent_use where reagent_id=\''.$all_ar['id'].'\' and count=\''.$i.'\'';
+				$container_result=run_query($link,$GLOBALS['database'],$usql);
+				if(get_row_count($container_result)==0)
+				{
+					return array($all_ar['id'],$i);
+				}
+			}
+			
+		}
+		else
+		{
+			//do nothing, go next in llop
+		}
+	}
+	return false;
+}
+
+function find_best_to_open($link)
+{
+	$best=get_best_container($link,$_POST['reagent_name']);
+	//print_r($best);
+	echo '<h3 class="text-success border border-danger rounded">It is best to open '. $_POST['reagent_name'].' ID:<span class="badge bg-warning">'.$best[0].'</span> Container count:<span class="badge  bg-warning">'.$best[1].' </span></h3>';
+	view_id_details($link,$best[0]);
+	view_reagent_summary_by_name($link);
+	
+}
+
+
 
 function view_reagent_summary_by_name($link)
 {	
-	if($_POST['action']=='name_details')
-	{	
+	
 		echo '<div class="m-2 p-2">';
 		echo '<h5 class=text-danger>Details of Reagent</h5>';
 
 			$all_sql='select * from reagent where name=\''.$_POST['reagent_name'].'\' order by id desc';
 			$all_result=run_query($link,$GLOBALS['database'],$all_sql);
 			echo '<table class="table table-striped table-sm table-bordered">';
-			echo '<tr><th>Reagent Name</th><th>Receipt ID</th><th>Open Units</th><th>Expiry date</th><th>Expiry in days</th></tr>';
+			echo '<tr><th>Reagent Name</th><th>Lot</th><th>Receipt ID</th><th>un-Opened Units</th><th>Expiry date</th><th>Expiry in days</th></tr>';
 			while($all_ar=get_single_row($all_result))
 			{
 				$c=get_unopened_count($link,$all_ar['id']);
 				$e=count_expiry_period_in_days($link,$all_ar['id']);
-				echo '<tr><td>'.$all_ar['name'].'</td><td>'.$all_ar['id'].'</td><td>'.$c.'</td><td>'.$all_ar['date_of_expiry'].'</td><td>'.$e.'</td></tr>';
+				echo '<tr><td>'.$all_ar['name'].'</td><td>'.$all_ar['lot'].'</td><td>'.$all_ar['id'].'</td><td>'.$c.'</td><td>'.$all_ar['date_of_expiry'].'</td><td>'.$e.'</td></tr>';
 			}
 			echo '</table>';
 		echo '</div>';
-	}
 }
 
 function count_expiry_period_in_days($link,$id)
@@ -253,13 +347,12 @@ function count_expiry_period_in_days($link,$id)
 
 function near_expiry_data($link)
 {
-	if($_POST['action']!='near_expiry_data'){return;}
 	echo '<h5 class=text-info>Near Expiry Data</h5>';
 	$sql='select * from reagent order by id desc';
 	$result=run_query($link,$GLOBALS['database'],$sql);
 	
 	echo '<table class="table table-striped table-sm table-bordered">';
-	echo '<tr><th>Reagent Name</th><th>Receipt ID</th><th>Open Units</th><th>Expiry date</th><th>Expiry in days</th></tr>';
+	echo '<tr><th>Reagent Name</th><th>Receipt ID</th><th>un-Opened Units</th><th>Expiry date</th><th>Expiry in days</th></tr>';
 
 	while($ar=get_single_row($result))
 	{
@@ -276,7 +369,6 @@ function near_expiry_data($link)
 }
 function out_of_stock_data($link)
 {
-	if($_POST['action']!='out_of_stock_data'){return;}
 	echo '<h5 class=text-info>Out of Stock Data (Reorder trigger). to be Released Soon!!</h5>';
 }
 //////////////user code ends////////////////
