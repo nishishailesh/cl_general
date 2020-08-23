@@ -1,0 +1,1 @@
+ssh -t -p1009 root@gmcsurat.edu.in "ssh -t root@11.207.2.4 ssh root@12.207.3.240"

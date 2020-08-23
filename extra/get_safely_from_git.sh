@@ -8,6 +8,8 @@
 #then copy git files to server folder
 
 #Settings
+#proj name
+proj_name=cl_general
 #a backup folder
 backup_path=/root/proj.home/cl_general/from_local
 #real folder
@@ -17,14 +19,16 @@ git_path=/root/proj.home/cl_general/from_git
 #Settings complete
 
 echo 'Step:1 press any key to take backup from main folder'
+full_backup_destination="$backup_path/$proj_name""_`date`\""
+echo $full_backup_destination
 read x
-cp $server_path "$backup_path.`date`" -Rvf
+cp "$server_path" "$full_backup_destination" -Rvf
 
 echo 'Step:2 press a key to take new from git'
 read x
 cd $git_path
 git pull https://github.com/nishishailesh/cl_general
 
-echo 'Step:3 press a key to copy git to main folder(in doubt press ctrl+c'
+echo 'Step:3 press a key to copy git to main folder(in doubt press ctrl+c)'
 read x
 cp $git_path/* $server_path -Rvf
