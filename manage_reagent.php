@@ -322,13 +322,32 @@ function view_reagent_summary_by_name($link)
 			$all_sql='select * from reagent where name=\''.$_POST['reagent_name'].'\' order by id desc';
 			$all_result=run_query($link,$GLOBALS['database'],$all_sql);
 			echo '<table class="table table-striped table-sm table-bordered">';
-			echo '<tr><th>Reagent Name</th><th>Lot</th><th>Receipt ID</th><th>un-Opened Units</th><th>Expiry date</th><th>Expiry in days</th></tr>';
+			echo '<tr>
+					<th>Reagent Name</th>
+					<th>Lot</th>
+					<th>Receipt ID</th>
+					<th>un-Opened Units</th>
+					<th>Expiry date</th>
+					<th>Expiry in days</th>
+				</tr>';
 			while($all_ar=get_single_row($all_result))
 			{
 				$c=get_unopened_count($link,$all_ar['id']);
 				$e=count_expiry_period_in_days($link,$all_ar['id']);
 				echo '<tr><td>'.$all_ar['name'].'</td><td>'.$all_ar['lot'].'</td><td>'.$all_ar['id'].'</td><td>'.$c.'</td><td>'.$all_ar['date_of_expiry'].'</td><td>'.$e.'</td></tr>';
 			}
+			$sr=get_stock_and_reorder($link,$_POST['reagent_name']);
+			if($sr[0]<=$sr[1])
+			{
+				$decision='<span class=bg-danger>YES</span>';
+			}
+			else
+			{
+				$decision='<span class=bg-success>NO</span>';
+			}
+			echo '<tr class="bg-warning">	<th>Total Stock</th>	<th>'.$sr[0].'</th>
+						<th>Reorder Value</th>	<th>'.$sr[1].'</th>
+						<th>Reorder?</th>		<th>'.$decision.'</th></tr>';
 			echo '</table>';
 		echo '</div>';
 }
@@ -367,9 +386,58 @@ function near_expiry_data($link)
 	echo '</table>';
 
 }
+
+function get_stock($link,$reagent_name)
+{
+	$sql='select * from reagent where name=\''.$reagent_name.'\' order by id desc';
+	$result=run_query($link,$GLOBALS['database'],$sql);
+	$balance=0;
+	while($ar=get_single_row($result))
+	{
+		$c=get_unopened_count($link,$ar['id']);
+		$balance=$balance+$c*$ar['size'];
+	}
+	return $balance;
+}
+
+function get_reorder_value($link,$reagent_name)
+{
+	$sql='select * from reagent_name where reagent_name=\''.$reagent_name.'\'';
+	$result=run_query($link,$GLOBALS['database'],$sql);
+	$ar=get_single_row($result);
+	return $ar['reorder_value'];		
+}
+function get_stock_and_reorder($link,$reagent_name)
+{
+		$stock=get_stock($link,$reagent_name);
+		$reorder=get_reorder_value($link,$reagent_name);
+		return array($stock,$reorder);
+}
+
 function out_of_stock_data($link)
 {
 	echo '<h5 class=text-info>Out of Stock Data (Reorder trigger). to be Released Soon!!</h5>';
+	$sql='select * from reagent_name where reorder_value is not null order by reagent_name';
+	$result=run_query($link,$GLOBALS['database'],$sql);
+	
+	echo '<table class="table table-striped table-sm table-bordered">';
+	echo '<tr><th>Reagent Name</th><th>Reorder Value</th><th>Stock</th><th>Reorder?</th></tr>';
+
+	while($ar=get_single_row($result))
+	{	
+		$stock=get_stock($link,$ar['reagent_name']);
+		if($stock<=$ar['reorder_value'])
+		{
+			$decision='<span class=bg-danger>YES</span>';
+		}
+		else
+		{
+			$decision='<span class=bg-success>NO</span>';
+		}			
+		echo '<tr><td>'.$ar['reagent_name'].'</td><td>'.$ar['reorder_value'].'</td><td>'.$stock.'</td><td>'.$decision.'</td></tr>';
+	}
+	echo '</table>';
+
 }
 //////////////user code ends////////////////
 tail();
