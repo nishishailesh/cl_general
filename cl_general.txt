@@ -17,46 +17,18 @@ TAT (no new data, only from sample data)
 		insert apology
  
 delta check
+graph in report
+multi sample report (request id based, complex report
 reflex testing
 
 independent tables
 ==================
-equipment log
 temperature
 environment para
-equipment records
 NC
-Calibration
 all docs
-Reagent
-reminders and schedules
-
-
-		
-Scope
-print lables
-Status of samples -statistics
-
+Status of samples -statistics (overview)
 QC - manufacturer's value
 
-
-#Datetime stored in result uniq tab is changed to following format in exported/manual entry to match ASTM
-#20200531233109
-
-
-
-Reagent and Consumables management
-	id
-	name (reaget_name table reaget_name field)
-	lot
-	unit_size
-	units (reagent_unit reagent_unit)
-	date_of_preparation
-	date of expiry
-	prepared_by
-	date_of_receipt
-	condition_on_receipt
-	date_of_opening
-	remark
-	
+test-equipment relation	
 	

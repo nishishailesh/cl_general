@@ -140,7 +140,7 @@ function main_menu($link)
 						<!-- <button class="btn btn-outline-primary m-0 p-0" formaction=get_4_line.php type=submit name=action value=get_4_line>4 Line Label</button> -->
 						<button class="btn btn-outline-primary m-0 p-0" formaction=manage_label.php type=submit name=action value=manage_label>Labels</button>
 						<button class="btn btn-outline-primary m-0 p-0" formaction=manage_reagent.php type=submit name=action value=manage_reagent>Reagent</button>
-						
+						<button class="btn btn-outline-primary m-0 p-0" formaction=TAT.php type=submit name=action value=get_TAT_search_condition>TAT</button>
 					</div>
 				</div>
 		</div>
@@ -3848,7 +3848,7 @@ function get_search_condition($link)
 	echo '</form>';
 }
 
-function set_search($link,$action='',$for_print='')
+function set_search($link,$action='',$for_print='no')
 {
 	$ex_requested=array_filter(explode(',',$_POST['list_of_selected_examination']));
 	//print_r($ex_requested);
@@ -3873,7 +3873,7 @@ function set_search($link,$action='',$for_print='')
 			echo '</div>';
 		}
 	
-	if($for_print=='')
+	if($for_print=='no')
 	{	
 		echo '<button type=submit class="btn btn-primary form-control m-1" name=action value=search_summary>Search (Summary View)</button>';
 		echo '<button type=submit class="btn btn-primary form-control m-1" name=action value=search_detail>Search (Detailed View)</button>';
@@ -3901,6 +3901,47 @@ function prepare_search_array($link)
 	return $ret;
 }
 
+function get_result_of_search_array($link,$search_array)
+{
+	$from=' ';
+	$counter=0;
+	foreach ($search_array as $kd=>$vd)
+	{
+		$tn='r'.$counter;
+		$from=$from.' result '.$tn.' ,';
+		$counter++;
+	}
+	if(substr($from,-1,1)==',')
+	{
+		$from=substr($from,0,-1);
+	}
+	
+	$counter=0;
+	$w=' ';
+	foreach ($search_array as $kd=>$vd)
+	{
+		$tn='r'.$counter;
+		
+		$w= $w. ' ('.$tn.'.examination_id=\''.$kd.'\' and '.$tn.'.result like \'%'.$vd.'%\' ) and ';
+		if($counter>0)
+		{
+			$tp=' r'.($counter-1);
+			$w=$w.' '.$tn.'.sample_id='.$tp.'.sample_id and ';
+		}
+		$counter++;
+	}
+
+	if(substr($w,-4,4)=='and ')
+	{
+		$w=substr($w,0,-4);
+	}
+			
+	$sql='select * from '.$from.' where '.$w;
+	//echo $sql; 
+	
+	$result=run_query($link,$GLOBALS['database'],$sql);
+	return $result;
+}
 function get_sample_with_condition($link,$exid,$ex_result,$sid_array=array(),$first=FALSE)
 {
 	$ret=array();
@@ -5378,17 +5419,20 @@ function show_sid_button_release_status($link,$sid)
 	}
 }
 
-function calculate_tat($link,$sample_id)
+function calculate_tat($link,$sample_id,$print='yes')
 {
+	$tat=array();
+	$tat['sample_id']=$sample_id;
+	ob_start();
 	//Prepare
 
 	//1. Request entry time is MRD entry time
 	$rq=get_one_ex_result_row($link,$sample_id,$GLOBALS['mrd']); //generally 1001
-
+	$tat['request_time']=$rq['recording_time'];
 	//2. Collection date and time
 	$cd=get_one_ex_result_row($link,$sample_id,$GLOBALS['collection_date']); //generally 1015
 	$ct=get_one_ex_result_row($link,$sample_id,$GLOBALS['collection_time']); //generally 1016
-	
+
 	//3. Receipt date time
 	$rd=get_one_ex_result_row($link,$sample_id,$GLOBALS['receipt_date']); //generally 1017
 	$rt=get_one_ex_result_row($link,$sample_id,$GLOBALS['receipt_time']); //generally 1018
@@ -5404,6 +5448,7 @@ function calculate_tat($link,$sample_id)
 	
 			//print_r($rq);
 	echo '<br>'.'request_time:'.$rq['recording_time']; //MRD is added first, always and never modified
+
 	$rq_stamp=strtotime($rq['recording_time']);
 			//$rq_time=getDate($rq_stamp);
 			//print_r($rq_time);
@@ -5412,6 +5457,7 @@ function calculate_tat($link,$sample_id)
 	if($cd!=null and $ct!=null)
 	{
 		echo '<br>'.'collection_time:'.$cd['result'].' '.$ct['result'];
+		$tat['collection_time']=$cd['result'].' '.$ct['result'];
 		$c_stamp=strtotime($cd['result'].' '.$ct['result']);
 	//$c_time=getDate($c_stamp);
 	//print_r($c_time);
@@ -5419,6 +5465,7 @@ function calculate_tat($link,$sample_id)
 		$ct_rq=round(($c_stamp-$rq_stamp)/3600);
 	//echo '<br>'.$c_stamp.'->'.$rq_stamp.'--> Collection-Request differance:'.$ct_rq.' Hours';
 		echo '<br>Collection-Request differance:'.$ct_rq.' Hours';
+		$tat['Collection_Request_TAT']=$ct_rq;
 	}
 	else
 	{
@@ -5431,6 +5478,7 @@ function calculate_tat($link,$sample_id)
 	{
 		echo '<br>'.'receipt_time:'.$rd['result'].' '.$rt['result'];
 		$rc_stamp=strtotime($rd['result'].' '.$rt['result']);
+		$tat['receipt_time']=$rd['result'].' '.$rt['result'];
 	}
 	else
 	{
@@ -5443,6 +5491,7 @@ function calculate_tat($link,$sample_id)
 		$rc_ct=round(($rc_stamp-$c_stamp)/3600,1);
 		//echo '<br>'.$rc_stamp.'->'.$c_stamp.'-->Receipt - Collection differance:'.$rc_ct.' Hours';
 		echo '<br>Receipt - Collection differance:'.$rc_ct.' Hours';
+		$tat['Receipt_Collection_TAT']=$rc_ct;
 	}
 	else
 	{
@@ -5453,12 +5502,15 @@ function calculate_tat($link,$sample_id)
 	foreach ($pr as $ex_data)
 	{
 		echo '<br>'.$ex_data['examination_id'].' completed_time:'.$ex_data['uniq'];
+		$tat[$ex_data['examination_id']]=$ex_data['uniq'];
 	}
 
 	if(strlen($rl['result'])>0)
 	{
 		echo '<br>'.'released_time:'.$rl['result'].'-->'.$rl['recording_time'];
+		
 		$rl_stamp=strtotime($rl['recording_time']);
+		$tat['release_time']=$rl['recording_time'];
 	}
 	else
 	{
@@ -5470,6 +5522,7 @@ function calculate_tat($link,$sample_id)
 	{
 		$rl_rc=round(($rl_stamp-$rc_stamp)/3600,1);
 		echo '<br>Release - SampleReceipt differance:'.$rl_rc.' Hours';
+		$tat['Release_SampleReciept_TAT']=$rl_rc;
 	}
 	else
 	{
@@ -5480,17 +5533,32 @@ function calculate_tat($link,$sample_id)
 	{
 		$final_tat=round(($rl_stamp-$rq_stamp)/3600,1);
 		echo '<br>Release - Request differance:'.$final_tat.' Hours';
-		return $final_tat;
+		$tat['Total_TAT']=$final_tat;
 	}
 	else
 	{
 		echo '<br>Release - Request differance can not be calculated';
 	}
 	echo '</pre>';
-	
-	return false;
-}
 
+
+	$output = ob_get_contents();
+	ob_end_clean();
+	//echo '<pre>';print_r($tat);echo '</pre>';
+
+	
+	if($print=='yes')
+	{
+		echo $output;
+		return $tat;
+	}
+	else
+	{
+		return $tat;		
+	}
+	
+	
+}
 
 
 function view_sql_result_as_table($link,$sql,$show_hide='yes')
