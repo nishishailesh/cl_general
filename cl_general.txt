@@ -1,34 +1,24 @@
-autoverify
+TODO
+	delta check
+	print graph
+	multi sample report
+	NABL Logo
+	
+	TAT: examination wise, average, histogram, outliers(examination and location wise)
+	Release: Examination wise
+	
+	reference range : age/sex etc
+	reflex testing
+	
+	Temp, environ
 
-#critical
-# as part of verfication
-# autoremark inserted if configured in config.php
-# result messages stored in config files
+	verify improve
 
+	NC, all docs
 
-TAT (no new data, only from sample data)
-	time of MRD is request time
-	collection time
-	receipt time
-	analysis compate_time
-	release time
-		calculate
-		compare with standard
-		insert apology
- 
-delta check
-graph in report
-multi sample report (request id based, complex report
-reflex testing
+	Status of samples -statistics (overview)
 
-independent tables
-==================
-temperature
-environment para
-NC
-all docs
-Status of samples -statistics (overview)
-QC - manufacturer's value
+	QC - manufacturer's value
 
-test-equipment relation	
+	test-equipment relation	
 	

@@ -40,8 +40,6 @@ $pdf=get_pdf_link_for_barcode();
 	}
 
 prepare_label($pdf,$from,$to);
-
-
 print_pdf($pdf,'barcode.pdf');
 
 

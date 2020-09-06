@@ -196,6 +196,45 @@ function get_id_for_details()
 	
 }	
 
+/*
+Array
+(
+    [line1] => rew89
+    [line2] => rew7
+    [range] => line2
+    [line3] => rew6
+    [line4] => dfg
+    [from] => 1
+    [to] => 5
+    [action] => view_dbid
+    [session_name] => sn_1692785306
+)
+*/
+
+function echo_reagent_lable_print_button($ar)
+{		
+	echo '<div class="m-2 p-2">';
+	echo '<form method=post action=print_4_line_label.php target=_blank>';
+	
+	echo '<button class="btn btn-outline-success btn-sm" name=action value=print_4_line >Print Lables</button>';
+	
+	echo '
+			<input type=hidden id=line1 name=line1  value=\''.$ar['line1'].'\' class="form-control text-danger"\>
+			<input type=hidden id=line2 name=line2  value=\''.$ar['line2'].'\' class="form-control text-danger"\>
+			<input type=hidden id=line3 name=line3  value=\''.$ar['line3'].'\' class="form-control text-danger"\>
+			<input type=hidden id=line4 name=line4  value=\''.$ar['line4'].'\' class="form-control text-danger"\>
+			<input type=hidden  name=from value=\''.$ar['from'].'\'  class="form-control text-danger"\>
+			<input type=hidden name=to   value=\''.$ar['to'].'\'    class="form-control text-danger"\>
+			<input type=hidden  name=range  value=\''.$ar['range'].'\'    class="form-control text-danger"\>
+			<input type=hidden  name=barcode1   value=on    class="form-control text-danger"\>
+			';	
+	
+	echo '<input type=hidden name=session_name value=\''.$_POST['session_name'].'\'>';
+	echo '</form>';
+	echo '</div>';
+
+}
+
 function view_id_details($link,$id)
 {	
 
@@ -203,7 +242,38 @@ function view_id_details($link,$id)
 			echo '<h5 class=text-danger>Details of Reagent/Consumable ID:'.$id.'</h5>';
 			$vsql='select * from reagent where id=\''.$id.'\'';
 			view_sql_result_as_table($link,$vsql,$show_hide='no');
-
+			$result=run_query($link,$GLOBALS['database'],$vsql);
+			$ar=get_single_row($result);
+			//print_r($ar);
+			
+			/* 
+			 * Array ( [id] => 30 
+			 * [name] => ALT_UV 
+			 * [lot] => B121952 
+			 * [size] => 330 [unit] => ml 
+			 * [count] => 13 
+			 * [date_of_preparation] => 2019-12-01 
+			 * [date_of_expiry] => 2021-08-01 
+			 * [prepared_by] => erba 
+			 * [date_of_receipt] => 2020-01-01 
+			 * [condition_on_receipt] => ok 
+			 * [remark] => brought foreward 
+			 * [recording_time] => 2020-08-18 10:59:18 
+			 * [recorded_by] => 3 )*/
+			  
+			$arl=array	
+				(
+					'line1'=> $ar['id'],
+					'barcode1'=>'on',
+					'range'=>'line1',	//NOT USED
+					'line2' => '',
+					'line3' => $ar['name'].' '.$ar['lot'].' '.$ar['date_of_expiry'],
+					'line4' => $ar['size'].'x'.$ar['count'].' '.$ar['prepared_by'],
+					'from' => 1,
+					'to' => $ar['count']
+				);
+    
+			echo_reagent_lable_print_button($arl);
 		echo '</div>';
 		echo '<div class="m-2 p-2">';
 		

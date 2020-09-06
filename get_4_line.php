@@ -50,7 +50,7 @@ echo '<div class="basic_form">';
 			To:<input type=number id=line1 name=to class="form-control text-danger"\></div>
 			<div>Give Start and End</div>';
 echo '</div>';
-echo '<button type=submit class="btn btn-primary form-control" name=action value=view_dbid>Print label</button>';
+echo '<button type=submit class="btn btn-primary form-control" name=action value=print_4_line>Print label</button>';
 echo '<input type=hidden name=session_name value=\''.session_name().'\'>';
 echo '</form>';
 }
