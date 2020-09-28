@@ -82,6 +82,7 @@ $GLOBALS['receipt_time']=1018;
 
 #for records
 $GLOBALS['record_tables']='record_tables';
+$GLOBALS['ongoing_acceptibility_record_type_id']=3;
 
 #for STE
 $GLOBALS['all_records_limit']=100;

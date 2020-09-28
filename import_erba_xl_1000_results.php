@@ -118,6 +118,9 @@ function csv_to_sql($link,$file_data,$equipment)
 			{
 				$my_date='';
 			}
+			
+			$my_date=$my_date."|XL_1000";
+
 			//echo '<br>'.$my_date;
 			//only for given sample_id
 			$sample_code_to_ex=get_examination_codes($link,$equipment,$ar[1]);

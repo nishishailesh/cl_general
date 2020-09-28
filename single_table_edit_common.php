@@ -32,6 +32,12 @@ function add($link,$tname)
 	echo '</table>';
 }
 
+function add_without_display($link,$tname)
+{
+	run_query($link,$GLOBALS['database'],'insert into `'.$tname.'` () values()');
+	return $id=last_autoincrement_insert($link);
+}
+
 function view_row($link,$tname,$pk,$header='no')
 {
 	$sql='select * FROM `'.$tname.'` where id=\''.$pk.'\'';
@@ -321,6 +327,75 @@ function edit($link,$tname,$pk,$header='no')
 
 }
 
+
+function multiedit($link,$tname,$pk_ar,$header='no')
+{
+	$pk_csv='';
+	foreach($pk_ar as $v)
+	{
+		$pk_csv=$pk_csv.'"'.$v.'"'.',';
+	}
+	$pk_csv=substr($pk_csv,0,-1);
+	$sql='select * FROM `'.$tname.'` where id in ('.$pk_csv.')';
+	//echo $sql;
+	//return;
+	//echo $sql;
+	$result=run_query($link,$GLOBALS['database'],$sql);
+	
+	echo '<form method=post class="d-inline" enctype="multipart/form-data">';
+	echo '<div class="table-responsive">';
+	echo '<table class="table table-striped table-sm table-bordered table-condensed">';
+	while($ar=get_single_row($result))
+	{
+
+				if($header=='yes')
+				{
+					echo '<tr>';
+					foreach($ar as $k=>$v)
+					{
+						echo '<td>'.$k.'</td>';
+					}
+					echo '</tr>';
+					$header='no';
+				}
+				
+				echo '<tr>';
+				foreach($ar as $k =>$v)
+				{
+					if($k=='id')
+					{
+						echo '<td>';
+							echo '<input size=4 readonly type=text name=\'id_'.$v.'\' value=\''.$v.'\'>';
+						echo '</td>';
+					}
+					elseif(substr(get_field_type($link,$tname,$k),-4)=='blob')
+					{
+						echo '<td>';
+							echo '<input type=file name=\''.$k.'_'.$ar['id'].'\' >';
+						echo '</td>';
+					}
+					elseif(in_array($k,array('recording_time','recorded_by')))
+					{
+						echo '<td>'.$v.'</td>';
+					}
+					else
+					{
+						echo '<td>';		
+							read_field($link,$tname,$k.'_'.$ar['id'],$v);
+						echo '</td>';
+					}
+				}
+				echo '</tr>';
+
+	}
+	echo '<input type=hidden name=session_name value=\''.$_POST['session_name'].'\'>';
+
+	echo '<tr><td><input type=submit name=action value=save></td></tr>';
+	echo '</table>';
+	echo '</div>';	
+	echo'</form>';
+}
+
 function get_field_spec($link,$tname,$fname)
 {
 	$sql='select * from table_field_specification  where tname=\''.$tname.'\' and fname=\''.$fname.'\'';
@@ -351,6 +426,17 @@ function read_field($link,$tname,$field,$value,$search='no')
 				echo '<input type=date name=\''.$field.'\' value=\''.$value.'\'>';
 			}
 		}
+		elseif($fspec['ftype']=='time')
+		{
+			if($search=='yes')
+			{
+				echo '<input type=text name=\''.$field.'\' value=\''.$value.'\'>';
+			}
+			else
+			{
+				echo '<input type=time name=\''.$field.'\' value=\''.$value.'\'>';
+			}
+		}				
 		elseif($fspec['ftype']=='textarea')
 		{
 			echo '<textarea name=\''.$field.'\' >'.$value.'</textarea>';

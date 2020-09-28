@@ -140,6 +140,7 @@ function main_menu($link)
 						<!-- <button class="btn btn-outline-primary m-0 p-0" formaction=get_4_line.php type=submit name=action value=get_4_line>4 Line Label</button> -->
 						<button class="btn btn-outline-primary m-0 p-0" formaction=manage_label.php type=submit name=action value=manage_label>Labels</button>
 						<button class="btn btn-outline-primary m-0 p-0" formaction=manage_reagent.php type=submit name=action value=manage_reagent>Reagent</button>
+						<button class="btn btn-outline-primary m-0 p-0" formaction=refrigerator_temperature.php type=submit name=action value=refrigerator_temperature>Refrigerator Temperature</button>
 						<button class="btn btn-outline-primary m-0 p-0" formaction=TAT.php type=submit name=action value=get_TAT_search_condition>TAT</button>
 					</div>
 				</div>

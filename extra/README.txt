@@ -37,6 +37,7 @@ example line (updation every min, practically updation hourly or daily is suffic
 
 *  *    * * *   root    /usr/share/smp/cl_general/extra/www-data_crontab.py 1 >>/var/log/www-data_crontab.log 2>>/var/log/www-data_crontab.log
 
+service cron restart
 
 ===update_reminders.py===
 this file is refered by www-data_crontab.py for inserting reminder in mysql database

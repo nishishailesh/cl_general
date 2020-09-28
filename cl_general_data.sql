@@ -383,7 +383,7 @@ CREATE TABLE `equipment` (
   `recorded_by` varchar(100) DEFAULT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `equipment` (`equipment`)
-) ENGINE=InnoDB AUTO_INCREMENT=54 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=56 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -404,8 +404,9 @@ DROP TABLE IF EXISTS `equipment_record_type`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `equipment_record_type` (
+  `id` int(11) NOT NULL,
   `equipment_record_type` varchar(100) NOT NULL,
-  PRIMARY KEY (`equipment_record_type`)
+  PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -415,7 +416,7 @@ CREATE TABLE `equipment_record_type` (
 
 LOCK TABLES `equipment_record_type` WRITE;
 /*!40000 ALTER TABLE `equipment_record_type` DISABLE KEYS */;
-INSERT INTO `equipment_record_type` VALUES ('h. schedule for preventive maintenance and calibration'),('i. conformation of initial acceptability for use (initial calibration/verification)'),('j. conformation of ongoing acceptability for use (ongoing calibration/verification)'),('k. maintenance aggrement'),('l. maintenance carried out'),('m. damage, malfunction, modification, repair'),('n. Schedule of quality check after repair');
+INSERT INTO `equipment_record_type` VALUES (1,'h. schedule for preventive maintenance and calibration'),(2,'i. conformation of initial acceptability for use (initial calibration/verification)'),(3,'j. conformation of ongoing acceptability for use (ongoing calibration/verification)'),(4,'k. maintenance aggrement'),(5,'l. maintenance carried out'),(6,'m. damage, malfunction, modification, repair');
 /*!40000 ALTER TABLE `equipment_record_type` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -433,7 +434,7 @@ CREATE TABLE `record_tables` (
   `recording_time` datetime DEFAULT NULL ON UPDATE current_timestamp(),
   `recorded_by` varchar(100) DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=23 DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB AUTO_INCREMENT=24 DEFAULT CHARSET=utf8mb4;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -442,7 +443,7 @@ CREATE TABLE `record_tables` (
 
 LOCK TABLES `record_tables` WRITE;
 /*!40000 ALTER TABLE `record_tables` DISABLE KEYS */;
-INSERT INTO `record_tables` VALUES (1,'record_tables',2,NULL,''),(2,'equipment_record',0,'2020-08-10 22:05:27','3'),(3,'dementia',1,NULL,''),(18,'equipment',2,'2020-08-13 11:53:10','3'),(19,'calibration',0,'2020-08-13 13:04:26','3'),(20,'reagent',0,NULL,NULL),(21,'reagent_name',2,NULL,NULL),(22,'unit_name',2,NULL,NULL);
+INSERT INTO `record_tables` VALUES (1,'record_tables',2,NULL,''),(2,'equipment_record',0,'2020-08-10 22:05:27','3'),(3,'dementia',1,NULL,''),(18,'equipment',2,'2020-08-13 11:53:10','3'),(19,'calibration',0,'2020-08-13 13:04:26','3'),(20,'reagent',0,NULL,NULL),(21,'reagent_name',2,NULL,NULL),(22,'unit_name',2,NULL,NULL),(23,'refrigerator_temperature',3,'2020-09-18 23:24:43','3');
 /*!40000 ALTER TABLE `record_tables` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -462,7 +463,7 @@ CREATE TABLE `table_field_specification` (
   `field` varchar(50) DEFAULT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `tname_fname` (`tname`,`fname`)
-) ENGINE=InnoDB AUTO_INCREMENT=16 DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB AUTO_INCREMENT=19 DEFAULT CHARSET=utf8mb4;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -471,7 +472,7 @@ CREATE TABLE `table_field_specification` (
 
 LOCK TABLES `table_field_specification` WRITE;
 /*!40000 ALTER TABLE `table_field_specification` DISABLE KEYS */;
-INSERT INTO `table_field_specification` VALUES (1,'equipment_record','equipment','table','equipment','equipment'),(2,'equipment_record','equipment_record_type','table','equipment_record_type','equipment_record_type'),(3,'equipment_record','date','date','',''),(4,'equipment_record','description','textarea','',''),(5,'calibration','date','date','',''),(6,'calibration','cal_equipment','table','cal_equipment','cal_equipment'),(7,'calibration','remarks','textarea','',''),(8,'calibration','correlation','textarea','',''),(9,'calibration','cal_examination','table','host_code','code'),(10,'reagent','name','table','reagent_name','reagent_name'),(11,'reagent','date_of_preparation','date','',''),(12,'reagent','date_of_expiry','date','',''),(13,'reagent','date_of_receipt','date','',''),(14,'reagent_date_of_opening','date_of_opening','date','',''),(15,'reagent','unit','table','unit_name','unit_name');
+INSERT INTO `table_field_specification` VALUES (1,'equipment_record','equipment','table','equipment','equipment'),(2,'equipment_record','equipment_record_type','table','equipment_record_type','equipment_record_type'),(3,'equipment_record','date','date','',''),(4,'equipment_record','description','textarea','',''),(5,'calibration','date','date','',''),(6,'calibration','cal_equipment','table','cal_equipment','cal_equipment'),(7,'calibration','remarks','textarea','',''),(8,'calibration','correlation','textarea','',''),(9,'calibration','cal_examination','table','host_code','code'),(10,'reagent','name','table','reagent_name','reagent_name'),(11,'reagent','date_of_preparation','date','',''),(12,'reagent','date_of_expiry','date','',''),(13,'reagent','date_of_receipt','date','',''),(14,'reagent_date_of_opening','date_of_opening','date','',''),(15,'reagent','unit','table','unit_name','unit_name'),(16,'refrigerator_temperature','name','table','equipment','equipment'),(17,'refrigerator_temperature','date','date','',''),(18,'refrigerator_temperature','time','time','','');
 /*!40000 ALTER TABLE `table_field_specification` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -498,7 +499,7 @@ CREATE TABLE `reagent` (
   `recording_time` datetime DEFAULT NULL,
   `recorded_by` varchar(100) DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=60 DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB AUTO_INCREMENT=61 DEFAULT CHARSET=utf8mb4;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -507,7 +508,7 @@ CREATE TABLE `reagent` (
 
 LOCK TABLES `reagent` WRITE;
 /*!40000 ALTER TABLE `reagent` DISABLE KEYS */;
-INSERT INTO `reagent` VALUES (30,'ALT_UV','B121952',330,'ml',13,'2019-12-01','2021-08-01','erba','2020-01-01','ok','brought foreward','2020-08-18 10:59:18','3'),(34,'GLC_GODPOD','S022003',440,'ml',13,'2020-02-01','2022-08-01','erba','2020-04-04','ok',NULL,'2020-08-18 12:13:48','8866829055'),(35,'GLC_GODPOD','S022024',440,'ml',3,'2020-02-01','2022-01-01','erba','2020-04-07','ok',NULL,'2020-08-18 12:18:12','8866829055'),(36,'AMY_CNPG3','LIQ295A',400,'ml',9,'2019-01-01','2020-10-01','spinreact','2019-07-01','ok',NULL,'2020-08-19 09:41:39','8866829055'),(37,'CHOLESTEROL','S121902',350,'ml',25,'2019-12-01','2021-01-01','erba','2020-04-07','ok',NULL,'2020-08-19 09:42:24','8866829055'),(39,'CHE-CHOLINESTERASE','497554',155,'ml',10,'2019-07-01','2021-02-28','RANDOX','2020-03-13','ok',NULL,'2020-08-18 14:45:22','9099514805'),(40,'UREA-UREASE','B051906',275,'ml',6,'2019-05-01','2020-12-01','erba','2020-01-04','ok',NULL,'2020-08-20 23:53:03','9099514805'),(41,'UREA-UREASE','B101870',275,'ml',1,'2018-10-01','2020-05-01','erba','2020-01-04','ok',NULL,'2020-08-20 23:52:45','9099514805'),(42,'UREA-UREASE','B022017',275,'ml',6,'2020-02-01','2021-09-01','erba','2020-01-04','ok',NULL,'2020-08-18 14:46:22','9099514805'),(43,'TG-GPO','376A',500,'ml',7,'2018-12-01','2020-09-01','spinreact','2019-12-02','ok',NULL,'2020-08-18 14:43:56','9099514805'),(44,'UA-URICASE','343A',500,'ml',4,'2018-07-01','2020-06-01','spinreact','2019-01-07','ok',NULL,'2020-08-18 14:49:04','9099514805'),(45,'UA-URICASE','346A',500,'ml',3,'2018-12-01','2020-09-01','spinreact','2019-01-07','ok',NULL,'2020-08-18 14:48:24','9099514805'),(46,'CK-TOTAL','2349TA',50,'ml',4,'2019-08-01','2021-06-01','spinreact','2019-12-02','ok',NULL,'2020-08-18 14:43:31','9099514805'),(47,'CKMB-UV','MB263A',48,'ml',2,'2019-05-01','2021-03-01','spinreact','2019-12-02','ok',NULL,'2020-08-20 23:52:53','9099514805'),(49,'LDH-DEA-R1','55',500,'ml',NULL,'2020-08-19','2021-02-19','Chinka',NULL,'ok',NULL,'2020-08-20 16:09:42','9099514805'),(50,'LDH-R2-NAD','55',50,'ml',NULL,'2020-08-19','2021-02-19','Chinka',NULL,'ok',NULL,'2020-08-20 16:10:27','9099514805'),(52,'ALT_UV','B072009',330,'ml',20,'2020-07-01','2021-12-01','erba','2020-08-21','OK',NULL,'2020-08-21 14:37:12','9099514805'),(53,'CALIBRATOR-3','1180UE',100,'ml',4,'2020-08-01','2022-06-01','RANDOX','2020-08-21','OK',NULL,'2020-08-21 14:38:39','9099514805'),(54,'QC-8','1066UE',100,'ml',3,'2019-06-01','2023-01-01','RANDOX','2019-11-23','OK',NULL,'2020-08-21 14:54:17','9099514805'),(55,'QC-5','1369UN',100,'ml',3,'2019-09-01','2023-01-01','RANDOX','2019-11-23','OK',NULL,'2020-08-21 14:54:51','9099514805'),(56,'QC-8','1089UE',100,'ml',6,'2020-01-01','2023-04-01','RANDOX','2020-02-12','OK',NULL,'2020-08-21 14:59:54','8866580625'),(57,'QC-5','1390UN',100,'ml',6,'2019-12-01','2023-03-01','RANDOX','2020-02-12','OK',NULL,'2020-08-21 15:02:10','8866580625'),(58,'CALIBRATOR-2','1320UN',100,'ml',3,'2019-04-01','2021-01-01','RANDOX',NULL,NULL,NULL,'2020-08-21 16:36:28','8866580625'),(59,'CALIBRATOR-3','1024UE',100,'ml',3,'2019-03-01','2020-12-01','RANDOX',NULL,'OK',NULL,'2020-08-21 16:39:12','8866580625');
+INSERT INTO `reagent` VALUES (30,'ALT_UV','B121952',330,'ml',13,'2019-12-01','2021-08-01','erba','2020-01-01','ok','brought foreward','2020-08-18 10:59:18','3'),(34,'GLC_GODPOD','S022003',440,'ml',13,'2020-02-01','2022-08-01','erba','2020-04-04','ok',NULL,'2020-08-18 12:13:48','8866829055'),(35,'GLC_GODPOD','S022024',440,'ml',3,'2020-02-01','2022-01-01','erba','2020-04-07','ok',NULL,'2020-08-18 12:18:12','8866829055'),(36,'AMY_CNPG3','LIQ295A',400,'ml',9,'2019-01-01','2020-10-01','spinreact','2019-07-01','ok',NULL,'2020-08-19 09:41:39','8866829055'),(37,'CHOLESTEROL','S121902',350,'ml',25,'2019-12-01','2021-01-01','erba','2020-04-07','ok',NULL,'2020-08-19 09:42:24','8866829055'),(39,'CHE-CHOLINESTERASE','497554',155,'ml',10,'2019-07-01','2021-02-28','RANDOX','2020-03-13','ok',NULL,'2020-08-18 14:45:22','9099514805'),(40,'UREA-UREASE','B051906',275,'ml',6,'2019-05-01','2020-12-01','erba','2020-01-04','ok',NULL,'2020-08-20 23:53:03','9099514805'),(41,'UREA-UREASE','B101870',275,'ml',1,'2018-10-01','2020-05-01','erba','2020-01-04','ok',NULL,'2020-08-20 23:52:45','9099514805'),(42,'UREA-UREASE','B022017',275,'ml',6,'2020-02-01','2021-09-01','erba','2020-01-04','ok',NULL,'2020-08-18 14:46:22','9099514805'),(43,'TG-GPO','376A',500,'ml',7,'2018-12-01','2020-09-01','spinreact','2019-12-02','ok',NULL,'2020-08-18 14:43:56','9099514805'),(44,'UA-URICASE','343A',500,'ml',4,'2018-07-01','2020-06-01','spinreact','2019-01-07','ok',NULL,'2020-08-18 14:49:04','9099514805'),(45,'UA-URICASE','346A',500,'ml',3,'2018-12-01','2020-09-01','spinreact','2019-01-07','ok',NULL,'2020-08-18 14:48:24','9099514805'),(46,'CK-TOTAL','2349TA',50,'ml',4,'2019-08-01','2021-06-01','spinreact','2019-12-02','ok',NULL,'2020-08-18 14:43:31','9099514805'),(47,'CKMB-UV','MB263A',48,'ml',2,'2019-05-01','2021-03-01','spinreact','2019-12-02','ok',NULL,'2020-08-20 23:52:53','9099514805'),(49,'LDH-DEA-R1','55',500,'ml',NULL,'2020-08-19','2021-02-19','Chinka',NULL,'ok',NULL,'2020-08-20 16:09:42','9099514805'),(50,'LDH-R2-NAD','55',50,'ml',NULL,'2020-08-19','2021-02-19','Chinka',NULL,'ok',NULL,'2020-08-20 16:10:27','9099514805'),(52,'ALT_UV','B072009',330,'ml',20,'2020-07-01','2021-12-01','erba','2020-08-21','OK',NULL,'2020-08-21 14:37:12','9099514805'),(53,'CALIBRATOR-3','1180UE',100,'ml',4,'2020-08-01','2022-06-01','RANDOX','2020-08-21','OK',NULL,'2020-08-21 14:38:39','9099514805'),(54,'QC-8','1066UE',100,'ml',3,'2019-06-01','2023-01-01','RANDOX','2019-11-23','OK',NULL,'2020-08-21 14:54:17','9099514805'),(55,'QC-5','1369UN',100,'ml',3,'2019-09-01','2023-01-01','RANDOX','2019-11-23','OK',NULL,'2020-08-21 14:54:51','9099514805'),(56,'QC-8','1089UE',100,'ml',6,'2020-01-01','2023-04-01','RANDOX','2020-02-12','OK',NULL,'2020-08-21 14:59:54','8866580625'),(57,'QC-5','1390UN',100,'ml',6,'2019-12-01','2023-03-01','RANDOX','2020-02-12','OK',NULL,'2020-08-21 15:02:10','8866580625'),(58,'CALIBRATOR-2','1320UN',100,'ml',3,'2019-04-01','2021-01-01','RANDOX',NULL,NULL,NULL,'2020-08-21 16:36:28','8866580625'),(59,'CALIBRATOR-3','1024UE',100,'ml',3,'2019-03-01','2020-12-01','RANDOX',NULL,'OK',NULL,'2020-08-21 16:39:12','8866580625'),(60,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL);
 /*!40000 ALTER TABLE `reagent` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -525,7 +526,7 @@ CREATE TABLE `reagent_name` (
   `recording_time` datetime DEFAULT NULL,
   `recorded_by` varchar(100) DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=57 DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB AUTO_INCREMENT=58 DEFAULT CHARSET=utf8mb4;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -534,7 +535,7 @@ CREATE TABLE `reagent_name` (
 
 LOCK TABLES `reagent_name` WRITE;
 /*!40000 ALTER TABLE `reagent_name` DISABLE KEYS */;
-INSERT INTO `reagent_name` VALUES (2,'ADA_HOCL',NULL,'2020-08-17 14:59:08','9099514805'),(3,'ADA_PHENOL',NULL,'2020-08-17 14:59:32','9099514805'),(4,'ADA_S60',NULL,'2020-08-17 14:59:44','9099514805'),(5,'ADENOSINE BUFFER',NULL,'2020-08-17 14:59:54','9099514805'),(6,'ALB_BCG',NULL,'2020-08-17 15:01:18','9099514805'),(7,'ALP-R1',NULL,'2020-08-17 15:02:42','9099514805'),(8,'ALP-R2',NULL,'2020-08-17 15:02:51','9099514805'),(9,'ALT_UV',500,'2020-08-17 15:03:07','9099514805'),(10,'AMY_CNPG3',NULL,'2020-08-17 15:03:28','9099514805'),(11,'AST_UV',NULL,'2020-08-17 15:03:45','9099514805'),(12,'DIAZO-A',NULL,'2020-08-17 15:04:01','9099514805'),(13,'CALIBRATOR-2',NULL,'2020-08-17 15:04:23','9099514805'),(14,'CALIBRATOR-3',NULL,'2020-08-17 15:04:32','9099514805'),(15,'CALCIUM_ARSENAZO',NULL,'2020-08-17 15:04:43','9099514805'),(16,'CHE-CHOLINESTERASE',NULL,'2020-08-17 15:05:06','9099514805'),(17,'CHOLESTEROL',100,'2020-08-17 15:05:24','9099514805'),(18,'CKMB-UV',NULL,'2020-08-17 15:05:40','9099514805'),(19,'CK-TOTAL',100,'2020-08-17 15:05:48','9099514805'),(20,'CR-R1 NAOH',NULL,'2020-08-17 15:06:08','9099514805'),(21,'CR-R2 PICRATE',NULL,'2020-08-17 15:06:20','9099514805'),(22,'DBIL-R1_HCL',NULL,'2020-08-17 15:06:40','9099514805'),(23,'DITHONITE BUFFER',NULL,'2020-08-17 15:06:55','9099514805'),(24,'GLC_GODPOD',NULL,'2020-08-17 15:07:11','9099514805'),(25,'HBS CONTROL LOT',NULL,'2020-08-17 15:08:10','9099514805'),(26,'HBF CONTROL LOT',NULL,'2020-08-17 15:08:20','9099514805'),(27,'HDL-PPT',NULL,'2020-08-17 15:08:34','9099514805'),(28,'IRON STOCKK SOLUTION',NULL,'2020-08-17 15:08:53','9099514805'),(29,'IRON-R1 THIOSEMICARBAZIDE',NULL,'2020-08-17 15:09:13','9099514805'),(30,'IRON-R2 FERROZINE',NULL,'2020-08-17 15:09:25','9099514805'),(31,'KETONE BODY CONTROL LOT',NULL,'2020-08-17 15:09:50','9099514805'),(32,'LDH-DEA-R1',NULL,'2020-08-17 15:10:13','9099514805'),(33,'LDH-R2-NAD',NULL,'2020-08-17 15:10:24','9099514805'),(34,'LIP-TURBIDOMETRY',NULL,'2020-08-17 15:10:48','9099514805'),(35,'MPR QC LOT',NULL,'2020-08-17 15:11:06','9099514805'),(36,'MPR',NULL,'2020-08-17 15:11:26','9099514805'),(37,'STD-A -NA + K',NULL,'2020-08-17 15:12:11','9099514805'),(38,'STD-B NA+K',NULL,'2020-08-17 15:12:26','9099514805'),(39,'PEPSIN',NULL,'2020-08-17 15:12:46','9099514805'),(40,'PH CALIBRATOR-4.01,6.08,9.13',NULL,'2020-08-17 15:13:30','9099514805'),(41,'PHOSPHATE BUFFER',NULL,'2020-08-17 15:13:44','9099514805'),(42,'PHOSPHATE MOLYBDATE',NULL,'2020-08-17 15:14:03','9099514805'),(43,'QC-5',NULL,'2020-08-17 15:14:15','9099514805'),(44,'QC-8',NULL,'2020-08-17 15:14:21','9099514805'),(45,'TBIL-R1_CAFFINE',NULL,'2020-08-17 15:14:42','9099514805'),(46,'TG-GPO',100,'2020-08-17 15:14:54','9099514805'),(47,'TP-BIURET',NULL,'2020-08-17 15:15:06','9099514805'),(48,'UA-URICASE',100,'2020-08-17 15:15:20','9099514805'),(49,'UIBC-R1_HYDROXYLAMINE',NULL,'2020-08-17 15:15:41','9099514805'),(50,'UIBC-R2_FERROZINE',NULL,'2020-08-17 15:15:55','9099514805'),(51,'UREA-UREASE',200,'2020-08-17 15:16:16','9099514805'),(52,'URINE DILUENT_MOPS',NULL,'2020-08-17 15:16:32','9099514805'),(53,'URINE ACID CONTROL LOT',NULL,'2020-08-17 15:17:02','9099514805'),(54,'URINE NEUTRAL CONTROL LOT',NULL,'2020-08-17 15:17:15','9099514805'),(55,'URINE BASIC CONTROL LOT',NULL,'2020-08-17 15:17:27','9099514805'),(56,'sarita mam',NULL,'2020-08-18 11:56:00','8866829055');
+INSERT INTO `reagent_name` VALUES (2,'ADA_HOCL',NULL,'2020-08-17 14:59:08','9099514805'),(3,'ADA_PHENOL',NULL,'2020-08-17 14:59:32','9099514805'),(4,'ADA_S60',NULL,'2020-08-17 14:59:44','9099514805'),(5,'ADENOSINE BUFFER',NULL,'2020-08-17 14:59:54','9099514805'),(6,'ALB_BCG',NULL,'2020-08-17 15:01:18','9099514805'),(7,'ALP-R1',NULL,'2020-08-17 15:02:42','9099514805'),(8,'ALP-R2',NULL,'2020-08-17 15:02:51','9099514805'),(9,'ALT_UV',500,'2020-08-17 15:03:07','9099514805'),(10,'AMY_CNPG3',NULL,'2020-08-17 15:03:28','9099514805'),(11,'AST_UV',NULL,'2020-08-17 15:03:45','9099514805'),(12,'DIAZO-A',NULL,'2020-08-17 15:04:01','9099514805'),(13,'CALIBRATOR-2',NULL,'2020-08-17 15:04:23','9099514805'),(14,'CALIBRATOR-3',NULL,'2020-08-17 15:04:32','9099514805'),(15,'CALCIUM_ARSENAZO',NULL,'2020-08-17 15:04:43','9099514805'),(16,'CHE-CHOLINESTERASE',NULL,'2020-08-17 15:05:06','9099514805'),(17,'CHOLESTEROL',100,'2020-08-17 15:05:24','9099514805'),(18,'CKMB-UV',NULL,'2020-08-17 15:05:40','9099514805'),(19,'CK-TOTAL',100,'2020-08-17 15:05:48','9099514805'),(20,'CR-R1 NAOH',NULL,'2020-08-17 15:06:08','9099514805'),(21,'CR-R2 PICRATE',NULL,'2020-08-17 15:06:20','9099514805'),(22,'DBIL-R1_HCL',NULL,'2020-08-17 15:06:40','9099514805'),(23,'DITHONITE BUFFER',NULL,'2020-08-17 15:06:55','9099514805'),(24,'GLC_GODPOD',NULL,'2020-08-17 15:07:11','9099514805'),(25,'HBS CONTROL LOT',NULL,'2020-08-17 15:08:10','9099514805'),(26,'HBF CONTROL LOT',NULL,'2020-08-17 15:08:20','9099514805'),(27,'HDL-PPT',NULL,'2020-08-17 15:08:34','9099514805'),(28,'IRON STOCKK SOLUTION',NULL,'2020-08-17 15:08:53','9099514805'),(29,'IRON-R1 THIOSEMICARBAZIDE',NULL,'2020-08-17 15:09:13','9099514805'),(30,'IRON-R2 FERROZINE',NULL,'2020-08-17 15:09:25','9099514805'),(31,'KETONE BODY CONTROL LOT',NULL,'2020-08-17 15:09:50','9099514805'),(32,'LDH-DEA-R1',NULL,'2020-08-17 15:10:13','9099514805'),(33,'LDH-R2-NAD',NULL,'2020-08-17 15:10:24','9099514805'),(34,'LIP-TURBIDOMETRY',NULL,'2020-08-17 15:10:48','9099514805'),(35,'MPR QC LOT',NULL,'2020-08-17 15:11:06','9099514805'),(36,'MPR',NULL,'2020-08-17 15:11:26','9099514805'),(37,'STD-A -NA + K',NULL,'2020-08-17 15:12:11','9099514805'),(38,'STD-B NA+K',NULL,'2020-08-17 15:12:26','9099514805'),(39,'PEPSIN',NULL,'2020-08-17 15:12:46','9099514805'),(40,'PH CALIBRATOR-4.01,6.08,9.13',NULL,'2020-08-17 15:13:30','9099514805'),(41,'PHOSPHATE BUFFER',NULL,'2020-08-17 15:13:44','9099514805'),(42,'PHOSPHATE MOLYBDATE',NULL,'2020-08-17 15:14:03','9099514805'),(43,'QC-5',NULL,'2020-08-17 15:14:15','9099514805'),(44,'QC-8',NULL,'2020-08-17 15:14:21','9099514805'),(45,'TBIL-R1_CAFFINE',NULL,'2020-08-17 15:14:42','9099514805'),(46,'TG-GPO',100,'2020-08-17 15:14:54','9099514805'),(47,'TP-BIURET',NULL,'2020-08-17 15:15:06','9099514805'),(48,'UA-URICASE',100,'2020-08-17 15:15:20','9099514805'),(49,'UIBC-R1_HYDROXYLAMINE',NULL,'2020-08-17 15:15:41','9099514805'),(50,'UIBC-R2_FERROZINE',NULL,'2020-08-17 15:15:55','9099514805'),(51,'UREA-UREASE',200,'2020-08-17 15:16:16','9099514805'),(52,'URINE DILUENT_MOPS',NULL,'2020-08-17 15:16:32','9099514805'),(53,'URINE ACID CONTROL LOT',NULL,'2020-08-17 15:17:02','9099514805'),(54,'URINE NEUTRAL CONTROL LOT',NULL,'2020-08-17 15:17:15','9099514805'),(55,'URINE BASIC CONTROL LOT',NULL,'2020-08-17 15:17:27','9099514805'),(57,NULL,NULL,NULL,NULL);
 /*!40000 ALTER TABLE `reagent_name` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -626,4 +627,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2020-09-06 23:58:25
+-- Dump completed on 2020-09-29  0:15:41
