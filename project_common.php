@@ -5500,10 +5500,27 @@ function calculate_tat($link,$sample_id,$print='yes')
 	}
 		
 	//print_r($pr);
+	//from primary table
+	//5031 completed_time:2020 09 28 131730|XL_1000
 	foreach ($pr as $ex_data)
 	{
-		echo '<br>'.$ex_data['examination_id'].' completed_time:'.$ex_data['uniq'];
-		$tat[$ex_data['examination_id']]=$ex_data['uniq'];
+		//$tat[$ex_data['examination_id']]=$ex_data['uniq'];
+		//date_create_from_format ( string $format , string $datetime 
+		//YmdHis
+		$ex_date=date_create_from_format ( "YmdHis" , explode('|',$ex_data['uniq'] )[0]);
+		if($ex_date)
+		{
+			$tat[$ex_data['examination_id']]=date_format($ex_date, 'Y-m-d H:i:s');
+			$ex_stamp=strtotime($tat[$ex_data['examination_id']]);
+			$tat[$ex_data['examination_id'].'_TAT']=round(($ex_stamp-$rc_stamp)/3600,1);
+			echo '<br>'.$ex_data['examination_id'].' completed_time:'.$tat[$ex_data['examination_id']];
+			echo '<br>'.$ex_data['examination_id'].'_TAT:'.$tat[$ex_data['examination_id'].'_TAT'].' Hours';
+		}
+		else
+		{
+			//$tat[$ex_data['examination_id'].'_TAT']='Uncalculated';
+			//echo '<br>'.$ex_data['examination_id'].'_TAT:'.$tat[$ex_data['examination_id'].'_TAT'].' Hours';			
+		}
 	}
 
 	if(strlen($rl['result'])>0)

@@ -46,7 +46,7 @@ elseif($_POST['action']=='search_detail')
 	
 	echo '<h3 class="text-success">Detailed TAT(in hours) of each sample</h3>';
 	echo '<table class="table table-striped table-sm table-bordered d-inline">';
-	echo '<tr><th>Sample ID</th><th>Location</th><th>Collection-Request</th><th>Receipt-Collection</th><th>Release-Receipt</th><th>Total</th></tr>';
+	echo '<tr><th>Sample ID</th><th>Location</th><th>Receipt_time</th><th>Collection-Request</th><th>Receipt-Collection</th><th>Release-Receipt</th><th>Total</th></tr>';
 	while($ar=get_single_row($result))
 	{
 		$tat=calculate_tat($link,$ar['sample_id'],$print='no');
@@ -57,6 +57,7 @@ elseif($_POST['action']=='search_detail')
 		echo '<tr>';
 			echo '<td>'.$tat['sample_id'].'</td>';
 			echo '<td>'.$location.'</td>';
+			echo '<td title="'.print_r($tat,true).'">'.$tat['receipt_time'].'</td>';
 			echo '<td>'.(isset($tat['Collection_Request_TAT'])?$tat['Collection_Request_TAT']:'').'</td>';
 			echo '<td>'.(isset($tat['Receipt_Collection_TAT'])?$tat['Receipt_Collection_TAT']:'').'</td>';
 			echo '<td>'.(isset($tat['Release_SampleReciept_TAT'])?$tat['Release_SampleReciept_TAT']:'').'</td>';

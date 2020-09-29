@@ -9,7 +9,6 @@ sys.path.append('/var/gmcs_config')
 import astm_var
 
 ####Settings for update_reminders.py script
-#update_reminders_path="/usr/share/smp/cl_general/extra/update_reminders.py "
 update_reminders_path="/usr/share/nchs/cl_general/extra/update_reminders.py "
 
 '''
