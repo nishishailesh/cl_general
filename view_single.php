@@ -24,6 +24,10 @@ if($_SESSION['display_style']=='full')
 {
 	view_sample($link,$_POST['sample_id']);
 	calculate_tat($link,$_POST['sample_id']);
+	$GLOBALS['library']='';
+		require_once 'get_data_for_delta_check.php';
+	unset($GLOBALS['library']);
+	show_delta_for_single_sample($link,$_POST['sample_id']);
 }
 else
 {

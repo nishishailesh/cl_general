@@ -124,6 +124,7 @@ function main_menu($link)
 				<div class="dropdown-menu m-0 p-0">
 					<div class="btn-group-vertical  d-block">
 						<button class="btn btn-outline-primary m-0 p-0" formaction=get_data_for_lj_chart.php type=submit name=action value=get_data>LJ Chart</button>					
+						<button class="btn btn-outline-primary m-0 p-0" formaction=get_data_for_delta_check.php type=submit name=action value=get_data>Delta Check</button>					
 					</div>
 				</div>
 		</div>
