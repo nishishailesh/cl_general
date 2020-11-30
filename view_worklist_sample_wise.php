@@ -60,30 +60,10 @@ echo '</form>';
 
 function show_worklist($link,$from_sid,$to_sid,$ex_id_array)
 {
-	foreach($ex_id_array as $ex_id)
+	for($sample_id =$from_sid ; $sample_id< $to_sid ; $sample_id++)
 	{
-		show_worklist_one_ex($link,$from_sid,$to_sid,$ex_id);
+		edit_sample_compact($link,$sample_id,array_filter($ex_id_array));
 	}
-}
-
-
-function show_worklist_one_ex($link,$from_sid,$to_sid,$ex_id)
-{
-	$sql='select * from result where sample_id between \''.$from_sid.'\' and \''.$to_sid.'\' and examination_id=\''.$ex_id.'\'';
-	$result=run_query($link,$GLOBALS['database'],$sql);
-	echo '<h3 class="bg-warning">'.get_one_examination_details($link,$ex_id)['name'].'</h3>';
-	echo '<table class="table table-striped align-top table-sm">';
-	while($ar=get_single_row($result))
-	{
-		echo '<tr><td >';
-		echo show_sid_button_release_status($link,$ar['sample_id']);
-		echo '</td><td>';
-		edit_field($link,$ar['examination_id'],array($ar['examination_id']=>$ar['result']),$ar['sample_id'],'',$frill=False);
-		echo '</td></tr>';
-		
-		//print_r($ar);
-	}
-	echo '</table>';
 }
 
 

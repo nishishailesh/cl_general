@@ -97,6 +97,7 @@ function main_menu($link)
 						<!-- <button class="btn btn-outline-primary m-0 p-0" formaction=search.php type=submit name=action value=get_search_condition>by Search Conditions</button>			-->
 						<button class="btn btn-outline-primary m-0 p-0" formaction=search_si.php type=submit name=action value=get_search_condition>by Search Conditions</button>			
 						<button class="btn btn-outline-primary m-0 p-0" formaction=view_worklist.php type=submit name=action value=get_sid_eid_for_worklist>Worklist</button>			
+						<button class="btn btn-outline-primary m-0 p-0" formaction=view_worklist_sample_wise.php type=submit name=action value=get_sid_eid_for_worklist>Worklist(Sample-wise)</button>			
 						<button class="btn btn-outline-primary m-0 p-0" formaction=report.php type=submit name=action value=get_search_condition>Report</button>			
 						
 					</div>
@@ -597,6 +598,77 @@ function view_sample_compact($link,$sample_id)
 		}
 	echo '</div>';
 }
+
+
+function edit_sample_compact($link,$sample_id,$ex_id_array)
+{
+	
+	//print_r($ex_id_array);
+	$ex_list=get_result_of_sample_in_array($link,$sample_id);
+	if(count(array_intersect(array_keys($ex_list),$ex_id_array))==0){return;}
+	//print_r($ex_list);
+	$rblob=get_result_blob_of_sample_in_array($link,$sample_id);
+	//print_r($rblob);
+	$result_plus_blob_requested=$ex_list+$rblob;
+	//print_r($result_plus_blob_requested);
+		echo '<div class="m-2 p-2 border border-dark">';
+		echo show_sid_button_release_status($link,$sample_id);
+		//sample_id_prev_button($sample_id);
+		//sample_id_next_button($sample_id);
+		$sr=get_one_ex_result($link,$sample_id,$GLOBALS['sample_requirement']);
+		$opd_ward=get_one_ex_result($link,$sample_id,$GLOBALS['OPD/Ward']);
+		if($opd_ward=='OPD')
+		{
+			echo '<span class="bg-warning">'.$sr.' '.$opd_ward.'</h5>';
+		}
+		else
+		{
+			echo '<span class="bg-info">'.$sr.' '.$opd_ward.'</h5>';
+		}
+
+		if(count($result_plus_blob_requested)==0)
+		{
+			echo '<h3>No such sample with sample_id='.$sample_id.'</h3>';
+			return;
+		}
+		$profile_wise_ex_list=ex_to_profile($link,$result_plus_blob_requested);
+
+		foreach($profile_wise_ex_list as $kp=>$vp)
+		{
+			$pinfo=get_profile_info($link,$kp);
+			$profile_edit_specification=json_decode($pinfo['edit_specification'],true);
+			$compact=isset($profile_edit_specification['compact'])?$profile_edit_specification['compact']:'';		
+			if($compact!='no')
+			{
+				echo '<h5 class="text-danger">'.$pinfo['name'].'</h5>';
+				echo '<table border=1>';
+				foreach($vp as $ex_id)
+				{
+					if(in_array($ex_id,$ex_id_array) || count($ex_id_array)==0)
+					{
+						$examination_details=get_one_examination_details($link,$ex_id);
+						$edit_specification=json_decode($examination_details['edit_specification'],true);
+						$type=isset($edit_specification['type'])?$edit_specification['type']:'';
+						
+						if($type!='blob')
+						{
+							echo '<tr>';
+								edit_field($link,$ex_id,array($ex_id=>$ex_list[$ex_id]),$sample_id,'',$frill=False);
+								//edit_field($link,$ex_id,array($ex_id=>$ex_list[$ex_id]),$sample_id,'',$frill=True);
+							echo '</tr>';
+						}
+						else
+						{
+							echo $examination_details['name'];
+						}
+					}
+				}
+				echo '</table>';
+			}
+		}
+	echo '</div>';
+}
+
 
 function view_field_blob($link,$kblob,$sample_id)
 {
