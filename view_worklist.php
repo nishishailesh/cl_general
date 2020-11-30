@@ -71,11 +71,12 @@ function show_worklist_one_ex($link,$from_sid,$to_sid,$ex_id)
 {
 	$sql='select * from result where sample_id between \''.$from_sid.'\' and \''.$to_sid.'\' and examination_id=\''.$ex_id.'\'';
 	$result=run_query($link,$GLOBALS['database'],$sql);
+	echo '<h3 class="bg-warning">'.get_one_examination_details($link,$ex_id)['name'].'</h3>';
 	echo '<table class="table table-striped align-top table-sm">';
 	while($ar=get_single_row($result))
 	{
 		echo '<tr><td >';
-		echo $ar['sample_id'];
+		echo show_sid_button_release_status($link,$ar['sample_id']);
 		echo '</td><td>';
 		edit_field($link,$ar['examination_id'],array($ar['examination_id']=>$ar['result']),$ar['sample_id'],'',$frill=False);
 		echo '</td></tr>';
@@ -84,4 +85,5 @@ function show_worklist_one_ex($link,$from_sid,$to_sid,$ex_id)
 	}
 	echo '</table>';
 }
+
 ?>
