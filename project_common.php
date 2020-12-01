@@ -605,7 +605,13 @@ function edit_sample_compact($link,$sample_id,$ex_id_array)
 	
 	//print_r($ex_id_array);
 	$ex_list=get_result_of_sample_in_array($link,$sample_id);
-	if(count(array_intersect(array_keys($ex_list),$ex_id_array))==0){return;}
+	if (
+		count(array_intersect(array_keys($ex_list),$ex_id_array))==0 
+			&& 
+		count($ex_id_array)!=0
+		)
+		{return;}
+		
 	//print_r($ex_list);
 	$rblob=get_result_blob_of_sample_in_array($link,$sample_id);
 	//print_r($rblob);
