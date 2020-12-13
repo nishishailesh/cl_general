@@ -3,12 +3,15 @@ $GLOBALS['nojunk']='';
 require_once 'project_common.php';
 require_once 'base/verify_login.php';
 	////////User code below/////////////////////
-	
+
 $link=get_link($GLOBALS['main_user'],$GLOBALS['main_pass']);
 
 $pdf=get_pdf_link_for_barcode();
-prepare_sample_barcode($link,$_POST['sample_id'],$pdf);
-if($_POST['action']=='two_barcode')
+if($_POST['action']=='two_barcode' || $_POST['action']=='one_barcode')
+{
+	prepare_sample_barcode($link,$_POST['sample_id'],$pdf);
+}
+if($_POST['action']=='two_barcode' ||$_POST['action']=='second_barcode')
 {
 	prepare_sample_barcode_for_tube($_POST['sample_id'],$pdf);
 }
