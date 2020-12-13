@@ -951,7 +951,7 @@ function sample_id_verify_button($sample_id)
 }
 function sample_id_view_button($sample_id,$target='',$label='View')
 {
-	echo '<div class="d-inline-block" ><form method=post action=view_single.php class=print_hide target=\''.$target.'\'>
+	echo '<div class="d-inline-block" ><form method=post action=view_single.php class=print_hide '.$target.'>
 	<button class="btn btn-outline-success btn-sm" name=sample_id value=\''.$sample_id.'\' >'.$label.'</button>
 	<input type=hidden name=session_name value=\''.$_POST['session_name'].'\'>
 	<input type=hidden name=action value=view_single>
@@ -5176,7 +5176,7 @@ function print_pdf($pdf,$fname)
 	$pdf->Output($filename, 'I');
 }
 
-
+/*
 function prepare_sample_barcode_for_tube($sample_id,$pdf)
 {
 		$style = array(
@@ -5198,6 +5198,60 @@ function prepare_sample_barcode_for_tube($sample_id,$pdf)
 		$pdf->AddPage();
 		$pdf->write1DBarcode($sample_id, 'C128', 03, 6 , 43, 15, 0.4, $style, 'N');
 }
+*/
+
+function prepare_sample_barcode_for_tube($link,$sample_id,$pdf)
+{
+		$style = array(
+		'position' => '',
+		'align' => 'C',
+		'stretch' => false,
+		'fitwidth' => true,
+		'cellfitalign' => '',
+		'border' => false,
+		'hpadding' => 'auto',
+		'vpadding' => '0',
+		'fgcolor' => array(0,0,0),
+		'bgcolor' => false, //array(255,255,255),
+		'text' => false,	//no text at bottom
+		'font' => 'helvetica',
+		'fontsize' => 10,
+		'stretchtext' => 4
+	);
+	
+		$sql='select * from result where sample_id=\''.$sample_id.'\'';
+		$result=run_query($link,$GLOBALS['database'],$sql);
+		if(get_row_count($result)==0){return;}
+		
+		$pdf->AddPage();
+		$pdf->write1DBarcode($sample_id, 'C128', 02, 5 , 43, 12, 0.4, $style, 'N');		
+		
+		while($ar=get_single_row($result))
+		{
+			if($ar['examination_id']==$GLOBALS['sample_requirement'])
+			{
+				$sample_type=$ar['result'];	
+				$pdf->SetFont('helveticaB', '', 7);		
+				$pdf->SetXY(5,17);
+				$pdf->Cell(15,3,$sample_type,$border=0, $ln=0, $align='', $fill=false, $link='', $stretch=2, $ignore_min_height=false, $calign='T', $valign='M');	
+			}
+			
+			else if($ar['examination_id']==$GLOBALS['patient_name'])
+			//else if($ar['examination_id']==$GLOBALS['mrd'])
+			{
+				$patient_name=substr($ar['result'],0,10);
+				//$patient_name=$ar['result'];
+				$pdf->SetFont('helveticaB', '', 7);
+				$pdf->SetXY(21,17);
+				$pdf->Cell(20,3,$patient_name.' '.$sample_id,$border=0, $ln=0, $align='', $fill=false, $link='', $stretch=2, $ignore_min_height=false, $calign='T', $valign='M');	
+				$pdf->SetFont('helvetica', '', 5);
+				$pdf->SetXY(5,20);
+				$pdf->Cell(15,3,$sample_id,$border=0, $ln=0, $align='', $fill=false, $link='', $stretch=2, $ignore_min_height=false, $calign='T', $valign='M');	
+			}
+		}
+				
+}
+
 
 //===========for LJ Chart, but , general in nature===============
 
