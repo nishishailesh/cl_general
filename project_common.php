@@ -4500,7 +4500,7 @@ function dashboard($link)
 	//echo '<h3>Dashboard</h3>';
 	$result=run_query($link,$GLOBALS['database'],$sql);
 	
-	echo '<ul id=dashboard class="collapse show">';
+	echo '<ul id=dashboard class="collapse hide">';
 	while($ar=get_single_row($result))
 	{
 		echo '<li><pre>';
@@ -4604,7 +4604,7 @@ function get_sql($link)
 		class="sh badge badge-warning d-inline" href=#statistics >Statistics and Info</span>';
 
         echo '
-        <table border=1 id=statistics class="table-striped table-hover collapse show"><tr><th colspan=20>Select the data to view</th></tr>';
+        <table border=1 id=statistics class="table-striped table-hover collapse hide"><tr><th colspan=20>Select the data to view</th></tr>';
 
         $first_data='yes';
 

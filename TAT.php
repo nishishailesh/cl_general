@@ -27,8 +27,8 @@ elseif($_POST['action']=='set_search')
 }
 elseif($_POST['action']=='search_summary')
 {
-	echo '<h2>Summary of TAT of samples</h2>';
-	print_r($search_array);
+	echo '<h2>Click <span class="bg-primary" >Search (Detailed View)"</span></h2>';
+	//print_r($search_array);
 }
 
 elseif($_POST['action']=='search_detail')
