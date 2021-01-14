@@ -23,12 +23,12 @@ $link=get_link($GLOBALS['main_user'],$GLOBALS['main_pass']);
 						
 function monitor($link)
 {
-	echo '<div id=monitor class="jumbotron">hi</div>';
+	echo '<div id=monitor class="jumbotron m-0 p-0">hi</div>';
 }
 
 	//////////////user code ends////////////////
 tail();
-echo '<pre>';print_r($_POST);echo '</pre>';
+//echo '<pre>';print_r($_POST);echo '</pre>';
 
 ?>
 

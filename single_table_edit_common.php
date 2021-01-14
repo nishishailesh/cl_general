@@ -462,7 +462,7 @@ function update_one_field($link,$tname,$fname,$pk)
 	{
 		$value=' \''.my_safe_string($link,$_POST[$fname]).'\' ';
 	}
-	
+	//echo $fname.'<br>';
 	update_one_field_with_value($link,$tname,$fname,$pk,$value);
 }
 
@@ -530,6 +530,7 @@ function update($link,$tname)
 	{
 		if(!in_array($k,array('action','tname','session_name','id','recording_time','recorded_by')))
 		{
+			//echo $k.'#<br>';
 			update_one_field($link,$tname,$k,$_POST['id']);
 		}
 	}

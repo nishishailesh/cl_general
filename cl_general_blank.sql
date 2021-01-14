@@ -698,7 +698,7 @@ CREATE TABLE `scope` (
   `examination_is_currently_available` varchar(100) DEFAULT NULL,
   `nabl_accreditation_status` varchar(100) DEFAULT NULL,
   `unit_of_measurement` varchar(100) DEFAULT NULL,
-  `referance_range` varchar(100) DEFAULT NULL,
+  `referance range` varchar(100) DEFAULT NULL,
   `sample_type` varchar(100) DEFAULT NULL,
   `container_additives` varchar(100) DEFAULT NULL,
   `method_of_analysis` varchar(100) DEFAULT NULL,
@@ -841,4 +841,4 @@ CREATE TABLE `view_info_data` (
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2020-12-17  9:55:16
+-- Dump completed on 2021-01-15  0:16:29

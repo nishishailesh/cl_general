@@ -36,8 +36,6 @@ echo '
 	<li>two fields <b>recording_time</b> of datetime type and <b> recorded_by </b> of varchar type are mandatory</li>
 	<li>id,recording_time and recorded_by are not user editable</li>
 	<li>all blob fields named <b>xyz</b> must have <b>xyz_name</b> field for storing uploaded file name</li>
-
-
 </ul>
 
 
@@ -45,7 +43,7 @@ echo '
 //////////////user code ends////////////////
 tail();
 
-//echo '<pre>';print_r($_POST);print_r($_FILES);echo '</pre>';
+echo '<pre>';print_r($_POST);print_r($_FILES);echo '</pre>';
 
 //////////////Functions///////////////////////
 

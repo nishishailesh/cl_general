@@ -5535,16 +5535,58 @@ function get_today_sample_id($link)
 	return $data;
 }
 
+function get_sample_status($link,$sample_id)
+{
+	$cd=get_one_ex_result_row($link,$sample_id,$GLOBALS['collection_date']); //generally 1015
+	$cd_text=(strlen($cd['result'])>0)?'C':'_';
+	$rd=get_one_ex_result_row($link,$sample_id,$GLOBALS['receipt_date']); //generally 1017
+	$rd_text=(strlen($rd['result'])>0)?'R':'_';
+	$r=get_result_of_sample_in_array($link,$sample_id);
+	$rl=get_one_ex_result_row($link,$sample_id,$GLOBALS['released_by']); //generally 1018	
+	$rl_text=(strlen($rl['result'])>0)?'P':'_';
+	
+	$eq_ar=array();
+	//print_r($r);
+	foreach($r as $k=>$v)
+	{
+		$examination_details=get_one_examination_details($link,$k);
+		$edit_specification=json_decode($examination_details['edit_specification'],true);
+		$eq=isset($edit_specification['equipment'])?$edit_specification['equipment']:' ';
+		$eq_ar[]=$eq;
+	}
+	$eq_ar_u=array_unique($eq_ar);
+	sort($eq_ar_u);
+	
+	$eq_str=str_pad(
+					implode(	"",
+								$eq_ar_u
+							)
+					,3);
+	return array($cd_text.$rd_text.$rl_text,$eq_str);
+}
 function show_sid_button_release_status($link,$sid)
 {
 	$released_by_local=get_one_ex_result($link,$sid,$GLOBALS['released_by']);
+	$ss=get_sample_status($link,$sid);
 	if(strlen($released_by_local)==0)
 	{
-		sample_id_view_button($sid,'target=_blank','<span class="text-danger rounded">'.$sid.'</span>');
+		sample_id_view_button(
+			$sid,
+			'target=_blank',
+			'<span class="text-danger rounded" >'.$sid.'</span>
+			<span class="badge badge-secondary "><pre class="d-inline text-white">'.$ss[0].'</pre></span>
+			<span class="badge badge-secondary"><pre class="d-inline  text-white">'.$ss[1].'</pre></span>'
+			);
 	}
 	else
 	{
-		sample_id_view_button($sid,'target=_blank','<span class="text-dark rounded">'.$sid.'</span>');
+		sample_id_view_button(
+		$sid,
+		'target=_blank',
+		'<span class="text-dark rounded" >'.$sid.'</span>
+			<span class="badge  badge-secondary"><pre class="d-inline  text-white">'.$ss[0].'</pre></span>
+			<span class="badge  badge-secondary"><pre class="d-inline  text-white">'.$ss[1].'</pre></span>'
+		);
 	}
 }
 
