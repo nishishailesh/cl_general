@@ -99,7 +99,6 @@ function main_menu($link)
 						<button class="btn btn-outline-primary m-0 p-0" formaction=view_worklist.php type=submit name=action value=get_sid_eid_for_worklist>Worklist</button>			
 						<button class="btn btn-outline-primary m-0 p-0" formaction=view_worklist_sample_wise.php type=submit name=action value=get_sid_eid_for_worklist>Worklist(Sample-wise)</button>			
 						<button class="btn btn-outline-primary m-0 p-0" formaction=report.php type=submit name=action value=get_search_condition>Report</button>			
-						
 					</div>
 				</div>
 		</div>
@@ -110,6 +109,7 @@ function main_menu($link)
 					<div class="btn-group-vertical  d-block">
 						<!-- <button class="btn btn-outline-primary m-0 p-0" formaction=view_database_id_from_to_for_print.php type=submit name=action value=get_from_to>Print From-To</button>			-->
 						<button class="btn btn-outline-primary m-0 p-0" formaction=view_database_id_from_to_for_print_opd.php type=submit name=action value=get_from_to>by Sample ID(s)</button>			
+						<button class="btn btn-outline-primary m-0 p-0" formaction=view_database_id_from_to_for_print_opd_nabl.php type=submit name=action value=get_from_to>by Sample ID(s), NABL</button>			
 						<button class="btn btn-outline-primary m-0 p-0" formaction=search_and_print.php type=submit name=action value=get_search_condition>by Search Conditions</button>
 						<button class="btn btn-outline-primary m-0 p-0" formaction=print_multiple_scanned_barcode.php type=submit name=action value=get_scan>by Scanning Barcode</button>						
 					</div>
@@ -144,6 +144,7 @@ function main_menu($link)
 						<button class="btn btn-outline-primary m-0 p-0" formaction=manage_reagent.php type=submit name=action value=manage_reagent>Reagent</button>
 						<button class="btn btn-outline-primary m-0 p-0" formaction=refrigerator_temperature.php type=submit name=action value=refrigerator_temperature>Refrigerator Temperature</button>
 						<button class="btn btn-outline-primary m-0 p-0" formaction=TAT.php type=submit name=action value=get_TAT_search_condition>TAT</button>
+						<button class="btn btn-outline-primary m-0 p-0" formaction=sms.php type=submit name=action value=sms>SMS</button>
 					</div>
 				</div>
 		</div>
@@ -4517,6 +4518,8 @@ class ACCOUNT1 extends TCPDF {
 	public $link;
 	public $current_y;
 	public $profile_wise_ex_list;
+	public $symbol_1;
+	
 	public function Header() 
 	{
 		ob_start();	
@@ -4525,11 +4528,27 @@ class ACCOUNT1 extends TCPDF {
 	//error-
 	$header=$GLOBALS[$sr_array[2]];
 
-	echo '<table  cellpadding="2">
-	<tr><td style="text-align:center" colspan="3"><h2>'.$header['name'].'</h2></td></tr>
-	<tr><td style="text-align:center" colspan="3"><h3>'.$header['section'].'<b> (Sample ID:</b> '.$this->sample_id.')</h3></td></tr>
-	<tr><td style="text-align:center" colspan="3"><h5>'.$header['address'].'</h5></td></tr>
-	<tr><td style="text-align:center" colspan="3"><h5>'.$header['phone'].'</h5></td></tr>';
+	echo '<table  cellpadding="2" >
+	<tr>
+		<td colspan="3">
+			<table>
+				<tr>
+					<td border="0.3" rowspan="4" width="10%"><img src="img/nabl1.png" width="50"> ML-0450</td>
+					<td style="text-align:center" width="90%"><h2>'.$header['name'].'</h2></td>
+				</tr>
+				<tr>
+					<td style="text-align:center"><h3>'.$header['section'].'<b> (Sample ID:</b> '.$this->sample_id.')</h3></td>
+				</tr>
+				<tr>
+					<td style="text-align:center"><h5>'.$header['address'].'</h5></td>
+				</tr>
+				<tr>
+					<td style="text-align:center"><h5>'.$header['phone'].'</h5></td>
+				</tr>
+			</table>
+		</td>
+	</tr>';
+	
 
 			$count=1;
 			foreach($this->profile_wise_ex_list[$GLOBALS['pid_profile']] as $v)

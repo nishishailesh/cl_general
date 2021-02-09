@@ -57,6 +57,12 @@ $GLOBALS['MI']=array('name'=>'New Civil Hospital Surat Laboratory Services',
                                                 'phone'=>' '
                                                 );
 
+$GLOBALS['.']=array('name'=>'New Civil Hospital Surat',
+                                                'section'=>'Radiology',
+                                                'address'=>'NCH Campus, Surat',
+                                                'phone'=>' '
+                                                );
+                                                
 $GLOBALS['normal_qc_str']='QC/5/';
 $GLOBALS['abnormal_qc_str']='QC/8/';
 $GLOBALS['normal_qc_tick']='N';
