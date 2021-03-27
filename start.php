@@ -4,11 +4,21 @@ require_once 'base/verify_login.php';
 	////////User code below/////////////////////
 require_once 'project_common.php';
 $link=get_link($GLOBALS['main_user'],$GLOBALS['main_pass']);
-
-		main_menu($link); 
-		dashboard($link);
-		show_dashboard($link);
-		monitor($link);
+	//echo '<div>';
+	main_menu($link); 
+	//echo '</div>';
+	//echo '<div class="btn-group">';
+	dashboard($link);
+	//echo '</div>';
+	//echo '<div class="btn-group">';
+	show_dashboard($link);
+	//echo '</div>';
+$user=get_user_info($link,$_SESSION['login']);
+$auth=explode(',',$user['authorization']);
+if(!in_array('requestonly',$auth))
+{
+	monitor($link);
+}
 		
 				if(isset($_POST['action']))
 				{
@@ -23,7 +33,7 @@ $link=get_link($GLOBALS['main_user'],$GLOBALS['main_pass']);
 						
 function monitor($link)
 {
-	echo '<div id=monitor class="jumbotron m-0 p-0">hi</div>';
+	echo '<div id=monitor class="jumbotron m-0 p-0">Wait for update of recent sample status</div>';
 }
 
 	//////////////user code ends////////////////
