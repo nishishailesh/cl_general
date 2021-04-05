@@ -42,7 +42,8 @@ elseif($_POST['action']=='search')
 		while($ar=get_single_row($result))
 		{
 			//echo $ar['sample_id'];
-			show_sid_button_release_status($link,$ar['sample_id']);
+			show_sid_button_release_status_and_pid($link,$ar['sample_id']);
+			echo '<br>';
 		}
 
 }

@@ -5616,6 +5616,46 @@ function show_sid_button_release_status($link,$sid)
 	}
 }
 
+
+
+function show_sid_button_release_status_and_pid($link,$sid)
+{
+	$released_by_local=get_one_ex_result($link,$sid,$GLOBALS['released_by']);
+	$pid=get_one_ex_result($link,$sid,$GLOBALS['patient_name']);
+	$mrd_local=get_one_ex_result($link,$sid,$GLOBALS['mrd']);
+	$location=get_one_ex_result($link,$sid,$GLOBALS['OPD/Ward']);
+
+
+	$ss=get_sample_status($link,$sid);
+	if(strlen($released_by_local)==0)
+	{
+		sample_id_view_button(
+			$sid,
+			'target=_blank',
+			'<span class="text-danger rounded" >'.$sid.'</span>
+			<span class="badge badge-secondary "><pre class="d-inline text-white">'.$ss[0].'</pre></span>
+			<span class="badge badge-secondary"><pre class="d-inline  text-white">'.$ss[1].'</pre></span>
+			<span class="text-primary"><pre class="d-inline">'.$pid.'</pre></span>
+			<span class="text-primary"><pre class="d-inline">'.$mrd_local.'</pre></span>
+			<span class="text-primary"><pre class="d-inline">'.$location.'</pre></span>'
+			);
+	}
+	else
+	{
+		sample_id_view_button(
+		$sid,
+		'target=_blank',
+		'<span class="text-dark rounded" >'.$sid.'</span>
+			<span class="badge  badge-secondary"><pre class="d-inline  text-white">'.$ss[0].'</pre></span>
+			<span class="badge  badge-secondary"><pre class="d-inline  text-white">'.$ss[1].'</pre></span>
+			<span class="text-primary"><pre class="d-inline">'.$pid.'</pre></span>
+			<span class="text-primary"><pre class="d-inline">'.$mrd_local.'</pre></span>
+			<span class="text-primary"><pre class="d-inline">'.$location.'</pre></span>'
+			);
+	}
+}
+
+
 function calculate_tat($link,$sample_id,$print='yes')
 {
 	$tat=array();
