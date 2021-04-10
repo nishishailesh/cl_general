@@ -376,6 +376,7 @@ function show_all_buttons_for_sample($link,$sample_id)
 		sample_id_interim_release_button($sample_id);					//allow new interim release too
 		sample_id_print_button($sample_id);			
 		sample_id_email_button($sample_id);
+		sample_id_telegram_button($sample_id);
 		sample_id_edit_button($sample_id);
 		sample_id_delete_button($sample_id);
 	}	
@@ -390,6 +391,7 @@ function show_all_buttons_for_sample($link,$sample_id)
 		sample_id_unrelease_button($sample_id);			
 		sample_id_print_button($sample_id);			
 		sample_id_email_button($sample_id);
+		sample_id_telegram_button($sample_id);
 	}
 }
 
@@ -993,6 +995,16 @@ function sample_id_email_button($sample_id)
 	</form></div>';
 }
 
+function sample_id_telegram_button($sample_id)			
+{
+	echo '<div class="d-inline-block" ><form method=post action=telegram.php class=print_hide>
+	<button class="btn btn-outline-success btn-sm" name=sample_id value=\''.$sample_id.'\' >Telegram</button>
+	<input type=hidden name=session_name value=\''.$_POST['session_name'].'\'>
+	<input type=hidden name=action value=telegram>
+	</form></div>';
+}
+
+
 function sample_id_next_button($sample_id)
 {
 	echo '<div class="d-inline-block" ><form method=post action=view_single.php  class=print_hide>
@@ -1229,6 +1241,20 @@ function get_result_of_sample_in_array($link,$sample_id)
 	while($ar=get_single_row($result))
 	{
 		$result_array[$ar['examination_id']]=$ar['result'];
+	}
+	//print_r($result_array);
+	return $result_array;
+}
+
+function get_result_of_sample_in_array_with_ex_name($link,$sample_id)
+{
+	$sql='select name,result from examination,result where sample_id=\''.$sample_id.'\' 
+						and examination.examination_id=result.examination_id';
+	$result=run_query($link,$GLOBALS['database'],$sql);
+	$result_array=array();
+	while($ar=get_single_row($result))
+	{
+		$result_array[str_pad(substr($ar['name'],0,19),20,' ')]=$ar['result'];
 	}
 	//print_r($result_array);
 	return $result_array;
