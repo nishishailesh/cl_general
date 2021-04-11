@@ -106,6 +106,7 @@ function main_menu($link)
 						<button class="btn btn-outline-primary m-0 p-0" formaction=view_worklist.php type=submit name=action value=get_sid_eid_for_worklist>Worklist</button>			
 						<button class="btn btn-outline-primary m-0 p-0" formaction=view_worklist_sample_wise.php type=submit name=action value=get_sid_eid_for_worklist>Worklist(Sample-wise)</button>			
 						<button class="btn btn-outline-primary m-0 p-0" formaction=report.php type=submit name=action value=get_search_condition>Report</button>			
+						<button class="btn btn-outline-primary m-0 p-0" formaction=location_report.php type=submit name=action value=get_location_list>LocationWise Report</button>			
 					</div>
 				</div>
 		</div>

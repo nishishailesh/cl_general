@@ -1,8 +1,4 @@
 <?php
-
-//curl -X POST -H 'Content-Type: application/json'  -d '{"chat_id": "-1001338261960", "text": "====Sample ID: '$1'====\n'"$x"'" , "disable_notification": true}' https://api.telegram.org/bot1691350169:AAGepYfuQP4jbjZDyOnhHA7bKVrBWZP2Uf4/sendMessage
-//curl -F chat_id="-xxxxxxxxxx" -F document=@"/home/telegram/someFile.pdf" -F caption="Text Message with attachment" https://api.telegram.org/bot<token>/sendDocument
-
 //$GLOBALS['nojunk']='';
 require_once 'project_common.php';
 require_once 'base/verify_login.php';
@@ -15,32 +11,31 @@ echo '            <link rel="stylesheet" href="project_common.css">
                   
 $link=get_link($GLOBALS['main_user'],$GLOBALS['main_pass']);
 main_menu($link);
-$pdf = new ACCOUNT1('P', 'mm', 'A4', true, 'UTF-8', false);
-
+insert_sample_id_link($link,$_POST['sample_id']);
 ob_start();
-$x=view_sample($link,$_POST['sample_id'],$pdf);
+echo "\n==PDF Report (".$_POST['sample_id'].")==\n";
+make_link($link,$_POST['sample_id']);
+echo "\n\n==Summary Report==\n";
+view_sample_telegram($link,$_POST['sample_id']);
+echo "\n================\n";
+echo "<code>Units, Ref. Interval, Method</code>";
+echo "\n================\n";
+
+view_sample_telegram_extra($link,$_POST['sample_id']);
+$x = ob_get_contents();
 ob_end_clean();
 
-$output=$pdf->Output('report.pdf', 'S');
+//echo $x;
 
-$res=get_result_of_sample_in_array_with_ex_name($link,$_POST['sample_id']);
-//$res_str='<pre>Sample_ID:'.$_POST['sample_id'].'</pre><pre>'.print_r($res,true).'</pre>';
+$token = $GLOBALS['_telegram_token_'];
 
-$res_str=htmlentities('<code>apple'.$x.'</code>');
-echo $x;
-//$res_str='<pre>Sample_ID:'.$_POST['sample_id'].'<br>'.print_r($res,true).'</pre>';
+$chatid = $GLOBALS['_telegram_chatid_'];
 
-$token = "1691350169:AAGepYfuQP4jbjZDyOnhHA7bKVrBWZP2Uf4";
-$chatid = "-1001338261960";
-sendMessage($chatid, $res_str, $token);
-//echo '<br>';
-//sendAttachment($chatid, $output, $token);
+sendMessage($chatid, $x, $token);
 view_sample($link,$_POST['sample_id']);
-
 
 //////////////user code ends////////////////
 tail();
-
 //echo '<pre>';print_r($_POST);echo '</pre>';
 
 
@@ -93,5 +88,331 @@ function sendAttachment($chatID, $attachment, $token) {
     return $result;
 }
 
+function view_sample_telegram($link,$sample_id)
+{
+	$ex_list=get_result_of_sample_in_array($link,$sample_id);
+	//print_r($ex_list);
+	$rblob=get_result_blob_of_sample_in_array($link,$sample_id);
+	//print_r($rblob);
+	$result_plus_blob_requested=$ex_list+$rblob;
+	//print_r($result_plus_blob_requested);
+
+	$profile_wise_ex_list=ex_to_profile($link,$result_plus_blob_requested);
+
+	if(count($result_plus_blob_requested)!=0)
+	{
+		$sr=get_one_ex_result($link,$sample_id,$GLOBALS['sample_requirement']);
+		//echo $sr;
+		$sr_array=explode('-',$sr);
+		//print_r($sr_array);
+		$header=$GLOBALS[$sr_array[2]];
+		echo "<b>".$header["name"]."</b>\n";
+		echo "<b>".$header["section"]."</b>\n";
+		echo "<b>".$header["address"]."</b>\n";
+		echo "<b>".$header["phone"]."</b>\n";
+		echo "\n================\n";
+		echo "<b>Sample_ID:<u>".$sample_id."</u></b>";
+		echo "\n================\n";
+	}
+
+	
+	foreach($profile_wise_ex_list as $kp=>$vp)
+	{
+		$pinfo=get_profile_info($link,$kp);
+		echo "\n<code>".$pinfo['name']."-------</code>\n";
+		$profile_edit_specification=json_decode($pinfo['edit_specification'],true);
+		$print_style=isset($profile_edit_specification['print_style'])?$profile_edit_specification['print_style']:'';		
+		foreach($vp as $ex_id)
+		{
+			
+			$examination_details=get_one_examination_details($link,$ex_id);
+			$edit_specification=json_decode($examination_details['edit_specification'],true);
+			$img=isset($edit_specification['img'])?$edit_specification['img']:'';
+			$type=isset($edit_specification['type'])?$edit_specification['type']:'';
+			if($print_style=='horizontal')
+			{					
+				if($type!='blob')
+				{
+					view_field_telegram_horizontal($link,$ex_id,$ex_list[$ex_id]);	
+				}
+			}
+			else
+			{					
+				if($type!='blob')
+				{
+					view_field_telegram($link,$ex_id,$ex_list[$ex_id]);	
+				}
+			}
+		}
+	}
+}
+
+
+
+function view_field_telegram($link,$ex_id,$ex_result)
+{
+		$examination_details=get_one_examination_details($link,$ex_id);
+		$edit_specification=json_decode($examination_details['edit_specification'],true);
+		$help=isset($edit_specification['help'])?$edit_specification['help']:'';
+		$type=isset($edit_specification['type'])?$edit_specification['type']:'';
+		$interval_l=isset($edit_specification['interval_l'])?$edit_specification['interval_l']:'';
+		$cinterval_l=isset($edit_specification['cinterval_l'])?$edit_specification['cinterval_l']:'';
+		$ainterval_l=isset($edit_specification['ainterval_l'])?$edit_specification['ainterval_l']:'';
+		$interval_h=isset($edit_specification['interval_h'])?$edit_specification['interval_h']:'';
+		$cinterval_h=isset($edit_specification['cinterval_h'])?$edit_specification['cinterval_h']:'';
+		$ainterval_h=isset($edit_specification['ainterval_h'])?$edit_specification['ainterval_h']:'';
+		$img=isset($edit_specification['img'])?$edit_specification['img']:'';
+			echo "<b>".$examination_details["name"].": </b>".htmlspecialchars($ex_result)."\n";
+}
+
+function view_field_telegram_horizontal($link,$ex_id,$ex_result)
+{
+		$examination_details=get_one_examination_details($link,$ex_id);
+		echo "<b>".$examination_details["name"].": </b>".htmlspecialchars($ex_result)."\n";
+}				
+
+
+
+
+
+function view_sample_telegram_extra($link,$sample_id)
+{
+	$ex_list=get_result_of_sample_in_array($link,$sample_id);
+	//print_r($ex_list);
+	$rblob=get_result_blob_of_sample_in_array($link,$sample_id);
+	//print_r($rblob);
+	$result_plus_blob_requested=$ex_list+$rblob;
+	//print_r($result_plus_blob_requested);
+
+	$profile_wise_ex_list=ex_to_profile($link,$result_plus_blob_requested);
+
+	if(count($result_plus_blob_requested)!=0)
+	{
+
+	}
+
+	
+	foreach($profile_wise_ex_list as $kp=>$vp)
+	{
+		$pinfo=get_profile_info($link,$kp);
+		//echo "<code>".$pinfo['name']."-------</code>\n";
+		$profile_edit_specification=json_decode($pinfo['edit_specification'],true);
+		$print_style=isset($profile_edit_specification['print_style'])?$profile_edit_specification['print_style']:'';		
+		foreach($vp as $ex_id)
+		{
+			
+			$examination_details=get_one_examination_details($link,$ex_id);
+			$edit_specification=json_decode($examination_details['edit_specification'],true);
+			$img=isset($edit_specification['img'])?$edit_specification['img']:'';
+			$type=isset($edit_specification['type'])?$edit_specification['type']:'';
+			if($print_style=='horizontal')
+			{					
+				if($type!='blob')
+				{
+					view_field_telegram_horizontal_extra($link,$ex_id,$ex_list[$ex_id]);	
+				}
+			}
+			else
+			{					
+				if($type!='blob')
+				{
+					view_field_telegram_extra($link,$ex_id,$ex_list[$ex_id]);	
+				}
+			}
+		}
+	}
+}
+
+
+
+function view_field_telegram_extra($link,$ex_id,$ex_result)
+{
+		$examination_details=get_one_examination_details($link,$ex_id);
+		$edit_specification=json_decode($examination_details['edit_specification'],true);
+		$help=isset($edit_specification['help'])?$edit_specification['help']:'';
+		$type=isset($edit_specification['type'])?$edit_specification['type']:'';
+		$interval_l=isset($edit_specification['interval_l'])?$edit_specification['interval_l']:'';
+		$cinterval_l=isset($edit_specification['cinterval_l'])?$edit_specification['cinterval_l']:'';
+		$ainterval_l=isset($edit_specification['ainterval_l'])?$edit_specification['ainterval_l']:'';
+		$interval_h=isset($edit_specification['interval_h'])?$edit_specification['interval_h']:'';
+		$cinterval_h=isset($edit_specification['cinterval_h'])?$edit_specification['cinterval_h']:'';
+		$ainterval_h=isset($edit_specification['ainterval_h'])?$edit_specification['ainterval_h']:'';
+		$img=isset($edit_specification['img'])?$edit_specification['img']:'';
+		echo "<b>".$examination_details["name"].":</b>".htmlspecialchars($help)."\n";
+}
+
+function view_field_telegram_horizontal_extra($link,$ex_id,$ex_result)
+{
+
+}				
+
+function insert_sample_id_link($link,$sample_id)
+{
+	$sql='insert into sample_link(sample_id,link)
+			values (\''.$sample_id.'\',\''.bin2hex(random_bytes(16)).'\')';
+	if(!run_query($link,$GLOBALS['database'],$sql))
+	{
+		return false;
+	}	
+	else
+	{
+		return true;
+	}
+}
+function make_link($link,$sample_id)
+{
+	$sql='select  * from sample_link where sample_id=\''.$sample_id.'\'';
+	$result=run_query($link,$GLOBALS['database'],$sql);
+	$ar=get_single_row($result);
+	//echo '<pre>';
+	//print_r($ar);
+	//print_r($_SERVER);
+	//echo '</pre>';
+	//echo $_SERVER['HTTP_HOST'].'/cl_general/get_linked_report.php?token='.$ar['link'];
+	echo 'http://gmcsurat.edu.in:12346/cl_general/get_linked_report.php?token='.$ar['link'];
+}
+/*
+function view_sample_telegram($link,$sample_id)
+{
+
+	$ex_list=get_result_of_sample_in_array($link,$sample_id);
+	//print_r($ex_list);
+	$rblob=get_result_blob_of_sample_in_array($link,$sample_id);
+	//print_r($rblob);
+	$result_plus_blob_requested=$ex_list+$rblob;
+	//print_r($result_plus_blob_requested);
+
+	$profile_wise_ex_list=ex_to_profile($link,$result_plus_blob_requested);
+
+	if(count($result_plus_blob_requested)!=0)
+	{
+		$sr=get_one_ex_result($link,$sample_id,$GLOBALS['sample_requirement']);
+		//echo $sr;
+		$sr_array=explode('-',$sr);
+		//print_r($sr_array);
+		$header=$GLOBALS[$sr_array[2]];
+		echo '**'.$header['name'].'**
+		<b>'.$header['section'].'</b>
+		<b>'.$header['address'].'</b>
+		<b>'.$header['phone'].'</b>
+		<hr>';
+	
+	
+		echo '<div class="basic_form">
+			<div class=my_label ><span class="badge badge-primary ">Sample ID</span>
+			<span class="badge badge-info"><h5>'.$sample_id.'</h5></span></div>			<div>';
+			show_all_buttons_for_sample($link,$sample_id);
+			echo '</div>
+			<div class="help print_hide">Unique Number to get this data</div>';
+		echo '</div>';	
+	}
+	else
+	{
+		sample_id_prev_button($sample_id);
+		sample_id_next_button($sample_id);
+	}
+	
+	if(count($result_plus_blob_requested)==0)
+	{
+		echo '<h3>No such sample with sample_id='.$sample_id.'</h3>';
+		return;
+	}
+		
+	foreach($profile_wise_ex_list as $kp=>$vp)
+	{
+		$pinfo=get_profile_info($link,$kp);
+		$div_id=$pinfo['name'].'_'.$sample_id;
+		echo '<img src="img/show_hide.png" height=32 data-toggle="collapse" class=sh href=\'#'.$div_id.'\' ><div></div><div></div>';
+		echo '<div class="collapse show" id=\''.$div_id.'\'>';
+		echo '<h3>'.$pinfo['name'].'</h3><div></div><div></div>';
+		$profile_edit_specification=json_decode($pinfo['edit_specification'],true);
+		$print_style=isset($profile_edit_specification['print_style'])?$profile_edit_specification['print_style']:'';		
+	
+		if($print_style=='horizontal')
+		{
+			echo '<div class=horiz>';
+			foreach($vp as $ex_id)
+			{
+				$examination_details=get_one_examination_details($link,$ex_id);
+				$edit_specification=json_decode($examination_details['edit_specification'],true);
+				$img=isset($edit_specification['img'])?$edit_specification['img']:'';
+				$type=isset($edit_specification['type'])?$edit_specification['type']:'';
+				
+				
+				if($type!='blob')
+				{
+					view_field_hr($link,$ex_id,$ex_list[$ex_id]);	
+				}
+				else
+				{
+					view_field_blob_hr($link,$ex_id,$sample_id);
+					if($img=='dw')
+					{
+						$ex_result=get_one_ex_result_blob($link,$sample_id,$ex_id);
+						display_dw($ex_result,$examination_details['name']);
+					}	
+				}
+			}
+			echo '</div>';			
+		}
+		
+		elseif($print_style=='vertical')
+		{
+			foreach($vp as $ex_id)
+			{
+				$examination_details=get_one_examination_details($link,$ex_id);
+				$edit_specification=json_decode($examination_details['edit_specification'],true);
+				$type=isset($edit_specification['type'])?$edit_specification['type']:'';					
+				if($type!='blob')
+				{
+					view_field_vr($link,$ex_id,$ex_list[$ex_id]);	
+				}
+				else
+				{
+					view_field_blob_vr($link,$ex_id,$sample_id);	
+				}
+			}
+		}
+		
+		else
+		{
+			echo_result_header();
+		
+			foreach($vp as $ex_id)
+			{
+				
+				$examination_details=get_one_examination_details($link,$ex_id);
+				$edit_specification=json_decode($examination_details['edit_specification'],true);
+				$img=isset($edit_specification['img'])?$edit_specification['img']:'';
+				$type=isset($edit_specification['type'])?$edit_specification['type']:'';
+						
+				if($type!='blob')
+				{
+					view_field($link,$ex_id,$ex_list[$ex_id]);	
+				}
+				else
+				{
+					view_field_blob($link,$ex_id,$sample_id);
+					if($img=='dw')
+					{
+						$ex_result=get_one_ex_result_blob($link,$sample_id,$ex_id);
+						display_dw($ex_result,$examination_details['name']);
+					}
+				}
+			}
+		}		
+		echo '</div>';
+	}
+	
+	echo '<br><footer></footer>';	
+}
+*/
+//$output=$pdf->Output('report.pdf', 'S');
+
+//$res=get_result_of_sample_in_array_with_ex_name($link,$_POST['sample_id']);
+//$res_str='<pre>Sample_ID:'.$_POST['sample_id'].'</pre><pre>'.print_r($res,true).'</pre>';
+
+//$res_str=strip_tags($x).'xx';
+//$res_str='<pre>Sample_ID:'.$_POST['sample_id'].'</pre><pre>'.print_r($res,true).'</pre>';
 
 ?>
