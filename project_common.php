@@ -5588,6 +5588,7 @@ function get_today_sample_id($link)
 	return $data;
 }
 
+/*
 function get_sample_status($link,$sample_id)
 {
 	$cd=get_one_ex_result_row($link,$sample_id,$GLOBALS['collection_date']); //generally 1015
@@ -5617,30 +5618,110 @@ function get_sample_status($link,$sample_id)
 					,3);
 	return array($cd_text.$rd_text.$rl_text,$eq_str);
 }
+*/
+
+
+/*
+ * Requested 			colorless
+ * Collected			light gray
+ * Received-at-lab		light yellow
+ * prepared				orange
+ * analysed				light red
+ * verified				light blue
+ * released				light green
+ * 
+ * $GLOBALS['request_date']=1027;
+$GLOBALS['request_time']=1028; 
+ 
+$GLOBALS['collection_date']=1015;
+$GLOBALS['collection_time']=1016; 
+
+$GLOBALS['receipt_date']=1017;
+$GLOBALS['receipt_time']=1018;
+
+$GLOBALS['sample_preparation_date']=1029;
+$GLOBALS['sample_preparation_time']=1030; 
+
+$GLOBALS['analysis_date']=1031;
+$GLOBALS['analysis_time']=1032;
+
+$GLOBALS['verification_date']=1033;
+$GLOBALS['verification_time']=1034;
+
+$GLOBALS['release_date']=1033;
+$GLOBALS['release_time']=1034;
+
+$GLOBALS['released_by']=1014;
+$GLOBALS['interim_released_by']=1019;
+ * */
+ 
+function get_sample_status($link,$sample_id)
+{
+	
+	$date_time_data=array();
+	foreach ($GLOBALS['dates_times'] as $each_ex=>$state)
+	{
+		$date_time_data[$each_ex]=get_one_ex_result($link,$sample_id,$each_ex);
+	}
+
+	return $date_time_data;
+}
+
+
+function get_equipment_str($link,$sample_id)
+{
+	$r=get_result_of_sample_in_array($link,$sample_id);
+	
+	$eq_ar=array();
+	//print_r($r);
+	foreach($r as $k=>$v)
+	{
+		$examination_details=get_one_examination_details($link,$k);
+		$edit_specification=json_decode($examination_details['edit_specification'],true);
+		$eq=isset($edit_specification['equipment'])?$edit_specification['equipment']:' ';
+		$eq_ar[]=$eq;
+	}
+	$eq_ar_u=array_unique($eq_ar);
+	sort($eq_ar_u);
+	
+	$eq_str=str_pad(
+					implode(	"",
+								$eq_ar_u
+							)
+					,3);
+	echo 'xx'.$eq_str;
+	return $eq_str;
+}
+
 function show_sid_button_release_status($link,$sid)
 {
-	$released_by_local=get_one_ex_result($link,$sid,$GLOBALS['released_by']);
-	$ss=get_sample_status($link,$sid);
-	if(strlen($released_by_local)==0)
+	$final_state=1;
+	foreach ($GLOBALS['dates_times'] as $each_ex=>$state )
 	{
-		sample_id_view_button(
-			$sid,
-			'target=_blank',
-			'<span class="text-danger rounded" >'.$sid.'</span>
-			<span class="badge badge-secondary "><pre class="d-inline text-white">'.$ss[0].'</pre></span>
-			<span class="badge badge-secondary"><pre class="d-inline  text-white">'.$ss[1].'</pre></span>'
-			);
+		$len=strlen(get_one_ex_result($link,$sid,$each_ex));
+		if($len>0)
+		{
+			$final_state=$state;
+		}
 	}
-	else
-	{
-		sample_id_view_button(
+
+/*
+ * Requested 			colorless
+ * Collected			light gray
+ * Received-at-lab		light yellow
+ * prepared				orange
+ * analysed				light red
+ * verified				light blue
+ * released				light green
+ */
+ 
+	$colorcode=array('white','lightgray','lightyellow','orange','lightpink','lightblue','lightgreen','lightgreen');
+	
+	sample_id_view_button(
 		$sid,
-		'target=_blank',
-		'<span class="text-dark rounded" >'.$sid.'</span>
-			<span class="badge  badge-secondary"><pre class="d-inline  text-white">'.$ss[0].'</pre></span>
-			<span class="badge  badge-secondary"><pre class="d-inline  text-white">'.$ss[1].'</pre></span>'
+		'target=_blank style="background-color:'.$colorcode[$final_state-1].'" ',
+		$sid.' '.get_equipment_str($link,$sid)
 		);
-	}
 }
 
 

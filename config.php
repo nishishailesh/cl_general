@@ -13,9 +13,7 @@ $GLOBALS['mrd']=1001;
 $GLOBALS['sample_requirement']=1000;
 
 $GLOBALS['patient_name']=1002;
-$GLOBALS['released_by']=1014;
 $GLOBALS['OPD/Ward']=1006;
-$GLOBALS['interim_released_by']=1019;
 
 $GLOBALS['email']=1024;
 // in /var/gmcs_config/staff.conf $GLOBALS['email_db_server']='11.207.1.1';
@@ -78,13 +76,44 @@ $GLOBALS['abnormal_low_message']='<--Abnormal Low';
 $GLOBALS['abnormal_high_message']='<--Abnormal High';
 
 
-#for TAT
+#for Sample Status
+
+
+
+
+/* 
+ * Requested 			colorless
+ * Collected			light gray 1015,1016
+ * Received-at-lab		light yellow 1017,1018
+ * prepared				orange
+ * analysed				light red
+ * verified				light blue
+ * released				light green 1014,1019
+ * */
+
+$GLOBALS['request_date']=1027;
+$GLOBALS['request_time']=1028; 
+ 
 $GLOBALS['collection_date']=1015;
-$GLOBALS['collection_time']=1016;
+$GLOBALS['collection_time']=1016; 
 
 $GLOBALS['receipt_date']=1017;
 $GLOBALS['receipt_time']=1018;
 
+$GLOBALS['sample_preparation_date']=1029;
+$GLOBALS['sample_preparation_time']=1030; 
+
+$GLOBALS['analysis_date']=1031;
+$GLOBALS['analysis_time']=1032;
+
+$GLOBALS['verification_date']=1033;
+$GLOBALS['verification_time']=1034;
+
+$GLOBALS['release_date']=1035;
+$GLOBALS['release_time']=1036;
+
+$GLOBALS['released_by']=1014;
+$GLOBALS['interim_released_by']=1019;
 
 #for records
 $GLOBALS['record_tables']='record_tables';
@@ -97,6 +126,28 @@ $GLOBALS['all_records_limit']=100;
 #to ensure that if table donot exist, menu donot get broken
 $GLOBALS['reminders_table']='reminders';
 
+
+
+	
+	$GLOBALS['dates_times']=array(
+			$GLOBALS['request_date']=>1,
+			$GLOBALS['request_time']=>1,
+			$GLOBALS['collection_date']=>2,
+			$GLOBALS['collection_time']=>2,
+			$GLOBALS['receipt_date']=>3,
+			$GLOBALS['receipt_time']=>3,
+			$GLOBALS['sample_preparation_date']=>4,
+			$GLOBALS['sample_preparation_time']=>4,
+			$GLOBALS['analysis_date']=>5,
+			$GLOBALS['analysis_time']=>5,
+			$GLOBALS['verification_date']=>6,
+			$GLOBALS['verification_time']=>6,
+			$GLOBALS['release_date']=>7,
+			$GLOBALS['release_time']=>7,
+			$GLOBALS['released_by']=>8,
+			$GLOBALS['interim_released_by']=>8
+			);
+			
 //20200531233109 date format for XL ASTM communication
 //08/01/2020 14:02:40 date format for XL export communication
 
