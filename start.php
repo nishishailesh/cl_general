@@ -13,6 +13,16 @@ $link=get_link($GLOBALS['main_user'],$GLOBALS['main_pass']);
 	//echo '<div class="btn-group">';
 	show_dashboard($link);
 	//echo '</div>';
+
+//$GLOBALS['state_colorcode']=array('white','lightgray','lightyellow','orange','lightpink','lightblue','lightgreen','lightgreen');
+
+$txt=array('white'=>'Requested','lightgray'=>'Collected','lightyellow'=>'Received',
+		'orange'=>'Prepared','lightpink'=>'Analysed','lightblue'=>'Verified','lightgreen'=>'Released');
+
+foreach($GLOBALS['state_colorcode'] as $k=>$v)
+{
+	echo '<span  style=" padding:2px; background-color:'.$v.'" >'.$txt[$v].'</span>';
+}
 $user=get_user_info($link,$_SESSION['login']);
 $auth=explode(',',$user['authorization']);
 if(!in_array('requestonly',$auth))

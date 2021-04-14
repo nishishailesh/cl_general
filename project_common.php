@@ -963,7 +963,7 @@ function sample_id_verify_button($sample_id)
 function sample_id_view_button($sample_id,$target='',$label='View')
 {
 	echo '<div class="d-inline-block" ><form method=post action=view_single.php class=print_hide '.$target.'>
-	<button class="btn btn-outline-success btn-sm " name=sample_id value=\''.$sample_id.'\' >'.$label.'</button>
+	<button class="btn btn-outline-success btn-sm text-dark" name=sample_id value=\''.$sample_id.'\' >'.$label.'</button>
 	<input type=hidden name=session_name value=\''.$_POST['session_name'].'\'>
 	<input type=hidden name=action value=view_single>
 	</form></div>';
@@ -5709,7 +5709,7 @@ function show_sid_button_release_status($link,$sid)
 		$sid,
 		'target=_blank style="background-color:'.$GLOBALS['state_colorcode'][$final_state-1].'" ',
 		//$sid
-		$sid.'<br>.'.colorize_eq_str(get_equipment_str($link,$sid))
+		$sid.'<br>'.colorize_eq_str(get_equipment_str($link,$sid))
 		//$sid.' '.str_pad(get_equipment_str($link,$sid),3," ")
 		);
 }
@@ -5751,7 +5751,7 @@ function show_sid_button_equipment_status($link,$sid)
 	sample_id_view_button(
 		$sid,
 		'target=_blank '.$b_style,
-		$sid.'<br>.'.get_equipment_str($link,$sid)
+		$sid.'<br>'.get_equipment_str($link,$sid)
 		);
 }
 
