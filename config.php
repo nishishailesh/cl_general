@@ -147,6 +147,10 @@ $GLOBALS['reminders_table']='reminders';
 			$GLOBALS['released_by']=>8,
 			$GLOBALS['interim_released_by']=>8
 			);
+
+$GLOBALS['state_colorcode']=array('white','lightgray','lightyellow','orange','lightpink','lightblue','lightgreen','lightgreen');
+
+$GLOBALS['eq_color_code']=array('C'=>'lightpink','I'=>'lightblue');
 			
 //20200531233109 date format for XL ASTM communication
 //08/01/2020 14:02:40 date format for XL export communication

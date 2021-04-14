@@ -963,7 +963,7 @@ function sample_id_verify_button($sample_id)
 function sample_id_view_button($sample_id,$target='',$label='View')
 {
 	echo '<div class="d-inline-block" ><form method=post action=view_single.php class=print_hide '.$target.'>
-	<button class="btn btn-outline-success btn-sm" name=sample_id value=\''.$sample_id.'\' >'.$label.'</button>
+	<button class="btn btn-outline-success btn-sm " name=sample_id value=\''.$sample_id.'\' >'.$label.'</button>
 	<input type=hidden name=session_name value=\''.$_POST['session_name'].'\'>
 	<input type=hidden name=action value=view_single>
 	</form></div>';
@@ -5678,7 +5678,7 @@ function get_equipment_str($link,$sample_id)
 	{
 		$examination_details=get_one_examination_details($link,$k);
 		$edit_specification=json_decode($examination_details['edit_specification'],true);
-		$eq=isset($edit_specification['equipment'])?$edit_specification['equipment']:' ';
+		$eq=isset($edit_specification['equipment'])?$edit_specification['equipment']:'';
 		$eq_ar[]=$eq;
 	}
 	$eq_ar_u=array_unique($eq_ar);
@@ -5689,7 +5689,7 @@ function get_equipment_str($link,$sample_id)
 								$eq_ar_u
 							)
 					,3);
-	echo 'xx'.$eq_str;
+	//echo 'xx'.$eq_str;
 	return $eq_str;
 }
 
@@ -5705,25 +5705,55 @@ function show_sid_button_release_status($link,$sid)
 		}
 	}
 
-/*
- * Requested 			colorless
- * Collected			light gray
- * Received-at-lab		light yellow
- * prepared				orange
- * analysed				light red
- * verified				light blue
- * released				light green
- */
- 
-	$colorcode=array('white','lightgray','lightyellow','orange','lightpink','lightblue','lightgreen','lightgreen');
-	
 	sample_id_view_button(
 		$sid,
-		'target=_blank style="background-color:'.$colorcode[$final_state-1].'" ',
-		$sid.' '.get_equipment_str($link,$sid)
+		'target=_blank style="background-color:'.$GLOBALS['state_colorcode'][$final_state-1].'" ',
+		//$sid
+		$sid.'<br>.'.colorize_eq_str(get_equipment_str($link,$sid))
+		//$sid.' '.str_pad(get_equipment_str($link,$sid),3," ")
 		);
 }
 
+function colorize_eq_str($str_real)
+{
+	$colorised_str='';
+	$str=str_split($str_real);
+	foreach ($str as $chr)
+	{
+		if(array_key_exists($chr,$GLOBALS['eq_color_code']))
+		{
+			$colorised_str=$colorised_str.'<span  style=" padding:2px; background-color:'.$GLOBALS['eq_color_code'][$chr].'" >'.$chr.'</span>';
+		}
+		else
+		{			
+			$colorised_str=$colorised_str.'<span  style="background-color:red" >'.$chr.'</span>';
+		}
+	}
+	//echo $colorised_str;
+	return $colorised_str;
+}
+
+function show_sid_button_equipment_status($link,$sid)
+{
+	$final_state=1;
+	foreach ($GLOBALS['dates_times'] as $each_ex=>$state )
+	{
+		$len=strlen(get_one_ex_result($link,$sid,$each_ex));
+		if($len>0)
+		{
+			$final_state=$state;
+		}
+	}
+
+    //$b_style='style = "background: linear-gradient(-90deg, lightpink 25%, yellow 25%, lightblue 50%)"';
+    $b_style='';
+    
+	sample_id_view_button(
+		$sid,
+		'target=_blank '.$b_style,
+		$sid.'<br>.'.get_equipment_str($link,$sid)
+		);
+}
 
 
 function show_sid_button_release_status_and_pid($link,$sid)

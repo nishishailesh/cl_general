@@ -67,6 +67,7 @@ function tail()
 function get_link($u,$p)
 {
 	$link=mysqli_connect('127.0.0.1',$u,$p);
+	//$link=mysqli_connect('gmcsurat.edu.in',$u,$p,'',13306);
 	if(!$link)
 	{
 		echo 'error1:'.mysqli_error($link); 
