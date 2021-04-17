@@ -104,9 +104,9 @@ function main_menu($link)
 						<!-- <button class="btn btn-outline-primary m-0 p-0" formaction=search.php type=submit name=action value=get_search_condition>by Search Conditions</button>			-->
 						<button class="btn btn-outline-primary m-0 p-0" formaction=search_si.php type=submit name=action value=get_search_condition>by Search Conditions</button>			
 						<button class="btn btn-outline-primary m-0 p-0" formaction=view_worklist.php type=submit name=action value=get_sid_eid_for_worklist>Worklist</button>			
-						<button class="btn btn-outline-primary m-0 p-0" formaction=view_worklist_sample_wise.php type=submit name=action value=get_sid_eid_for_worklist>Worklist(Sample-wise)</button>			
-						<button class="btn btn-outline-primary m-0 p-0" formaction=report.php type=submit name=action value=get_search_condition>Report</button>			
+						<button class="btn btn-outline-primary m-0 p-0" formaction=view_worklist_sample_wise.php type=submit name=action value=get_sid_eid_for_worklist>Worklist(Sample-wise)</button>
 						<button class="btn btn-outline-primary m-0 p-0" formaction=location_report.php type=submit name=action value=get_location_list>LocationWise Report</button>			
+						<button class="btn btn-outline-primary m-0 p-0" formaction=update_status.php type=submit name=action value=update_status>Update Status</button>
 					</div>
 				</div>
 		</div>
@@ -150,12 +150,12 @@ function main_menu($link)
 						<!-- <button class="btn btn-outline-primary m-0 p-0" formaction=get_4_line.php type=submit name=action value=get_4_line>4 Line Label</button> -->
 						<button class="btn btn-outline-primary m-0 p-0" formaction=manage_label.php type=submit name=action value=manage_label>Labels</button>
 						<button class="btn btn-outline-primary m-0 p-0" formaction=manage_reagent.php type=submit name=action value=manage_reagent>Reagent</button>
-						<button class="btn btn-outline-primary m-0 p-0" formaction=refrigerator_temperature.php type=submit name=action value=refrigerator_temperature>Refrigerator Temperature</button>
+						
 						<button class="btn btn-outline-primary m-0 p-0" formaction=TAT.php type=submit name=action value=get_TAT_search_condition>TAT</button>
 						<button class="btn btn-outline-primary m-0 p-0" formaction=sms.php type=submit name=action value=sms>SMS</button>
 						<button class="btn btn-outline-primary m-0 p-0" formaction=statistics_and_info.php type=submit name=action value=statistics>Statistics and Info</button>
 						<button class="btn btn-outline-primary m-0 p-0" formaction=dashboard.php type=submit name=action value=dashboard>Dashboard</button>
-						<button class="btn btn-outline-primary m-0 p-0" formaction=update_status.php type=submit name=action value=update_status>Update Status</button>
+						
 					</div>
 				</div>
 		</div>
@@ -450,7 +450,7 @@ function view_sample($link,$sample_id)
 			<span class="badge badge-info"><h5>'.$sample_id.'</h5></span></div>			<div>';
 			show_all_buttons_for_sample($link,$sample_id);
 			echo '</div>
-			<div class="help print_hide">Unique Number to get this data</div>';
+			<div class="help print_hide"></div>';
 		echo '</div>';	
 	}
 	else
@@ -5734,18 +5734,22 @@ function show_sid_button_release_status($link,$sid,$extra_post='')
 }
 
 
-function get_sample_action($link,$sample_id,$extra_post)
+function get_sample_action($link,$sample_id,$extra_post='')
 {
 	echo '<div class="d-inline-block" >
 	<form method=post>';
 	echo $extra_post;
 	foreach($GLOBALS['sample_status'] as $index=>$status_details)
 	{
-		echo '<button 
+		if($status_details[4]=='show')
+		{
+			echo '<button 
 					type=submit 
-					class="btn btn-outline-dark btn-sm" 
+					class="btn btn-outline-dark btn-sm " 
+					style="background-color:'.$status_details[2].'" 
 					name=action 
 					value=\''.$status_details[0].'\' >'.$status_details[0].'</button>';
+		}
 	}
 	
 	echo '<input type=hidden name=session_name value=\''.$_POST['session_name'].'\'>
@@ -5978,10 +5982,10 @@ function view_sql_result_as_table($link,$sql,$show_hide='yes')
 
 function update_sample_status($link,$sample_id,$action)
 {
-	echo '<h1>'.$_POST['action'].'</h1>';
+	//echo '<h1>'.$_POST['action'].'</h1>';
 	foreach($GLOBALS['sample_status'] as $index=>$status_array)
 	{
-		if($status_array[0]==$_POST['action'])
+		if($status_array[0]==$action)
 		{
 			$kcounter=0;
 			foreach($status_array[1] as $key=>$ex_id)
@@ -6003,9 +6007,6 @@ function update_sample_status($link,$sample_id,$action)
 			}
 		}
 	}
-	
-	
-	
 }
 
 ?>

@@ -17,9 +17,9 @@ if(in_array('lock',$auth))
 	//insert_one_examination_with_result($link,$_POST['sample_id'],
 	//		$GLOBALS['released_by'],$user['name'].' ('.strftime("%Y-%m-%d %H:%M").')');
 	
-	update_one_examination_with_result($link,$_POST['sample_id'],$GLOBALS['released_by'],$user['name'].' ('.strftime("%Y-%m-%d %H:%M").')');
-	update_one_examination_with_result($link,$_POST['sample_id'],$GLOBALS['release_date'],strftime("%Y-%m-%d"));
-	update_one_examination_with_result($link,$_POST['sample_id'],$GLOBALS['release_time'],strftime("%H:%M:%S"));
+	insert_update_one_examination_with_result($link,$_POST['sample_id'],$GLOBALS['released_by'],$user['name'].' ('.strftime("%Y-%m-%d %H:%M").')');
+	insert_update_one_examination_with_result($link,$_POST['sample_id'],$GLOBALS['release_date'],strftime("%Y-%m-%d"));
+	insert_update_one_examination_with_result($link,$_POST['sample_id'],$GLOBALS['release_time'],strftime("%H:%M"));
 
 }
 else

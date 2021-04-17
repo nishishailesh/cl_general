@@ -1,5 +1,4 @@
 <?php
-
 require_once 'base/verify_login.php';
 	////////User code below/////////////////////
 require_once 'project_common.php';
@@ -36,7 +35,6 @@ function monitor($link)
 {
 	echo '<div id=monitor class="jumbotron m-0 p-0">Wait for update of recent sample status</div>';
 }
-
 
 ?>
 

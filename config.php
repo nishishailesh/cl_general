@@ -151,16 +151,16 @@ $GLOBALS['dates_times']=array(
 
 $GLOBALS['sample_status']=
 array(
-		['sample_requested',[$GLOBALS['request_date'],$GLOBALS['request_time']],'white',['date','time']],
-		['sample_collected',[$GLOBALS['collection_date'],$GLOBALS['collection_time']],'lightgray',['date','time']],
-		['sample_received',[$GLOBALS['receipt_date'],$GLOBALS['receipt_time']],'yellow',['date','time']],
-		['sample_prepared',[$GLOBALS['sample_preparation_date'],$GLOBALS['sample_preparation_time']],'orange',['date','time']],
-		['analysis_started',[$GLOBALS['analysis_date'],$GLOBALS['analysis_time']],'lightpink',['date','time']],
-		['verification_done',[$GLOBALS['verification_date'],$GLOBALS['verification_time']],'lightblue',['date','time']],
-		['interim_report released',[$GLOBALS['interim_release_date'],$GLOBALS['interim_release_time']],'#B0F6DD',['date','time']],		
-		['interim_report released',[$GLOBALS['interim_released_by']],'#B0F6DD',['username']],
-		['report_released',[$GLOBALS['release_date'],$GLOBALS['release_time']],'lightgreen',['date','time']],		
-		['report_released',[$GLOBALS['released_by']],'lightgreen',['username']]
+		['sample_requested',[$GLOBALS['request_date'],$GLOBALS['request_time']],'white',['date','time'],'hide'],
+		['sample_collected',[$GLOBALS['collection_date'],$GLOBALS['collection_time']],'lightgray',['date','time'],'show'],
+		['sample_received',[$GLOBALS['receipt_date'],$GLOBALS['receipt_time']],'yellow',['date','time'],'show'],
+		['sample_prepared',[$GLOBALS['sample_preparation_date'],$GLOBALS['sample_preparation_time']],'orange',['date','time'],'show'],
+		['analysis_started',[$GLOBALS['analysis_date'],$GLOBALS['analysis_time']],'lightpink',['date','time'],'show'],
+		['verification_done',[$GLOBALS['verification_date'],$GLOBALS['verification_time']],'lightblue',['date','time'],'show'],
+		['interim_report_released',[$GLOBALS['interim_release_date'],$GLOBALS['interim_release_time']],'greenyellow',['date','time'],'hide'],		
+		['interim_report_released',[$GLOBALS['interim_released_by']],'greenyellow',['username'],'hide'],
+		['report_released',[$GLOBALS['release_date'],$GLOBALS['release_time']],'lightgreen',['date','time'],'hide'],		
+		['report_released',[$GLOBALS['released_by']],'lightgreen',['username'],'hide']
 	);
 	
 //$GLOBALS['state_colorcode']=array('white','lightgray','yellow','orange','lightpink','lightblue','lightgreen','lightgreen','lightgreen');
