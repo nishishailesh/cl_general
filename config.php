@@ -111,8 +111,10 @@ $GLOBALS['verification_time']=1034;
 
 $GLOBALS['release_date']=1035;
 $GLOBALS['release_time']=1036;
-
 $GLOBALS['released_by']=1014;
+
+$GLOBALS['interim_release_date']=1037;
+$GLOBALS['interim_release_time']=1038;
 $GLOBALS['interim_released_by']=1019;
 
 #for records
@@ -126,10 +128,8 @@ $GLOBALS['all_records_limit']=100;
 #to ensure that if table donot exist, menu donot get broken
 $GLOBALS['reminders_table']='reminders';
 
-
-
-	
-	$GLOBALS['dates_times']=array(
+/*
+$GLOBALS['dates_times']=array(
 			$GLOBALS['request_date']=>1,
 			$GLOBALS['request_time']=>1,
 			$GLOBALS['collection_date']=>2,
@@ -147,26 +147,52 @@ $GLOBALS['reminders_table']='reminders';
 			$GLOBALS['released_by']=>8,
 			$GLOBALS['interim_released_by']=>8
 			);
+*/
 
-$GLOBALS['state_colorcode']=array('white','lightgray','lightyellow','orange','lightpink','lightblue','lightgreen','lightgreen');
+$GLOBALS['sample_status']=
+array(
+		['sample_requested',[$GLOBALS['request_date'],$GLOBALS['request_time']],'white',['date','time']],
+		['sample_collected',[$GLOBALS['collection_date'],$GLOBALS['collection_time']],'lightgray',['date','time']],
+		['sample_received',[$GLOBALS['receipt_date'],$GLOBALS['receipt_time']],'yellow',['date','time']],
+		['sample_prepared',[$GLOBALS['sample_preparation_date'],$GLOBALS['sample_preparation_time']],'orange',['date','time']],
+		['analysis_started',[$GLOBALS['analysis_date'],$GLOBALS['analysis_time']],'lightpink',['date','time']],
+		['verification_done',[$GLOBALS['verification_date'],$GLOBALS['verification_time']],'lightblue',['date','time']],
+		['interim_report released',[$GLOBALS['interim_release_date'],$GLOBALS['interim_release_time']],'#B0F6DD',['date','time']],		
+		['interim_report released',[$GLOBALS['interim_released_by']],'#B0F6DD',['username']],
+		['report_released',[$GLOBALS['release_date'],$GLOBALS['release_time']],'lightgreen',['date','time']],		
+		['report_released',[$GLOBALS['released_by']],'lightgreen',['username']]
+	);
+	
+//$GLOBALS['state_colorcode']=array('white','lightgray','yellow','orange','lightpink','lightblue','lightgreen','lightgreen','lightgreen');
 
-$GLOBALS['eq_color_code']=array('C'=>'lightpink','I'=>'red','A'=>'cyan','D'=>'lightgreen','6'=>'violet','K'=>'#6699ff');
+$GLOBALS['eq_color_code']=array('C'=>'lightpink','I'=>'red','A'=>'cyan','D'=>'#00F5E0','6'=>'violet','K'=>'#6699ff');
+
 //20200531233109 date format for XL ASTM communication
 //08/01/2020 14:02:40 date format for XL export communication
 
-//example configutation file for passwords
+//example configutation file for passwords  
+//see above: $GLOBALS['main_user_location']='/var/gmcs_config/staff.conf';
 /*
 <?php
 $GLOBALS['main_user']='for main database access';
 $GLOBALS['main_pass']='xyz';
+$ser='Dept Label';
 $GLOBALS['main_server_main_user']='to access distant server';
 $GLOBALS['main_server_main_pass']='xyz';
 
 $GLOBALS['email_user']='to access email-db server';
 $GLOBALS['email_pass']='xyz';
 $GLOBALS['email_db_server']='ip address where email database and exim4 is running for SMARTHOST';
-?>
 
+$GLOBALS['sms_site']    ='complate address link';
+$GLOBALS['sms_UserID']  ='user';
+$GLOBALS['sms_UserPass']='pass';
+$GLOBALS['sms_GSMID']   ='GSMID';
+
+$GLOBALS['_telegram_chatid_']='chat ID';
+$GLOBALS['_telegram_token_']='bot token';
+
+?>
 */
 
 ?>

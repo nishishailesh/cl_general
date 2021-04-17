@@ -4,51 +4,39 @@ require_once 'base/verify_login.php';
 	////////User code below/////////////////////
 require_once 'project_common.php';
 $link=get_link($GLOBALS['main_user'],$GLOBALS['main_pass']);
-	//echo '<div>';
-	main_menu($link); 
-	//echo '</div>';
-	//echo '<div class="btn-group">';
-	dashboard($link);
-	//echo '</div>';
-	//echo '<div class="btn-group">';
-	show_dashboard($link);
-	//echo '</div>';
+//echo '<div>';
+main_menu($link); 
 
-//$GLOBALS['state_colorcode']=array('white','lightgray','lightyellow','orange','lightpink','lightblue','lightgreen','lightgreen');
+//$txt=array('white'=>'Requested','lightgray'=>'Collected','yellow'=>'Received',
+//		'orange'=>'Prepared','lightpink'=>'Analysed','lightblue'=>'Verified','lightgreen'=>'Released');
 
-$txt=array('white'=>'Requested','lightgray'=>'Collected','lightyellow'=>'Received',
-		'orange'=>'Prepared','lightpink'=>'Analysed','lightblue'=>'Verified','lightgreen'=>'Released');
-
-foreach($GLOBALS['state_colorcode'] as $k=>$v)
+foreach($GLOBALS['sample_status'] as $k=>$v)
 {
-	echo '<span  style=" padding:2px; background-color:'.$v.'" >'.$txt[$v].'</span>';
+	echo '<span  style=" margin:2px; background-color:'.$v[2].'" >'.$v[0].'</span>';
 }
+
 $user=get_user_info($link,$_SESSION['login']);
 $auth=explode(',',$user['authorization']);
 if(!in_array('requestonly',$auth))
 {
 	monitor($link);
 }
-		
-				if(isset($_POST['action']))
-				{
-					if( $_POST['action']=='display_data')
-					{
-				
-					$result=prepare_result_from_view_data_id($link,$_POST['id']);
-					
-				
-					}
-				}
-						
+
+if (isset($_POST['action']) && isset($_POST['sample_id']))
+{
+	update_sample_status($link,$_POST['sample_id'],$_POST['action']);
+}					
+
+//////////////user code ends////////////////
+tail();
+//echo '<pre>';print_r($_POST);echo '</pre>';
+
+///////////////////Functions////////////////
 function monitor($link)
 {
 	echo '<div id=monitor class="jumbotron m-0 p-0">Wait for update of recent sample status</div>';
 }
 
-	//////////////user code ends////////////////
-tail();
-//echo '<pre>';print_r($_POST);echo '</pre>';
 
 ?>
 
@@ -65,7 +53,7 @@ jQuery(document).ready(
 
 function start()
 {
-	setTimeout(callServer, 2000);
+	setTimeout(callServer, 0);
 }
 
 function callServer()
@@ -83,7 +71,7 @@ function callServer()
 	xhttp.open('POST', 'monitor.php', true);
 	xhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
 	xhttp.send(post);	
-	setTimeout(callServer, 2000);
+	setTimeout(callServer, 10000);
 }
 
 </script>

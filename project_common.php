@@ -153,6 +153,9 @@ function main_menu($link)
 						<button class="btn btn-outline-primary m-0 p-0" formaction=refrigerator_temperature.php type=submit name=action value=refrigerator_temperature>Refrigerator Temperature</button>
 						<button class="btn btn-outline-primary m-0 p-0" formaction=TAT.php type=submit name=action value=get_TAT_search_condition>TAT</button>
 						<button class="btn btn-outline-primary m-0 p-0" formaction=sms.php type=submit name=action value=sms>SMS</button>
+						<button class="btn btn-outline-primary m-0 p-0" formaction=statistics_and_info.php type=submit name=action value=statistics>Statistics and Info</button>
+						<button class="btn btn-outline-primary m-0 p-0" formaction=dashboard.php type=submit name=action value=dashboard>Dashboard</button>
+						<button class="btn btn-outline-primary m-0 p-0" formaction=update_status.php type=submit name=action value=update_status>Update Status</button>
 					</div>
 				</div>
 		</div>
@@ -340,7 +343,8 @@ function show_all_buttons_for_sample($link,$sample_id)
 {
 	$released_by=get_one_ex_result($link,$sample_id,$GLOBALS['released_by']);
 	$interim_released_by=get_one_ex_result($link,$sample_id,$GLOBALS['interim_released_by']);
-		
+	
+	echo '<div class="btn-group" role="group">';
 	if(requestonly_check($link))		//no interim, no release, allow edit/delete no print
 	{
 		sample_id_barcode_button($sample_id);
@@ -394,6 +398,7 @@ function show_all_buttons_for_sample($link,$sample_id)
 		sample_id_email_button($sample_id);
 		sample_id_telegram_button($sample_id);
 	}
+	echo '</div>';
 }
 
 function sample_exist($link,$sample_id)
@@ -909,7 +914,7 @@ function view_sample_no_profile($link,$sample_id)
 
 function sample_id_edit_button($sample_id,$target='',$label='Edit')
 {
-	echo '<div class="d-inline-block" ><form method=post '.$target.' action=edit_general.php class=print_hide>
+	echo '<div class="d-inline-block"  style="width:100%;"><form method=post '.$target.' action=edit_general.php class=print_hide>
 	<button class="btn btn-outline-primary btn-sm" name=sample_id value=\''.$sample_id.'\' >'.$label.'</button>
 	<input type=hidden name=session_name value=\''.$_POST['session_name'].'\'>
 	<input type=hidden name=action value=edit_general>
@@ -919,11 +924,13 @@ function sample_id_edit_button($sample_id,$target='',$label='Edit')
 
 function sample_id_barcode_button($sample_id)
 {
-	echo '<div class="d-inline-block" >
+	echo '<div class="d-inline-block"  style="width:100%;">
 	<form method=post target=_blank action=print_single_barcode.php class=print_hide>
+	<div class="btn-group" role="group">
 	<button class="btn btn-outline-primary btn-sm" name=action value=one_barcode >[B1]||||</button>
 	<button class="btn btn-outline-primary btn-sm" name=action value=two_barcode >[B1B2]||||</button>
 	<button class="btn btn-outline-primary btn-sm" name=action value=second_barcode >[B2]||||</button>
+	</div>
 	<input type=hidden name=session_name value=\''.$_POST['session_name'].'\'>
 	<input type=hidden name=sample_id value=\''.$sample_id.'\'>
 	</form></div>';
@@ -932,7 +939,7 @@ function sample_id_barcode_button($sample_id)
 function sample_id_barcode_button_array($sample_id_array)
 {
 	$serialized=base64_encode(serialize($sample_id_array));
-	echo '<div class="d-inline-block" >
+	echo '<div class="d-inline-block"  style="width:100%;">
 	<form method=post target=_blank action=print_multiple_barcode.php class=print_hide>
 
 	<button class="btn btn-outline-primary btn-sm" name=action value=one_barcode >[1]||||,||||</button>
@@ -945,7 +952,7 @@ function sample_id_barcode_button_array($sample_id_array)
 
 function sample_id_calculate_button($sample_id)
 {
-	echo '<div class="d-inline-block" ><form method=post action=edit_general.php class=print_hide>
+	echo '<div class="d-inline-block"  style="width:100%;"><form method=post action=edit_general.php class=print_hide>
 	<button class="btn btn-outline-primary btn-sm" name=sample_id value=\''.$sample_id.'\' >Calculate</button>
 	<input type=hidden name=session_name value=\''.$_POST['session_name'].'\'>
 	<input type=hidden name=action value=calculate>
@@ -954,7 +961,7 @@ function sample_id_calculate_button($sample_id)
 
 function sample_id_verify_button($sample_id)
 {
-	echo '<div class="d-inline-block" ><form method=post action=edit_general.php class=print_hide>
+	echo '<div class="d-inline-block"  style="width:100%;"><form method=post action=edit_general.php class=print_hide>
 	<button class="btn btn-outline-primary btn-sm" name=sample_id value=\''.$sample_id.'\' >Verify</button>
 	<input type=hidden name=session_name value=\''.$_POST['session_name'].'\'>
 	<input type=hidden name=action value=verify>
@@ -962,16 +969,16 @@ function sample_id_verify_button($sample_id)
 }
 function sample_id_view_button($sample_id,$target='',$label='View')
 {
-	echo '<div class="d-inline-block" ><form method=post action=view_single.php class=print_hide '.$target.'>
-	<button class="btn btn-outline-success btn-sm text-dark" name=sample_id value=\''.$sample_id.'\' >'.$label.'</button>
+	echo '<div class="d-inline-block" style="width:100%;"><form method=post action=view_single.php class=print_hide '.$target.'>
+	<button class="btn btn-outline-success btn-sm text-dark " name=sample_id value=\''.$sample_id.'\' >'.$label.'</button>
 	<input type=hidden name=session_name value=\''.$_POST['session_name'].'\'>
-	<input type=hidden name=action value=view_single>
-	</form></div>';
+	<input type=hidden name=action value=view_single>';
+	echo '</form></div>';
 }
 
 function sample_id_sync_all_button($sample_id,$target='')
 {
-	echo '<div class="d-inline-block" ><form method=post action=edit_general.php class=print_hide>
+	echo '<div class="d-inline-block"  style="width:100%;"><form method=post action=edit_general.php class=print_hide>
 	<button class="btn btn-sm btn-warning" name=sample_id value=\''.$sample_id.'\' >Sync ALL</button>
 	<input type=hidden name=session_name value=\''.$_POST['session_name'].'\'>
 	<input type=hidden name=action value=sync_ALL>
@@ -980,16 +987,16 @@ function sample_id_sync_all_button($sample_id,$target='')
 
 function sample_id_print_button($sample_id)
 {
-	echo '<div class="d-inline-block" ><form method=post action=print_single.php target=_blank class=print_hide>
+	echo '<div class="d-inline-block"  style="width:100%;"><form method=post action=print_single.php target=_blank class=print_hide>
 	<button class="btn btn-outline-success btn-sm" name=sample_id value=\''.$sample_id.'\' >Print</button>
 	<input type=hidden name=session_name value=\''.$_POST['session_name'].'\'>
 	<input type=hidden name=action value=print_single>
 	</form></div>';
 }
-		
+
 function sample_id_email_button($sample_id)			
 {
-	echo '<div class="d-inline-block" ><form method=post action=email_single.php class=print_hide>
+	echo '<div class="d-inline-block"  style="width:100%;"><form method=post action=email_single.php class=print_hide>
 	<button class="btn btn-outline-success btn-sm" name=sample_id value=\''.$sample_id.'\' >Email</button>
 	<input type=hidden name=session_name value=\''.$_POST['session_name'].'\'>
 	<input type=hidden name=action value=email_single>
@@ -998,7 +1005,7 @@ function sample_id_email_button($sample_id)
 
 function sample_id_telegram_button($sample_id)			
 {
-	echo '<div class="d-inline-block" ><form method=post action=telegram.php class=print_hide>
+	echo '<div class="d-inline-block"  style="width:100%;"><form method=post action=telegram.php class=print_hide>
 	<button class="btn btn-outline-success btn-sm" name=sample_id value=\''.$sample_id.'\' >Telegram</button>
 	<input type=hidden name=session_name value=\''.$_POST['session_name'].'\'>
 	<input type=hidden name=action value=telegram>
@@ -1008,7 +1015,7 @@ function sample_id_telegram_button($sample_id)
 
 function sample_id_next_button($sample_id)
 {
-	echo '<div class="d-inline-block" ><form method=post action=view_single.php  class=print_hide>
+	echo '<div class="d-inline-block"  style="width:100%;"><form method=post action=view_single.php  class=print_hide>
 	<button class="btn btn-outline-danger btn-sm m-0 p-0" name=sample_id value=\''.($sample_id+1).'\' >Next</button>
 	<input type=hidden name=session_name value=\''.$_POST['session_name'].'\'>
 	<input type=hidden name=action value=view_single>
@@ -1018,7 +1025,7 @@ function sample_id_next_button($sample_id)
 
 function sample_id_prev_button($sample_id)
 {
-	echo '<div class="d-inline-block " ><form method=post action=view_single.php class=print_hide>
+	echo '<div class="d-inline-block  style="width:100%;"" ><form method=post action=view_single.php class=print_hide>
 	<button class="btn btn-outline-danger  btn-sm m-0 p-0" name=sample_id value=\''.($sample_id-1).'\' >Previous</button>
 	<input type=hidden name=session_name value=\''.$_POST['session_name'].'\'>
 	<input type=hidden name=action value=view_single>
@@ -1027,7 +1034,7 @@ function sample_id_prev_button($sample_id)
 
 function sample_id_prev_button_edit($sample_id)
 {
-	echo '<div class="d-inline-block " ><form method=post action=edit_general.php class=print_hide>
+	echo '<div class="d-inline-block "  style="width:100%;"><form method=post action=edit_general.php class=print_hide>
 	<button class="btn btn-outline-danger  btn-sm m-0 p-0" name=sample_id value=\''.($sample_id-1).'\' >Previous</button>
 	<input type=hidden name=session_name value=\''.$_POST['session_name'].'\'>
 	<input type=hidden name=action value=edit_general>
@@ -1036,7 +1043,7 @@ function sample_id_prev_button_edit($sample_id)
 
 function sample_id_next_button_edit($sample_id)
 {
-	echo '<div class="d-inline-block" ><form method=post action=edit_general.php  class=print_hide>
+	echo '<div class="d-inline-block"  style="width:100%;"><form method=post action=edit_general.php  class=print_hide>
 	<button class="btn btn-outline-danger btn-sm m-0 p-0" name=sample_id value=\''.($sample_id+1).'\' >Next</button>
 	<input type=hidden name=session_name value=\''.$_POST['session_name'].'\'>
 	<input type=hidden name=action value=edit_general>
@@ -1046,7 +1053,7 @@ function sample_id_next_button_edit($sample_id)
 
 function sample_id_delete_button($sample_id)
 {
-	echo '<div class="d-inline-block" ><form method=post action=delete_sample.php class=print_hide>
+	echo '<div class="d-inline-block"  style="width:100%;"><form method=post action=delete_sample.php class=print_hide>
 	<button onclick="return confirm(\'delete really?\')" class="btn btn-outline-dark btn-sm" name=sample_id value=\''.$sample_id.'\' >Delete</button>
 	<input type=hidden name=session_name value=\''.$_POST['session_name'].'\'>
 	<input type=hidden name=action value=delete_sample>
@@ -1056,7 +1063,7 @@ function sample_id_delete_button($sample_id)
 
 function sample_id_release_button($sample_id)
 {
-	echo '<div class="d-inline-block" ><form method=post action=release_sample.php class=print_hide>
+	echo '<div class="d-inline-block"  style="width:100%;"><form method=post action=release_sample.php class=print_hide>
 	<button class="btn btn-outline-secondary btn-sm" name=sample_id value=\''.$sample_id.'\' >Release</button>
 	<input type=hidden name=session_name value=\''.$_POST['session_name'].'\'>
 	<input type=hidden name=action value=release_sample>
@@ -1066,7 +1073,7 @@ function sample_id_release_button($sample_id)
 
 function sample_id_interim_release_button($sample_id)
 {
-	echo '<div class="d-inline-block" ><form method=post action=interim_release_sample.php class=print_hide>
+	echo '<div class="d-inline-block"  style="width:100%;"><form method=post action=interim_release_sample.php class=print_hide>
 	<button class="btn btn-outline-secondary btn-sm" name=sample_id value=\''.$sample_id.'\' >Interim Release</button>
 	<input type=hidden name=session_name value=\''.$_POST['session_name'].'\'>
 	<input type=hidden name=action value=interim_release_sample>
@@ -1075,7 +1082,7 @@ function sample_id_interim_release_button($sample_id)
 
 function sample_id_unrelease_button($sample_id)
 {
-	echo '<div class="d-inline-block" ><form method=post action=unrelease_sample.php class=print_hide>
+	echo '<div class="d-inline-block"  style="width:100%;"><form method=post action=unrelease_sample.php class=print_hide>
 	<button class="btn btn-outline-secondary btn-sm" name=sample_id value=\''.$sample_id.'\' >Un-Release</button>
 	<input type=hidden name=session_name value=\''.$_POST['session_name'].'\'>
 	<input type=hidden name=action value=unrelease_sample>
@@ -1170,7 +1177,7 @@ function edit_sample($link,$sample_id)
 	echo '<div class="basic_form">
 			<div class=my_label ><span class="badge badge-primary ">Sample ID</span>
 			<span class="badge badge-info"><h5>'.$sample_id.'</h5></span></div>
-			<div>';
+			<div class="btn-group" role="group">';
 				sample_id_prev_button_edit($sample_id);
 				sample_id_next_button_edit($sample_id);
 				
@@ -4107,7 +4114,8 @@ function set_sample_id($link, $sample_required_array)
 			//echo $GLOBALS['sample_requirement'];
 			insert_one_examination_with_result($link,$sample_id_array[$stype],$GLOBALS['sample_requirement'],$stype);
 			insert_one_examination_with_result($link,$sample_id_array[$stype],$GLOBALS['released_by'],'');
-			
+			insert_one_examination_with_result($link,$sample_id_array[$stype],$GLOBALS['release_date'],'');
+			insert_one_examination_with_result($link,$sample_id_array[$stype],$GLOBALS['release_time'],'');			
 			//echo 'qq';
 		}
 	}
@@ -5655,19 +5663,6 @@ $GLOBALS['released_by']=1014;
 $GLOBALS['interim_released_by']=1019;
  * */
  
-function get_sample_status($link,$sample_id)
-{
-	
-	$date_time_data=array();
-	foreach ($GLOBALS['dates_times'] as $each_ex=>$state)
-	{
-		$date_time_data[$each_ex]=get_one_ex_result($link,$sample_id,$each_ex);
-	}
-
-	return $date_time_data;
-}
-
-
 function get_equipment_str($link,$sample_id)
 {
 	$r=get_result_of_sample_in_array($link,$sample_id);
@@ -5693,26 +5688,71 @@ function get_equipment_str($link,$sample_id)
 	return $eq_str;
 }
 
-function show_sid_button_release_status($link,$sid)
+function show_sid_button_release_status($link,$sid,$extra_post='')
 {
-	$final_state=1;
-	foreach ($GLOBALS['dates_times'] as $each_ex=>$state )
+	$final_state=0;
+	foreach ($GLOBALS['sample_status'] as $status_index=>$status_array )
 	{
-		$len=strlen(get_one_ex_result($link,$sid,$each_ex));
-		if($len>0)
+		$temp_state=0;
+		foreach($status_array[1] as $key=>$ex_id)
 		{
-			$final_state=$state;
+			$len=strlen(get_one_ex_result($link,$sid,$ex_id));
+			if($len>0)
+			{
+				$temp_state=$temp_state+1;
+			}
+			if($temp_state==count($status_array[1]))
+			{
+				$final_state=$status_index;
+			}
 		}
 	}
 
+	$pid=get_one_ex_result($link,$sid,$GLOBALS['patient_name']);
+	$mrd_local=get_one_ex_result($link,$sid,$GLOBALS['mrd']);
+	$location=get_one_ex_result($link,$sid,$GLOBALS['OPD/Ward']);
+	
+	echo '<div class="btn-group-vertical m-0 p-0 border border-light">';
+		echo '<div class="btn-group d-inline-block">
+				<button type="button" 
+				style="background-color:'.$GLOBALS['sample_status'][$final_state][2].'" 
+				class="m-0 p-0 btn btn-success btn-block btn-sm dropdown-toggle text-dark" 
+				data-toggle="dropdown">'.$sid.'</button>
+				
+				<ul class="dropdown-menu">
+					<li>'.$pid.'</li><li>'.$mrd_local.'</li><li>'.$location.'</li>';
+					get_sample_action($link,$sid,$extra_post);
+				echo '</ul>
+			</div>';
+		
 	sample_id_view_button(
 		$sid,
-		'target=_blank style="background-color:'.$GLOBALS['state_colorcode'][$final_state-1].'" ',
-		//$sid
-		$sid.'<br>'.colorize_eq_str(get_equipment_str($link,$sid))
-		//$sid.' '.str_pad(get_equipment_str($link,$sid),3," ")
+		'target=_blank style="background-color:'.$GLOBALS['sample_status'][$final_state][2].'" ',
+		colorize_eq_str(get_equipment_str($link,$sid))
 		);
+	echo '</div>';
 }
+
+
+function get_sample_action($link,$sample_id,$extra_post)
+{
+	echo '<div class="d-inline-block" >
+	<form method=post>';
+	echo $extra_post;
+	foreach($GLOBALS['sample_status'] as $index=>$status_details)
+	{
+		echo '<button 
+					type=submit 
+					class="btn btn-outline-dark btn-sm" 
+					name=action 
+					value=\''.$status_details[0].'\' >'.$status_details[0].'</button>';
+	}
+	
+	echo '<input type=hidden name=session_name value=\''.$_POST['session_name'].'\'>
+	<input type=hidden name=sample_id value=\''.$sample_id.'\'>
+	</form></div>';	
+}
+
 
 function colorize_eq_str($str_real)
 {
@@ -5733,29 +5773,6 @@ function colorize_eq_str($str_real)
 	return $colorised_str;
 }
 
-function show_sid_button_equipment_status($link,$sid)
-{
-	$final_state=1;
-	foreach ($GLOBALS['dates_times'] as $each_ex=>$state )
-	{
-		$len=strlen(get_one_ex_result($link,$sid,$each_ex));
-		if($len>0)
-		{
-			$final_state=$state;
-		}
-	}
-
-    //$b_style='style = "background: linear-gradient(-90deg, lightpink 25%, yellow 25%, lightblue 50%)"';
-    $b_style='';
-    
-	sample_id_view_button(
-		$sid,
-		'target=_blank '.$b_style,
-		$sid.'<br>'.get_equipment_str($link,$sid)
-		);
-}
-
-
 function show_sid_button_release_status_and_pid($link,$sid)
 {
 	$released_by_local=get_one_ex_result($link,$sid,$GLOBALS['released_by']);
@@ -5764,15 +5781,12 @@ function show_sid_button_release_status_and_pid($link,$sid)
 	$location=get_one_ex_result($link,$sid,$GLOBALS['OPD/Ward']);
 
 
-	$ss=get_sample_status($link,$sid);
 	if(strlen($released_by_local)==0)
 	{
 		sample_id_view_button(
 			$sid,
 			'target=_blank',
 			'<span class="text-danger rounded" >'.$sid.'</span>
-			<span class="badge badge-secondary "><pre class="d-inline text-white">'.$ss[0].'</pre></span>
-			<span class="badge badge-secondary"><pre class="d-inline  text-white">'.$ss[1].'</pre></span>
 			<span class="text-primary"><pre class="d-inline">'.$pid.'</pre></span>
 			<span class="text-primary"><pre class="d-inline">'.$mrd_local.'</pre></span>
 			<span class="text-primary"><pre class="d-inline">'.$location.'</pre></span>'
@@ -5784,8 +5798,6 @@ function show_sid_button_release_status_and_pid($link,$sid)
 		$sid,
 		'target=_blank',
 		'<span class="text-dark rounded" >'.$sid.'</span>
-			<span class="badge  badge-secondary"><pre class="d-inline  text-white">'.$ss[0].'</pre></span>
-			<span class="badge  badge-secondary"><pre class="d-inline  text-white">'.$ss[1].'</pre></span>
 			<span class="text-primary"><pre class="d-inline">'.$pid.'</pre></span>
 			<span class="text-primary"><pre class="d-inline">'.$mrd_local.'</pre></span>
 			<span class="text-primary"><pre class="d-inline">'.$location.'</pre></span>'
@@ -5961,6 +5973,39 @@ function view_sql_result_as_table($link,$sql,$show_hide='yes')
 		 return false;
 	}
 	display_sql_result_data($result,$show_hide);
+}
+
+
+function update_sample_status($link,$sample_id,$action)
+{
+	echo '<h1>'.$_POST['action'].'</h1>';
+	foreach($GLOBALS['sample_status'] as $index=>$status_array)
+	{
+		if($status_array[0]==$_POST['action'])
+		{
+			$kcounter=0;
+			foreach($status_array[1] as $key=>$ex_id)
+			{
+				if($status_array[3][$kcounter]=='date')
+				{
+					insert_update_one_examination_with_result($link,$sample_id,$ex_id,strftime("%Y-%m-%d"));
+				}
+				elseif($status_array[3][$kcounter]=='time')
+				{
+					insert_update_one_examination_with_result($link,$sample_id,$ex_id,strftime("%H:%M:%S"));
+				}
+				elseif($status_array[3][$kcounter]=='username')
+				{
+					$user=get_user_info($link,$_SESSION['login']);
+					insert_update_one_examination_with_result($link,$sample_id,$ex_id,$user['name']);
+				}
+				$kcounter++;
+			}
+		}
+	}
+	
+	
+	
 }
 
 ?>

@@ -16,6 +16,8 @@ if(in_array('interimlock',$auth))
 	delete_examination($link,$_POST['sample_id'],$GLOBALS['interim_released_by']);
 	insert_one_examination_with_result($link,$_POST['sample_id'],
 			$GLOBALS['interim_released_by'],$user['name'].' ('.strftime("%Y-%m-%d %H:%M").')');
+	update_one_examination_with_result($link,$_POST['sample_id'],$GLOBALS['interim_release_date'],strftime("%Y-%m-%d"));
+	update_one_examination_with_result($link,$_POST['sample_id'],$GLOBALS['interim_release_time'],strftime("%H:%M:%S"));			
 }
 else
 {

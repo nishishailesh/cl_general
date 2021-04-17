@@ -18,6 +18,8 @@ if(in_array('lock',$auth))
 	//		$GLOBALS['released_by'],$user['name'].' ('.strftime("%Y-%m-%d %H:%M").')');
 	
 	update_one_examination_with_result($link,$_POST['sample_id'],$GLOBALS['released_by'],$user['name'].' ('.strftime("%Y-%m-%d %H:%M").')');
+	update_one_examination_with_result($link,$_POST['sample_id'],$GLOBALS['release_date'],strftime("%Y-%m-%d"));
+	update_one_examination_with_result($link,$_POST['sample_id'],$GLOBALS['release_time'],strftime("%H:%M:%S"));
 
 }
 else
@@ -25,7 +27,7 @@ else
 	echo '<h3>You are not authorized to release report</h3>';
 }
 view_sample($link,$_POST['sample_id']);
-calculate_tat($link,$_POST['sample_id']);
+//calculate_tat($link,$_POST['sample_id']);
 
 //////////////user code ends////////////////
 tail();

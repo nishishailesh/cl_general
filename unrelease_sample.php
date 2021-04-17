@@ -15,7 +15,8 @@ if(in_array('unlock',$auth))
 {
 	//delete_examination($link,$_POST['sample_id'],$GLOBALS['released_by']);
 	update_one_examination_with_result($link,$_POST['sample_id'],$GLOBALS['released_by'],'');
-
+	update_one_examination_with_result($link,$_POST['sample_id'],$GLOBALS['release_date'],'');
+	update_one_examination_with_result($link,$_POST['sample_id'],$GLOBALS['release_time'],'');
 }
 else
 {

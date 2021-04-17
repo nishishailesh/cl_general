@@ -55,8 +55,11 @@ echo '<div class="two_column">';
 	echo '<div class="ten_column">';
 				for ($i=$rounded_start_id;$i<$rounded_start_id+$lot_size;$i++)
 				{
-					echo '<div class="btn-group-vertical m-0 p-0 rounded">';
+					echo '<div class="btn-group-vertical m-0 p-0">';
+					//echo '<div border border-warning>';
 					show_sid_button_release_status($link,$i);
+					show_sample_dropdown($link,$i);
+					//echo '</div>';
 					echo '</div>';
 				}			
 	
@@ -67,10 +70,26 @@ echo '<div class="two_column">';
 			{
 				echo '<div class="btn-group-vertical m-0 p-0">';
 				show_sid_button_release_status($link,$i);
+				show_sample_dropdown($link,$i);
 				echo '</div>';
 			}							
 	echo '</div>';
 echo '</div>';
-//echo '<pre>';print_r($_POST);echo '</pre>';
+
+
+function show_sample_dropdown($link,$sid)
+{
+	echo '
+<div class="btn-group">
+  <button type="button" class="m-0 p-0 btn btn-success btn-block btn-sm dropdown-toggle" data-toggle="dropdown">'.$sid.'</button>
+  <ul class="dropdown-menu">
+    <li><a href="#">'.$sid.'</a></li>
+    <li><a href="#">Another action</a></li>
+    <li><a href="#">Something else here</a></li>
+    <li role="separator" class="divider"></li>
+    <li><a href="#">Separated link</a></li>
+  </ul>
+</div>';
+}
 
 ?>

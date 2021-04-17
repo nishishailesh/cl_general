@@ -13,15 +13,11 @@ $link=get_link($GLOBALS['main_user'],$GLOBALS['main_pass']);
 main_menu($link);
 insert_sample_id_link($link,$_POST['sample_id']);
 ob_start();
-echo "\n==PDF Report (".$_POST['sample_id'].")==\n";
-make_link($link,$_POST['sample_id']);
-echo "\n\n==Summary Report==\n";
-view_sample_telegram($link,$_POST['sample_id']);
-echo "\n================\n";
-echo "<code>Units, Ref. Interval, Method</code>";
-echo "\n================\n";
 
-view_sample_telegram_extra($link,$_POST['sample_id']);
+view_sample_telegram($link,$_POST['sample_id']);
+echo "\nDetailed PDF:\n";
+make_link($link,$_POST['sample_id']);
+
 $x = ob_get_contents();
 ob_end_clean();
 
@@ -106,20 +102,20 @@ function view_sample_telegram($link,$sample_id)
 		$sr_array=explode('-',$sr);
 		//print_r($sr_array);
 		$header=$GLOBALS[$sr_array[2]];
-		echo "<b>".$header["name"]."</b>\n";
-		echo "<b>".$header["section"]."</b>\n";
-		echo "<b>".$header["address"]."</b>\n";
-		echo "<b>".$header["phone"]."</b>\n";
-		echo "\n================\n";
+		//echo "<b>".$header["name"]."</b>\n";
+		//echo "<b>".$header["section"]."</b>\n";
+		//echo "<b>".$header["address"]."</b>\n";
+		//echo "<b>".$header["phone"]."</b>\n";
+		//echo "\n================\n";
 		echo "<b>Sample_ID:<u>".$sample_id."</u></b>";
-		echo "\n================\n";
+		//echo "\n================\n";
 	}
 
 	
 	foreach($profile_wise_ex_list as $kp=>$vp)
 	{
 		$pinfo=get_profile_info($link,$kp);
-		echo "\n<code>".$pinfo['name']."-------</code>\n";
+		echo "\n<code>".str_pad($pinfo['name'],25,'-')."</code>\n";
 		$profile_edit_specification=json_decode($pinfo['edit_specification'],true);
 		$print_style=isset($profile_edit_specification['print_style'])?$profile_edit_specification['print_style']:'';		
 		foreach($vp as $ex_id)
