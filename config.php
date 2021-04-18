@@ -156,7 +156,7 @@ array(
 		['sample_received',[$GLOBALS['receipt_date'],$GLOBALS['receipt_time']],'yellow',['date','time'],'show'],
 		['sample_prepared',[$GLOBALS['sample_preparation_date'],$GLOBALS['sample_preparation_time']],'orange',['date','time'],'show'],
 		['analysis_started',[$GLOBALS['analysis_date'],$GLOBALS['analysis_time']],'lightpink',['date','time'],'show'],
-		['verification_done',[$GLOBALS['verification_date'],$GLOBALS['verification_time']],'lightblue',['date','time'],'show'],
+		['verification_done',[$GLOBALS['verification_date'],$GLOBALS['verification_time']],'lightblue',['date','time'],'hide'],
 		['interim_report_released',[$GLOBALS['interim_release_date'],$GLOBALS['interim_release_time']],'greenyellow',['date','time'],'hide'],		
 		['interim_report_released',[$GLOBALS['interim_released_by']],'greenyellow',['username'],'hide'],
 		['report_released',[$GLOBALS['release_date'],$GLOBALS['release_time']],'lightgreen',['date','time'],'hide'],		

@@ -446,8 +446,10 @@ function view_sample($link,$sample_id)
 	
 	
 		echo '<div class="basic_form">
-			<div class=my_label ><span class="badge badge-primary ">Sample ID</span>
-			<span class="badge badge-info"><h5>'.$sample_id.'</h5></span></div>			<div>';
+				<div class=my_label ><span class="badge badge-primary ">Sample ID</span>
+									<span class="badge badge-info"><h5>'.$sample_id.'</h5></span>
+				</div>';
+			
 			show_all_buttons_for_sample($link,$sample_id);
 			echo '</div>
 			<div class="help print_hide"></div>';
@@ -967,6 +969,16 @@ function sample_id_verify_button($sample_id)
 	<input type=hidden name=action value=verify>
 	</form></div>';
 }
+
+function sample_id_verification_done_button($sample_id)
+{
+	echo '<div class="d-inline-block"  style="width:100%;"><form method=post action=edit_general.php class=print_hide>
+	<button class="btn btn-outline-primary btn-sm" name=sample_id value=\''.$sample_id.'\' >Verification Done</button>
+	<input type=hidden name=session_name value=\''.$_POST['session_name'].'\'>
+	<input type=hidden name=action value=verification_done>
+	</form></div>';
+}
+
 function sample_id_view_button($sample_id,$target='',$label='View')
 {
 	echo '<div class="d-inline-block" style="width:100%;"><form method=post action=view_single.php class=print_hide '.$target.'>
@@ -1025,7 +1037,7 @@ function sample_id_next_button($sample_id)
 
 function sample_id_prev_button($sample_id)
 {
-	echo '<div class="d-inline-block  style="width:100%;"" ><form method=post action=view_single.php class=print_hide>
+	echo '<div class="d-inline-block"  style="width:100%;" ><form method=post action=view_single.php class=print_hide>
 	<button class="btn btn-outline-danger  btn-sm m-0 p-0" name=sample_id value=\''.($sample_id-1).'\' >Previous</button>
 	<input type=hidden name=session_name value=\''.$_POST['session_name'].'\'>
 	<input type=hidden name=action value=view_single>
@@ -1187,13 +1199,14 @@ function edit_sample($link,$sample_id)
 					sample_id_edit_button($sample_id);
 					sample_id_calculate_button($sample_id);
 					sample_id_verify_button($sample_id);
+					sample_id_verification_done_button($sample_id);
 					sample_id_sync_all_button($sample_id);
 				}
 				
 				sample_id_view_button($sample_id);
 
-				//removed javascript based system
-				//echo '<button class="btn btn-sm btn-warning" onclick="sync_all()">Sync All</button>';
+			//echo_sample_action_button_for_sample_id($s);
+			
 			echo '</div>
 			<div class=help>Unique Number to get this data</div>';
 	echo '</div>';	
@@ -5712,7 +5725,10 @@ function show_sid_button_release_status($link,$sid,$extra_post='')
 	$mrd_local=get_one_ex_result($link,$sid,$GLOBALS['mrd']);
 	$location=get_one_ex_result($link,$sid,$GLOBALS['OPD/Ward']);
 	
+	
 	echo '<div class="btn-group-vertical m-0 p-0 border border-light">';
+
+
 		echo '<div class="btn-group d-inline-block">
 				<button type="button" 
 				style="background-color:'.$GLOBALS['sample_status'][$final_state][2].'" 
@@ -5721,15 +5737,19 @@ function show_sid_button_release_status($link,$sid,$extra_post='')
 				
 				<ul class="dropdown-menu">
 					<li>'.$pid.'</li><li>'.$mrd_local.'</li><li>'.$location.'</li>';
-					get_sample_action($link,$sid,$extra_post);
+					if(!requestonly_check($link))
+					{	
+						get_sample_action($link,$sid,$extra_post);
+					}
 				echo '</ul>
 			</div>';
-		
-	sample_id_view_button(
-		$sid,
-		'target=_blank style="background-color:'.$GLOBALS['sample_status'][$final_state][2].'" ',
-		colorize_eq_str(get_equipment_str($link,$sid))
-		);
+
+	
+		sample_id_view_button(
+			$sid,
+			'target=_blank style="background-color:'.$GLOBALS['sample_status'][$final_state][2].'" ',
+			colorize_eq_str(get_equipment_str($link,$sid))
+			);
 	echo '</div>';
 }
 
@@ -5996,7 +6016,7 @@ function update_sample_status($link,$sample_id,$action)
 				}
 				elseif($status_array[3][$kcounter]=='time')
 				{
-					insert_update_one_examination_with_result($link,$sample_id,$ex_id,strftime("%H:%M:%S"));
+					insert_update_one_examination_with_result($link,$sample_id,$ex_id,strftime("%H:%M"));
 				}
 				elseif($status_array[3][$kcounter]=='username')
 				{
@@ -6008,5 +6028,39 @@ function update_sample_status($link,$sample_id,$action)
 		}
 	}
 }
+
+
+function echo_sample_action_button()
+{
+	echo '<div class="d-inline-block" >';
+	foreach($GLOBALS['sample_status'] as $index=>$status_details)
+	{
+		if($status_details[4]=='show')
+		{
+			echo '<button 
+					type=submit 
+					class="btn btn-outline-dark btn-sm " 
+					style="background-color:'.$status_details[2].'" 
+					name=status_action
+					value=\''.$status_details[0].'\' >'.$status_details[0].'</button>';
+		}
+	}
+
+	echo '</div>';	
+}
+
+
+function update_all_sample_status($link,$action,$post)
+{
+		foreach($post as $k=>$v)
+		{
+			if(is_int($k))
+			{
+				update_sample_status($link,$k,$action);
+			}
+		}
+}
+
+
 
 ?>

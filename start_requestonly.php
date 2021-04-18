@@ -6,19 +6,16 @@ $link=get_link($GLOBALS['main_user'],$GLOBALS['main_pass']);
 //echo '<div>';
 main_menu($link); 
 
-
-
 $user=get_user_info($link,$_SESSION['login']);
 $auth=explode(',',$user['authorization']);
-
-//if(!in_array('requestonly',$auth))
-//{
+if(!in_array('requestonly',$auth))
+{
 	foreach($GLOBALS['sample_status'] as $k=>$v)
 	{
 		echo '<span  style=" margin:2px; background-color:'.$v[2].'" >'.$v[0].'</span>';
 	}
 	monitor($link);
-//}
+}
 
 if (isset($_POST['action']) && isset($_POST['sample_id']))
 {
@@ -27,8 +24,8 @@ if (isset($_POST['action']) && isset($_POST['sample_id']))
 
 //////////////user code ends////////////////
 tail();
-echo '<pre>start:post';print_r($_POST);echo '</pre>';
-echo '<pre>start:session';print_r($_SESSION);echo '</pre>';
+//echo '<pre>';print_r($_POST);echo '</pre>';
+//echo '<pre>';print_r($_SESSION);echo '</pre>';
 
 ///////////////////Functions////////////////
 function monitor($link)
@@ -65,7 +62,7 @@ function callServer()
 			document.getElementById('monitor').innerHTML = xhttp.responseText;
 		}
 	};
-	post='session_name=<?php echo $_POST["session_name"];?>&login=<?php echo $_SESSION["login"];?>&password=<?php echo $_SESSION["password"];?>';
+	post='session_name=<?php echo $_POST["session_name"];?>;'
 	xhttp.open('POST', 'monitor.php', true);
 	xhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
 	xhttp.send(post);	

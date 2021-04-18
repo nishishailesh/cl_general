@@ -117,39 +117,10 @@ function show_sid_button_for_status_change($link,$sid)
 	$label=$sid.'<br>'.colorize_eq_str(get_equipment_str($link,$sid));
 	
 	echo '
-	<div class="d-inline-block border border-success" style="background-color:'.$GLOBALS['sample_status'][$final_state][2].'">
+	<div class="d-inline-block border border-success m-0 p-0" style="background-color:'.$GLOBALS['sample_status'][$final_state][2].'">
 		<input  type="checkbox" name=\''.$sid.'\' id='.$sid.'>
-		<label   for='.$sid.'>'.$label.'</label>
+		<label   class="m-0 p-0" for='.$sid.'>'.$label.'</label>
 	</div>';
 }
 
-function echo_sample_action_button()
-{
-	echo '<div class="d-inline-block" >';
-	foreach($GLOBALS['sample_status'] as $index=>$status_details)
-	{
-		if($status_details[4]=='show')
-		{
-			echo '<button 
-					type=submit 
-					class="btn btn-outline-dark btn-sm " 
-					style="background-color:'.$status_details[2].'" 
-					name=status_action
-					value=\''.$status_details[0].'\' >'.$status_details[0].'</button>';
-		}
-	}
-
-	echo '</div>';	
-}
-
-function update_all_sample_status($link,$action,$post)
-{
-		foreach($post as $k=>$v)
-		{
-			if(is_int($k))
-			{
-				update_sample_status($link,$k,$action);
-			}
-		}
-}
 ?>

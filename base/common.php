@@ -1,10 +1,10 @@
 <?php
 
 
-function login()
+function login($action='start.php')
 {
 echo '
-				<form method=post action=start.php class="form-group jumbotron  m-0 p-3">
+				<form method=post action=\''.$action.'\' class="form-group jumbotron  m-0 p-3">
 						<h3>Login</h3>
 						<div><input class="form-control" type=text name=login placeholder=Username></div>
 						<div><input class="form-control" type=password name=password placeholder=Password></div>

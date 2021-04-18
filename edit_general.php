@@ -65,6 +65,12 @@ if($_POST['action']=='verify')
 	edit_sample($link,$_POST['sample_id']);
 }
 
+if($_POST['action']=='verification_done')
+{
+	update_sample_status($link,$_POST['sample_id'],'verification_done');
+	edit_sample($link,$_POST['sample_id']);
+}
+
 if($_POST['action']=='save_primary_result')
 {
     //[session_name] => sn_1241728485
