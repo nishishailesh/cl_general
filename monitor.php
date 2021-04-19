@@ -71,7 +71,8 @@ else
 }
 
 $start_id=$ar['max_id']+$offset - 2*$lot_size;	//100566 -> 100566 +4 -200 =100560 - 200 = 100360 
-$rounded_start_id=$start_id+1;		//100361
+$rounded_start_id=$start_id+1+$_POST['show_offset'];		//100361
+$end_id=$ar['max_id']+$_POST['show_offset'];
 
 echo '<div class="two_column">';
 	echo '<div class="ten_column">';
@@ -85,7 +86,7 @@ echo '<div class="two_column">';
 	echo '</div>';
 
 	echo '<div class="ten_column">';
-			for ($i=$rounded_start_id+$lot_size;$i<=$ar['max_id'];$i++)
+			for ($i=$rounded_start_id+$lot_size;$i<=$end_id;$i++)
 			{
 				echo '<div class="btn-group-vertical m-0 p-0">';
 				show_sid_button_release_status($link,$i);
@@ -93,8 +94,8 @@ echo '<div class="two_column">';
 			}							
 	echo '</div>';
 echo '</div>';
-echo '<pre>monitor:post';print_r($_POST);echo '</pre>';
-echo '<pre>monitor:session';print_r($_SESSION);echo '</pre>';
+//echo '<pre>monitor:post';print_r($_POST);echo '</pre>';
+//echo '<pre>monitor:session';print_r($_SESSION);echo '</pre>';
 
 function get_user_info($link,$user)
 {

@@ -4275,31 +4275,26 @@ function view_sample_p($link,$sample_id,$profile_wise_ex_list)
 
 			foreach($vp as $ex_id)
 			{
-				if($count%3==1)
-				{
-					echo '<tr>';
-				}
+
 
 				$examination_details=get_one_examination_details($link,$ex_id);
 				$edit_specification=json_decode($examination_details['edit_specification'],true);
 				$type=isset($edit_specification['type'])?$edit_specification['type']:'';					
-				if($type!='blob')
+				$hide=isset($edit_specification['hide'])?$edit_specification['hide']:'';
+
+				if($type!='blob' && $hide!='yes')
 				{
+					if($count%3==1){echo '<tr>';}
+					
 					echo '<td style="border-right:0.1px solid black;">';
 					view_field_hr_p($link,$ex_id,$ex_list[$ex_id]);	
 					echo '</td>';
+					
+					if($count%3==0){echo '</tr>';}
+					
+					$count++;
 				}
-				else
-				{
-					//view_field_blob_hr($link,$ex_id,$sample_id);	
-				}
-				
-				
-				if($count%3==0)
-				{
-					echo '</tr>';
-				}
-			$count++;
+			
 			}
 			$count--;
 			
