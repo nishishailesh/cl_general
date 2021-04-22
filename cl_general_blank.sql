@@ -1,8 +1,8 @@
--- MySQL dump 10.17  Distrib 10.3.23-MariaDB, for debian-linux-gnu (x86_64)
+-- MySQL dump 10.17  Distrib 10.3.22-MariaDB, for debian-linux-gnu (x86_64)
 --
 -- Host: localhost    Database: cl_general
 -- ------------------------------------------------------
--- Server version	10.3.23-MariaDB-0+deb10u1
+-- Server version	10.3.22-MariaDB-0+deb10u1
 
 /*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
 /*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
@@ -14,22 +14,6 @@
 /*!40014 SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS=0 */;
 /*!40101 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='NO_AUTO_VALUE_ON_ZERO' */;
 /*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
-
---
--- Table structure for table `Description`
---
-
-DROP TABLE IF EXISTS `Description`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `Description` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
-  `Description` varchar(500) DEFAULT NULL,
-  `recorded_by` varchar(50) DEFAULT NULL,
-  `recording_time` datetime DEFAULT NULL,
-  PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb4;
-/*!40101 SET character_set_client = @saved_cs_client */;
 
 --
 -- Table structure for table `Extent`
@@ -94,13 +78,13 @@ DROP TABLE IF EXISTS `IQC`;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `IQC` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
-  `Parameter` varchar(50) DEFAULT NULL,
-  `Description` varchar(200) DEFAULT NULL,
+  `Parameter` varchar(100) DEFAULT NULL,
   `attachment` mediumblob DEFAULT NULL,
+  `attachment_name` varchar(50) DEFAULT NULL,
   `recorded_by` varchar(50) DEFAULT NULL,
   `recording_time` datetime DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=11 DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB AUTO_INCREMENT=15 DEFAULT CHARSET=utf8mb4;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -119,7 +103,7 @@ CREATE TABLE `NABL_Records` (
   `recorded_by` varchar(100) DEFAULT NULL,
   `recording_time` datetime DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=96 DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB AUTO_INCREMENT=106 DEFAULT CHARSET=utf8mb4;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -163,7 +147,7 @@ CREATE TABLE `Nonconformity` (
   `recording_time` datetime DEFAULT NULL,
   `recorded_by` varchar(100) DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=41 DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB AUTO_INCREMENT=42 DEFAULT CHARSET=utf8mb4;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -234,6 +218,71 @@ CREATE TABLE `Quality_manual_section` (
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
+-- Table structure for table `Refrigerator_Temp`
+--
+
+DROP TABLE IF EXISTS `Refrigerator_Temp`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `Refrigerator_Temp` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `date_of_reading` date DEFAULT NULL,
+  `time_of_reading` time DEFAULT NULL,
+  `5_REFRIGERATOR_HE_78_WHIRLPOOL` decimal(1,0) DEFAULT NULL,
+  `11_REFRIGERATOR_HE_78_SAMSUNG` decimal(1,0) DEFAULT NULL,
+  `17_REFRIGERATOR_LG-010PRNF052047 : HOSP-EQ-P-78` decimal(1,0) DEFAULT NULL,
+  `18_REFRIGERATOR_LG-010PRZZ052109: HOSP-EQ-P-78` decimal(1,0) DEFAULT NULL,
+  `6_REFRIGERATOR_HE_136_DEEP_FREEZER_(-40)` decimal(1,0) DEFAULT NULL,
+  `12_REFRIGERATOR_HE_78_SAMSUNG` decimal(1,0) DEFAULT NULL,
+  `13_REFRIGERATOR_HE_78_SAMSUNG` decimal(1,0) DEFAULT NULL,
+  `19_REFRIGERATOR_LG-011PRWH031393: HOSP-EQ-P-78` decimal(1,0) DEFAULT NULL,
+  `20_REFRIGERATOR_LG-011PRDE031386: HOSP-EQ-P-78` decimal(1,0) DEFAULT NULL,
+  `21_REFRIGERATOR_LG-102PRSD109078: HOSP-EQ-P-75` decimal(1,0) DEFAULT NULL,
+  `16_REFRIGERATOR_Haier_chest_freezer: HOSP-EQ-P-136(-30)` decimal(1,0) DEFAULT NULL,
+  `7_REFRIGERATOR_HE_138_REMI_DEEP_FREEZER_(-20` decimal(1,0) DEFAULT NULL,
+  `15_REFRIGERATOR_HE_78_WHIRLPOOL` decimal(1,0) DEFAULT NULL,
+  `recorded_by` varchar(50) DEFAULT NULL,
+  `recording_time` datetime DEFAULT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=9 DEFAULT CHARSET=utf8mb4;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Table structure for table `Sample_Transporter`
+--
+
+DROP TABLE IF EXISTS `Sample_Transporter`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `Sample_Transporter` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `name` varchar(100) DEFAULT NULL,
+  `date` date DEFAULT NULL,
+  `time` time DEFAULT NULL,
+  `recording_time` datetime DEFAULT NULL,
+  `recorded_by` varchar(100) DEFAULT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Table structure for table `Sample_Transporter_name`
+--
+
+DROP TABLE IF EXISTS `Sample_Transporter_name`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `Sample_Transporter_name` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `name` varchar(100) DEFAULT NULL,
+  `mobile` varchar(12) DEFAULT NULL,
+  `recording_time` datetime DEFAULT NULL,
+  `recorded_by` varchar(100) DEFAULT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
 -- Table structure for table `Second Dose`
 --
 
@@ -299,7 +348,7 @@ CREATE TABLE `calibration` (
   `recording_time` datetime DEFAULT NULL,
   `recorded_by` varchar(100) DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=521 DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB AUTO_INCREMENT=533 DEFAULT CHARSET=utf8mb4;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -384,7 +433,7 @@ CREATE TABLE `equipment` (
   `recorded_by` varchar(100) DEFAULT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `equipment` (`equipment`)
-) ENGINE=InnoDB AUTO_INCREMENT=66 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=67 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -408,7 +457,7 @@ CREATE TABLE `equipment_record` (
   `recorded_by` varchar(100) DEFAULT NULL,
   PRIMARY KEY (`id`),
   KEY `equipment` (`equipment`)
-) ENGINE=InnoDB AUTO_INCREMENT=188 DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB AUTO_INCREMENT=191 DEFAULT CHARSET=utf8mb4;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -547,7 +596,7 @@ CREATE TABLE `outward` (
   `attachment_name` varchar(100) DEFAULT NULL,
   `recorded_by` varchar(50) DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=27 DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB AUTO_INCREMENT=29 DEFAULT CHARSET=utf8mb4;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -671,7 +720,7 @@ CREATE TABLE `reagent` (
   `recording_time` datetime DEFAULT NULL,
   `recorded_by` varchar(100) DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=405 DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB AUTO_INCREMENT=415 DEFAULT CHARSET=utf8mb4;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -727,7 +776,7 @@ CREATE TABLE `record_tables` (
   `recording_time` datetime DEFAULT NULL ON UPDATE current_timestamp(),
   `recorded_by` varchar(100) DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=55 DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB AUTO_INCREMENT=58 DEFAULT CHARSET=utf8mb4;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -746,7 +795,7 @@ CREATE TABLE `reminders` (
   `recording_time` varchar(100) DEFAULT NULL,
   `recorded_by` varchar(100) DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=868 DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB AUTO_INCREMENT=894 DEFAULT CHARSET=utf8mb4;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -850,7 +899,7 @@ CREATE TABLE `sample_type` (
   `recorded_by` varchar(100) DEFAULT NULL,
   `sample_type` varchar(100) DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB AUTO_INCREMENT=8 DEFAULT CHARSET=utf8mb4;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -885,7 +934,7 @@ CREATE TABLE `scope` (
   `examination_is_currently_available` varchar(100) DEFAULT NULL,
   `nabl_accreditation_status` varchar(100) DEFAULT NULL,
   `unit_of_measurement` varchar(100) DEFAULT NULL,
-  `referance range` varchar(100) DEFAULT NULL,
+  `referance_range` varchar(100) DEFAULT NULL,
   `sample_type` varchar(100) DEFAULT NULL,
   `container_additives` varchar(100) DEFAULT NULL,
   `method_of_analysis` varchar(100) DEFAULT NULL,
@@ -899,7 +948,7 @@ CREATE TABLE `scope` (
   `recording_time` datetime DEFAULT NULL,
   `recorded_by` varchar(100) DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=61 DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB AUTO_INCREMENT=72 DEFAULT CHARSET=utf8mb4;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -935,23 +984,28 @@ CREATE TABLE `table_field_specification` (
   `field` varchar(50) DEFAULT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `tname_fname` (`tname`,`fname`)
-) ENGINE=InnoDB AUTO_INCREMENT=33 DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB AUTO_INCREMENT=47 DEFAULT CHARSET=utf8mb4;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
--- Table structure for table `type_of_container_additives`
+-- Table structure for table `training_record`
 --
 
-DROP TABLE IF EXISTS `type_of_container_additives`;
+DROP TABLE IF EXISTS `training_record`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `type_of_container_additives` (
+CREATE TABLE `training_record` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `recording_time` datetime DEFAULT NULL,
+  `topic` varchar(100) DEFAULT NULL,
+  `attachment` mediumblob DEFAULT NULL,
+  `attachment_name` varchar(500) DEFAULT NULL,
+  `conducted_by` varchar(500) DEFAULT NULL,
+  `competency_record` mediumblob DEFAULT NULL,
+  `competency_record_name` varchar(500) DEFAULT NULL,
   `recorded_by` varchar(100) DEFAULT NULL,
-  `type_of_container_additives` varchar(100) DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB AUTO_INCREMENT=14 DEFAULT CHARSET=utf8mb4;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -967,7 +1021,7 @@ CREATE TABLE `unit_name` (
   `recording_time` datetime DEFAULT NULL,
   `recorded_by` varchar(100) DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -983,7 +1037,7 @@ CREATE TABLE `unit_of_measurement` (
   `recorded_by` varchar(100) DEFAULT NULL,
   `unit_of_measurement` varchar(100) DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=12 DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB AUTO_INCREMENT=18 DEFAULT CHARSET=utf8mb4;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -1028,4 +1082,4 @@ CREATE TABLE `view_info_data` (
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2021-04-20  1:23:50
+-- Dump completed on 2021-04-23  0:26:29

@@ -165,7 +165,7 @@ array(
 	
 //$GLOBALS['state_colorcode']=array('white','lightgray','yellow','orange','lightpink','lightblue','lightgreen','lightgreen','lightgreen');
 
-$GLOBALS['eq_color_code']=array('C'=>'lightpink','I'=>'red','A'=>'cyan','D'=>'#00F5E0','6'=>'violet','K'=>'#6699ff');
+$GLOBALS['eq_color_code']=array('C'=>'lightpink','I'=>'red','A'=>'cyan','D'=>'#00F5E0','6'=>'violet','K'=>'#6699ff','E'=>'mediumvioletred');
 
 //20200531233109 date format for XL ASTM communication
 //08/01/2020 14:02:40 date format for XL export communication
