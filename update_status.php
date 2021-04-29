@@ -44,6 +44,8 @@ if($result)
 	$ar=get_single_row($result);
 }
 
+
+
 $div=$ar['max_id']%10;		//1149290 -> 0
 if($div!=0)
 {
@@ -54,11 +56,49 @@ else
 	$offset=0;
 }
 
+if(isset($_POST['show_offset']))
+{
+	$show_offset=$_POST['show_offset'];
+}
+else
+{
+	$show_offset=0;
+}
+
 $start_id=$ar['max_id']+$offset - 2*$lot_size;	//100566 -> 100566 +4 -200 =100560 - 200 = 100360 
-$rounded_start_id=$start_id+1;		//100361
+$rounded_start_id=$start_id+1+$show_offset;		//100361
+$end_id=$ar['max_id']+$show_offset;
+
+
+
 
 
 echo '<form method=post>';
+
+echo '<div><button 
+			id=offset_button1 
+			type=submit
+			class="btn btn-sm m-1 p-0 btn-secondary"
+			name=show_offset
+			value=\''.($show_offset-100).'\'
+		>(-)</button>';
+echo '<button 
+			id=offset_button2 
+			type=submit 
+			class="btn btn-sm m-1 p-0 btn-secondary"			
+			name=show_offset
+			value=\''.($show_offset+100).'\'
+		>(+)</button>';
+echo '<button 
+			id=offset_button3 
+			type=submit 
+			class="btn btn-sm m-1 p-0 btn-secondary"
+			name=show_offset
+			value=0			
+			
+		>(0)</button>';
+echo '<span class="bg-warning">Current Offset:</span><span class="bg-warning" id=current_offset>'.$show_offset.'</span></div>';
+
 	echo_sample_action_button();
 
 	echo '<div class="two_column">';
@@ -73,7 +113,7 @@ echo '<form method=post>';
 		echo '</div>';
 
 		echo '<div class="ten_column">';
-			for ($i=$rounded_start_id+$lot_size;$i<=$ar['max_id'];$i++)
+			for ($i=$rounded_start_id+$lot_size;$i<=min($ar['max_id'],$rounded_start_id+200);$i++)
 			{
 				echo '<div class="btn-group-vertical m-0 p-0">';
 				show_sid_button_for_status_change($link,$i);

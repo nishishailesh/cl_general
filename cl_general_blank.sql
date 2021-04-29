@@ -1,8 +1,8 @@
--- MySQL dump 10.17  Distrib 10.3.22-MariaDB, for debian-linux-gnu (x86_64)
+-- MySQL dump 10.18  Distrib 10.3.27-MariaDB, for debian-linux-gnu (x86_64)
 --
 -- Host: localhost    Database: cl_general
 -- ------------------------------------------------------
--- Server version	10.3.22-MariaDB-0+deb10u1
+-- Server version	10.3.27-MariaDB-0+deb10u1
 
 /*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
 /*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
@@ -14,6 +14,22 @@
 /*!40014 SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS=0 */;
 /*!40101 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='NO_AUTO_VALUE_ON_ZERO' */;
 /*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
+
+--
+-- Table structure for table `Description`
+--
+
+DROP TABLE IF EXISTS `Description`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `Description` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `Description` varchar(500) DEFAULT NULL,
+  `recorded_by` varchar(50) DEFAULT NULL,
+  `recording_time` datetime DEFAULT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb4;
+/*!40101 SET character_set_client = @saved_cs_client */;
 
 --
 -- Table structure for table `Extent`
@@ -1009,6 +1025,22 @@ CREATE TABLE `training_record` (
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
+-- Table structure for table `type_of_container_additives`
+--
+
+DROP TABLE IF EXISTS `type_of_container_additives`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `type_of_container_additives` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `recording_time` datetime DEFAULT NULL,
+  `recorded_by` varchar(100) DEFAULT NULL,
+  `type_of_container_additives` varchar(100) DEFAULT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8mb4;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
 -- Table structure for table `unit_name`
 --
 
@@ -1037,7 +1069,7 @@ CREATE TABLE `unit_of_measurement` (
   `recorded_by` varchar(100) DEFAULT NULL,
   `unit_of_measurement` varchar(100) DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=18 DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB AUTO_INCREMENT=12 DEFAULT CHARSET=utf8mb4;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -1082,4 +1114,4 @@ CREATE TABLE `view_info_data` (
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2021-04-23  0:26:29
+-- Dump completed on 2021-04-29 17:25:28

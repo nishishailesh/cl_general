@@ -148,6 +148,7 @@ function init(all_data)
 	ctxx.stroke();
 }
 </script>
+
 <?php
 $GLOBALS['nojunk']='';
 require_once 'base/verify_login.php';

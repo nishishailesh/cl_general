@@ -120,6 +120,7 @@ function main_menu($link)
 						<button class="btn btn-outline-primary m-0 p-0" formaction=view_database_id_from_to_for_print_opd_nabl.php type=submit name=action value=get_from_to>by Sample ID(s), NABL</button>			
 						<button class="btn btn-outline-primary m-0 p-0" formaction=search_and_print.php type=submit name=action value=get_search_condition>by Search Conditions</button>
 						<button class="btn btn-outline-primary m-0 p-0" formaction=print_multiple_scanned_barcode.php type=submit name=action value=get_scan>by Scanning Barcode</button>						
+						<button class="btn btn-outline-primary m-0 p-0" formaction=cumulative_report.php type=submit name=action value=get_data>QReport</button>					
 					</div>
 				</div>
 		</div>
