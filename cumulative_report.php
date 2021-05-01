@@ -16,6 +16,7 @@ require_once 'base/verify_login.php';
 echo '		  <link rel="stylesheet" href="project_common.css">
 		  <script src="project_common.js"></script>
 		 <script type="text/javascript" src="bootstrap/jquery.sparkline.js"></script>';	
+
 		 
 $link=get_link($GLOBALS['main_user'],$GLOBALS['main_pass']);
 main_menu($link);
@@ -68,15 +69,16 @@ echo '<form method=post>
 	</div>
 </form>';
 
-$GLOBALS['canvas_height']=100;
-$GLOBALS['canvas_width']=200;
+$GLOBALS['canvas_height']=200;
+$GLOBALS['canvas_width']=400;
 
 //echo 'before get_data obtained';
 if(isset($_POST['get_data']))
 {
 	//echo 'get_data obtained';
-		echo '<div class="d-inline-block border rounded p-2 border-primary">';
-			$j_data=show_delta_for_single_sample($link,$one_by_one_sample_id);
+		echo '<div class="d-inline-block border rounded p-2">';
+			//$j_data=show_delta_for_single_sample($link,$one_by_one_sample_id);
+			show_delta_for_single_sample($link,$one_by_one_sample_id);
 		echo '</div>';
 
 }
@@ -115,9 +117,11 @@ function show_delta_for_single_sample($link,$sample_id,$ex_requested=array())
 	$exr=prepare_examination_wise_cumulative_report($all_data);
 	//echo '<pre>';print_r($exr);echo '</pre>';
 	//echo 'going to execute echo graph';
+	echo '<div class="two_column">';
 	echo_graph($link,$exr);
-	$j_data=json_encode($exr);
-	return $j_data;
+	echo '</div>';
+	//$j_data=json_encode($exr);
+	//return $j_data;
 }
 
 function show_lj_for_sample($link,$sample_id_array,$ex_requested=array())
@@ -178,17 +182,29 @@ function echo_graph($link,$exr)
 		$js=json_encode($data,JSON_NUMERIC_CHECK);
 
 		$js_var=$js;
-		echo 	'<div  border border-danger><span>'.$examination_details['name'].'</span>
-				<span 
-					class="inlinesparkline" 
-					ex_name=\''.$examination_details['name'].'\' 
+		echo 	'<div>';
+		//echo '<span>'.$examination_details['name'].'</span>';
+					//echo 		'<span 
+					//class="inlinesparkline" 
+					//ex_name=\''.$examination_details['name'].'\' 
+					//interval_l=\''.$interval_l.'\' 
+					//interval_h=\''.$interval_h.'\' 
+					//id=\'i_'.$ex_id.'\' 
+					//myar=\''.$data_str.'\'>['.$ex_id.']</span>';
+		
+		echo '<canvas 
+	
+					class="my_canvas border border-warning"
+					ex_name=\''.$examination_details['name'].'\'
+					ex_id=\''.$ex_id.'\' 
+					id=\'c_'.$ex_id.'\'  
 					interval_l=\''.$interval_l.'\' 
 					interval_h=\''.$interval_h.'\' 
-					id=\'i_'.$ex_id.'\' 
-					myar='.$data_str.'>['.$ex_id.']</span></div>';
+					height=\''.$GLOBALS['canvas_height'].'\' 
+					width=\''.$GLOBALS['canvas_width'].'\'
+					myar=\''.$data_str.'\' ></canvas>';
 		
-		echo '<canvas class="my_canvas"  ex_id=\''.$ex_id.'\' id=\'c_'.$ex_id.'\'  height=\''.$GLOBALS['canvas_height'].'\' width=\''.$GLOBALS['canvas_width'].'\' ></canvas>';
-		
+		echo '</div>';
 	}	
 }
 
@@ -210,11 +226,6 @@ function echo_graph_good($exr)
 				>
 					['.$ex_id.']
 				</span>';
-				
-		//echo '<span id=\'i_'.$ex_id.'\' >['.$ex_id.']</span>';		
-		//echo '<script>
-		//			$(\'#i_'.$ex_id.'\').sparkline(x,{width:"5em",height:"5em"})
-		//		</script>';
 	}	
 }
 
@@ -225,62 +236,138 @@ function echo_graph_good($exr)
 $(document).ready
 	(
 		function()
-		{		
+		{	
+			
+			
+				
 			$('.inlinesparkline').each
 			(
 				function(index,value)
 				{
-					//alert(index+':'+$(this).attr('myar'));
-					x=$(this).attr('myar');
-					y=x.split(',');
-					//alert(index+':'+y);
-					l=$(this).attr('interval_l');
-					h=$(this).attr('interval_h');
-										
-					properties=
-						{
-							type: 'line',
-							width: '5em',
-							height: '5em',
-							lineColor: '#000000',
-							fillColor: '#ffffff',
-							lineWidth: 2,
-							spotColor: '#54ff00',
-							minSpotColor: '#ef00d3',
-							maxSpotColor: '#5f00bf',
-							spotRadius: 3,
-							chartRangeMin: l/2,
-							chartRangeMax: h*2,
-							normalRangeMin: l,
-							normalRangeMax: h,
-							drawNormalOnTop: true,
-						};
-					$(this).sparkline(y,properties);
-					draw_one_graph(y)
+					my_spark($(this).attr('id'));
 				}
 			);
+			
+			$('.my_canvas').each
+			(
+				function(index,value)
+				{
+					draw_one_graph($(this).attr('id'));
+				}
+			)
+			
 		}
 	);
 
-	
-	function my_chart(me,data)
-	{
-		$('#'+me).sparkline(data,{width:"3em",height:"3em"});
-	}
-
-function draw_line(ctx,from,to)
+function my_spark(id)
 {
-	//ctx.setLineDash([5, 3])
+	x=$('#'+id).attr('myar');
+	y=x.split(',');
+	//alert(index+':'+y);
+	l=$('#'+id).attr('interval_l');
+	h=$('#'+id).attr('interval_h');
+						
+	properties=
+		{
+			type: 'line',
+			width: '5em',
+			height: '5em',
+			lineColor: '#000000',
+			fillColor: '#ffffff',
+			lineWidth: 2,
+			spotColor: '#54ff00',
+			minSpotColor: '#ef00d3',
+			maxSpotColor: '#5f00bf',
+			spotRadius: 3,
+			chartRangeMin: l/2,
+			chartRangeMax: h*2,
+			normalRangeMin: l,
+			normalRangeMax: h,
+			drawNormalOnTop: true,
+		};
+	$('#'+id).sparkline(y,properties);
+	
+}	
+function my_chart(me,data)
+{
+	$('#'+me).sparkline(data,{width:"3em",height:"3em"});
+}
+
+function draw_line(ctx,from,to,color='#000000')
+{
 	ctx.beginPath();
-	ctx.strokeStyle = "#D70AE2";
+	ctx.strokeStyle = color;
 	ctx.moveTo(from[0],from[1]);
 	ctx.lineTo(to[0],to[1]);
 	ctx.stroke();  	
-	
+
 }
-function draw_one_graph(ex_id,y_data)
+
+function draw_text(ctx,from,text,color='#000000',font="10px Serif")
 {
-	var c = document.getElementById("canvas");
+	ctx.font = font;
+	ctx.strokeStyle = color;
+	ctx.strokeText(text,from[0],from[1]);
+}
+
+function draw_one_graph(id)
+{
+	c=document.getElementById(id);
+	x=c.getAttribute('myar');
+	y_data=x.split(',');
+	//alert(index+':'+y);
+	l=c.getAttribute('interval_l');
+	h=c.getAttribute('interval_h');
+	ex_name=c.getAttribute('ex_name');
+						
+	var canvas_height=c.getAttribute("height");
+	var canvas_width=c.getAttribute("width");
+	var ctx = c.getContext("2d");
+	ctx.font = "Serif";
+    //console.log(y_data);
+    //console.log(canvas_height);
+    //console.log(canvas_width);
+	len=y_data.length;
+    //console.log(len);
+
+    
+    zero_x=canvas_width/20;
+    zero_y=canvas_height/20;
+    canvas_width=canvas_width-zero_x;
+    canvas_height=canvas_height-zero_y;
+    
+	x_unit=(canvas_width)/(len+1);
+	y_unit=(canvas_height)/(Math.max(...y_data));
+	
+    console.log(x_unit+','+y_unit);
+	draw_line(ctx, [zero_x,canvas_height],[zero_x,zero_y]);
+	draw_line(ctx, [zero_x,canvas_height],[canvas_width,canvas_height]);
+
+	var counter=1;
+	for( var one_point in y_data)
+	{
+		draw_line(ctx, [counter*x_unit,canvas_height],[counter*x_unit, canvas_height-(y_data[one_point]*y_unit) ])
+		draw_text(ctx,[counter*x_unit, canvas_height-(y_data[one_point]*y_unit) ],y_data[one_point]);
+
+		counter++;
+	}
+	draw_text(ctx,[zero_x,canvas_height+zero_y-1],ex_name);
+	draw_text(ctx,[zero_x,zero_y],Math.max(...y_data));
+
+}
+
+
+
+function draw_one_graph_good(id)
+{
+	c=document.getElementById(id);
+	x=c.getAttribute('myar');
+	y_data=x.split(',');
+	//alert(index+':'+y);
+	l=c.getAttribute('interval_l');
+	h=c.getAttribute('interval_h');
+	ex_name=c.getAttribute('ex_name');
+						
 	var canvas_height=c.getAttribute("height");
 	var canvas_width=c.getAttribute("width");
 	var ctx = c.getContext("2d");
@@ -289,24 +376,42 @@ function draw_one_graph(ex_id,y_data)
     console.log(canvas_height);
     console.log(canvas_width);
     
-	//axis
-	//draw_line(ctx,[0,canvas_height],[canvas_width,canvas_height]);
-	//draw_line(ctx,[0,canvas_height],[0,0]);
-	
+
 	len=y_data.length;
     console.log(len);
 
-	x_unit=canvas_width/len;
-	y_unit=canvas.height/(Math.max(...y_data))
-    console.log(x_unit+','+y_unit);
+    pad=canvas_width/20;
+    
+    canvas_width=canvas_width-2*pad;
+    canvas_height=canvas_height-2*pad;
+    
+	x_unit=(canvas_width)/(len+1);
+	y_unit=(canvas_height)/(Math.max(...y_data)*1.1);
+	
+    //console.log(x_unit+','+y_unit);
+	draw_line(ctx, [zero_x,canvas_height],[zero_x,zero_y]);
+	draw_line(ctx, [zero_x,canvas_height],[canvas_width,canvas_height]);
 
-	var counter=0;
+	var counter=1;
 	for( var one_point in y_data)
 	{
-		draw_line(ctx, [counter*x_unit,canvas_height],[counter*x_unit,one_point*y_unit])
+		draw_line(ctx, [counter*x_unit,canvas_height],[counter*x_unit, canvas_height-(y_data[one_point]*y_unit) ])
+		draw_text(ctx,[counter*x_unit, canvas_height-(y_data[one_point]*y_unit) ],y_data[one_point]);
+
 		counter++;
 	}
-	
+	draw_text(ctx,[zero_x,canvas_height+zero_y-1],ex_name);
+	draw_text(ctx,[zero_x,zero_y],Math.max(...y_data));
+
 }
+
 </script>
+
+<style>
+.two_column 
+{
+  display: grid;
+  grid-template-columns: auto auto;
+}
+</style>
 

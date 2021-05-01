@@ -282,6 +282,51 @@ function edit($link,$tname,$pk,$header='no')
 	$ar=get_single_row($result);
 	
 	echo '<form method=post class="d-inline" enctype="multipart/form-data">';
+	echo '<div class="two_column_one_by_two bg-light">';
+			foreach($ar as $k =>$v)
+			{
+				if($k=='id')
+				{
+					echo '<div class="border">'.$k.'</div>';
+					echo '<div class="border">';
+						ste_id_update_button($link,$tname,$v);
+					echo '</div>';
+				}
+				elseif(substr(get_field_type($link,$tname,$k),-4)=='blob')
+				{
+					echo '<div class="border">'.$k.'</div>';
+					echo '<div class="border">';
+						echo '<input type=file name=\''.$k.'\' >';
+					echo '</div>';
+				}
+				elseif(in_array($k,array('recording_time','recorded_by')))
+				{
+					echo '<div class="border">'.$k.'</div>';
+					echo '<div class="border">';
+						echo $v;
+					echo '</div>';
+				}
+				else
+				{
+					echo '<div class="border">'.$k.'</div>';
+					echo '<div class="border">';
+						read_field($link,$tname,$k,$v);
+					echo '</div>';
+				}
+			}
+			echo '</div>';
+	echo'</form>';
+
+}
+
+function edit_old($link,$tname,$pk,$header='no')
+{
+	$sql='select * FROM `'.$tname.'` where id=\''.$pk.'\'';
+	//echo $sql;
+	$result=run_query($link,$GLOBALS['database'],$sql);
+	$ar=get_single_row($result);
+	
+	echo '<form method=post class="d-inline" enctype="multipart/form-data">';
     echo '<div class="table-responsive">';
 		echo '<table class="table table-striped table-sm table-bordered table-condensed">';
 			if($header=='yes')
@@ -423,18 +468,22 @@ function read_field($link,$tname,$field,$value,$search='no')
 			}
 			else
 			{
-				echo '<input type=date name=\''.$field.'\' value=\''.$value.'\'>';
+				echo '<input type=date id=\''.$field.'\' name=\''.$field.'\' value=\''.$value.'\'>';
+				$default=strftime("%Y-%m-%d");
+				show_source_button($field,$default);
 			}
 		}
 		elseif($fspec['ftype']=='time')
 		{
 			if($search=='yes')
 			{
-				echo '<input type=text name=\''.$field.'\' value=\''.$value.'\'>';
+				echo '<input type=text  name=\''.$field.'\' value=\''.$value.'\'>';
 			}
 			else
 			{
-				echo '<input type=time name=\''.$field.'\' value=\''.$value.'\'>';
+				echo '<input type=time id=\''.$field.'\' name=\''.$field.'\' value=\''.$value.'\'>';
+				$default=strftime("%H:%M");
+				show_source_button($field,$default);
 			}
 		}				
 		elseif($fspec['ftype']=='textarea')
@@ -652,4 +701,5 @@ function manage_stf($link,$post)
 
 	
 }
+
 ?>
