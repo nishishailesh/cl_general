@@ -1,7 +1,10 @@
 <?php
 //$GLOBALS['nojunk']='';
+//echo '<pre>';print_r($GLOBALS);echo '</pre>';
 require_once 'project_common.php';
 require_once 'base/verify_login.php';
+//echo '<pre>';print_r($GLOBALS);echo '</pre>';
+
 	////////User code below/////////////////////
 echo '		  <link rel="stylesheet" href="project_common.css">
 		  <script src="project_common.js"></script>';	

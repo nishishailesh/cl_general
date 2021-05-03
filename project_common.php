@@ -616,6 +616,7 @@ function view_sample_compact($link,$sample_id)
 			}
 		}
 	echo '</div>';
+
 }
 
 

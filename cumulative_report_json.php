@@ -194,7 +194,7 @@ function echo_graph($link,$exr)
 		
 		echo '<canvas 
 	
-					class="my_canvas border"
+					class="my_canvas border border-warning"
 					ex_name=\''.$examination_details['name'].'\'
 					ex_id=\''.$ex_id.'\' 
 					id=\'c_'.$ex_id.'\'  
@@ -315,7 +315,7 @@ function draw_one_graph(id)
 	c=document.getElementById(id);
 	x=c.getAttribute('myar');
 	y_data=x.split(',');
-	//alert(y_data);
+	//alert(index+':'+y);
 	l=c.getAttribute('interval_l');
 	h=c.getAttribute('interval_h');
 	ex_name=c.getAttribute('ex_name');
@@ -331,44 +331,29 @@ function draw_one_graph(id)
     //console.log(len);
 
     
-    zero_x=canvas_width/10;
-    zero_y=canvas_height-canvas_height/10;
-    //alert(zero_y);
-    canvas_width=canvas_width-(zero_x*2);
-    canvas_height=canvas_height-((canvas_height/10)*2);
+    zero_x=canvas_width/20;
+    zero_y=canvas_height/20;
+    canvas_width=canvas_width-zero_x;
+    canvas_height=canvas_height-zero_y;
     
 	x_unit=(canvas_width)/(len+1);
-	y_unit=(canvas_height)/( Math.max(...y_data) - Math.min(...y_data) );
-	//alert(canvas_height+','+ Math.max(...y_data) + ',' + Math.min(...y_data) );
-    //console.log(x_unit+','+y_unit);
-    
-    //Y
-	draw_line(ctx, [zero_x,zero_y],[zero_x,zero_y-canvas_height -canvas_height/20  ],color='Green');
-	//X
-	draw_line(ctx, [zero_x,zero_y],[zero_x+canvas_width,zero_y],color='Green');
+	y_unit=(canvas_height)/(Math.max(...y_data));
+	
+    console.log(x_unit+','+y_unit);
+	draw_line(ctx, [zero_x,canvas_height],[zero_x,zero_y]);
+	draw_line(ctx, [zero_x,canvas_height],[canvas_width,canvas_height]);
 
 	var counter=1;
-	
 	for( var one_point in y_data)
 	{
-		//alert(y_data[one_point]+','+Math.min(...y_data));
-
-		//alert(zero_y+','+y_draw+','+y_unit);
-		
-		//draw_line(ctx, [zero_x+counter*x_unit, zero_y],[zero_x+counter*x_unit, zero_y - (y_draw*y_unit)-canvas_height/20 ]);
-		
-		y_draw=y_data[one_point]-Math.min(...y_data);
-		if(one_point>0)
-		{
-		y_draw_priv=y_data[one_point-1]-Math.min(...y_data);
-		draw_line(ctx, [zero_x+ (one_point-1)*x_unit, zero_y - (y_draw_priv*y_unit)-canvas_height/20 ] ,[zero_x+ one_point*x_unit, zero_y - (y_draw*y_unit)-canvas_height/20 ]);
-		}
-
-		draw_text(ctx, [zero_x+one_point*x_unit+5, zero_y - (y_draw*y_unit) -canvas_height/20 ]  ,y_data[one_point]);
+		draw_line(ctx, [counter*x_unit,canvas_height],[counter*x_unit, canvas_height-(y_data[one_point]*y_unit) ])
+		draw_text(ctx,[counter*x_unit, canvas_height-(y_data[one_point]*y_unit) ],y_data[one_point]);
 
 		counter++;
 	}
-	draw_text(ctx,[zero_x,zero_y+canvas_height/10],ex_name,color='#0F0000',font="15px Serif");
+	draw_text(ctx,[zero_x,canvas_height+zero_y-1],ex_name);
+	draw_text(ctx,[zero_x,zero_y],Math.max(...y_data));
+
 }
 
 
