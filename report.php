@@ -11,42 +11,27 @@ $link=get_link($GLOBALS['main_user'],$GLOBALS['main_pass']);
 main_menu($link);
 echo '<div id=response></div>';
 
-if($_POST['action']=='get_search_condition')
+if($_POST['action']=='get_report_sample_id')
 {
-	get_search_condition($link);
-}
-elseif($_POST['action']=='set_search')
-{
-	set_search_report($link);
-}
-elseif($_POST['action']=='search')
-{
-	$search_array=prepare_search_array($link);
-	//print_r($search_array);
-	$first=TRUE;
-	$temp=array();
-	foreach ($search_array as $sk=>$sv)
-	{
-		$temp=get_sample_with_condition($link,$sk,$sv,$temp,$first);
-		$first=FALSE;
-	}
-	//print_r($temp);
-	if(count($temp)>0)
-	{
-		$sample_id_csv = implode(',', $temp);
-		echo '<h3>Export is ready. click Export Button to download file</h3>';
-		echo_report_export_button($sample_id_csv,$_POST['id']);
-	}
-	else
-	{
-		echo '<h3>Nothing meaningful provided!!</h3>';
-	}
+	echo '<form method=post action=export2.php >';
+	echo '<div class="basic_form">';
+		echo '	<label class="my_label text-danger" for="from">From Sample ID</label>
+			<input type=number size=13 id=from name=from class="form-control text-danger" required="required" \>
+			<p class="help"><span class=text-danger>Must be</span> number</p>';
+		echo '	<label class="my_label text-danger" for="to">To Sample ID</label>
+			<input type=number size=13 id=from name=to class="form-control text-danger"\>
+			<p class="help"><span class=text-danger>Must be</span> number</p>';
+		
+		echo '</div>';
+	list_report_types($link);
+	echo '<input type=hidden name=session_name value=\''.session_name().'\'>';
+	echo '</form>';
 }
 
 //////////////user code ends////////////////
 tail();
 
-//echo '<pre>';print_r($_POST);echo '</pre>';
+echo '<pre>';print_r($_POST);echo '</pre>';
 
 //////////////Functions///////////////////////
 

@@ -10,7 +10,6 @@ $link=get_link($GLOBALS['main_user'],$GLOBALS['main_pass']);
 
 //echo '<pre>';print_r($_POST);echo '</pre>';
 
-$ex_sample_id=explode(',',$_POST['sample_id']);
 //print_r($ex_sample_id);
 //export_h_examination($link);
 
@@ -25,16 +24,16 @@ $ex_list=export_h_examination($link);
 
 fputcsv($fp, $ex_list);
 		
-foreach($ex_sample_id as $val)
+for($sample_id=$_POST['from'];$sample_id<=$_POST['to'];$sample_id++)
 {
-	$result_data=export_h_result($link,$val,$ex_list);
+	$result_data=export_h_result($link,$sample_id,$ex_list);
 	fputcsv($fp, $result_data);
 
 }
 
 function export_h_examination($link)
 {
-	$sql='select * from report where id=\''.$_POST['report_id'].'\'';
+	$sql='select * from report where id=\''.$_POST['id'].'\'';
 	$result=run_query($link,$GLOBALS['database'],$sql);
 	$csv=mysqli_fetch_assoc($result);
 	$explod=explode(',',$csv['examination_id']);
