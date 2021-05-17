@@ -154,7 +154,7 @@ function show_lj_for_sample($link,$sample_id_array,$ex_requested=array())
 		<td><button type=button class="btn btn-sm btn-info" onclick="my_sort(this,2,\'qc_table\')" data-sorting=1>Sample_ID</button></td>
 		<td><button type=button class="btn btn-sm btn-info" onclick="my_sort(this,3,\'qc_table\')" data-sorting=1>Examination</button></td>
 		<td>Result</td>
-		<td><button type=button class="btn btn-sm btn-info" onclick="my_sort(this,5,\'qc_table\')" data-sorting=1>Analysis Time</button></td>
+		<!-- <td><button type=button class="btn btn-sm btn-info" onclick="my_sort(this,5,\'qc_table\')" data-sorting=1>Analysis Time</button></td>-->
 		<td class="compact collapse">Receipt Date</td>
 		<td class="compact collapse">Receipt Time</td>
 		<td class="compact collapse">Sample Type</td>
@@ -227,13 +227,14 @@ function display_one_qc($link,$sample_id,$ex_requested)
 	$patient_name_local=get_one_ex_result($link,$sample_id,$GLOBALS['patient_name']);
 	//never give $name, it is global
 	
-	$sql='select * from primary_result where sample_id=\''.$sample_id.'\' order by uniq';
-	//$sql='select * from result where sample_id=\''.$sample_id.'\'';
+	//$sql='select * from primary_result where sample_id=\''.$sample_id.'\' order by uniq';
+	$sql='select * from result where sample_id=\''.$sample_id.'\'';
 	$result=run_query($link,$GLOBALS['database'],$sql);
 
 	$current_ex_id=0;
 	while($ar=get_single_row($result))
 	{
+		//echo '<pre>';print_r($ar);
 		$ex_requested=array_filter($ex_requested);
 		if(in_array($ar['examination_id'],$ex_requested) || count($ex_requested)==0)
 		{		
@@ -273,7 +274,7 @@ function display_one_qc($link,$sample_id,$ex_requested)
 				echo '<td  class=\''.$sample_class.'\'>'.$sample_id.'</td>';
 				echo '<td>'.$ar['examination_id'].'-'.get_name_of_ex_id($link,$ar['examination_id']).'</td>';
 				echo '<td>'.$ar['result'].'</td>';
-				echo '<td>'.$ar['uniq'].'</td>';
+				//echo '<td>'.$ar['uniq'].'</td>';
 				//echo '<td></td>';
 
 			

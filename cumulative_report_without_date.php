@@ -10,9 +10,6 @@ $GLOBALS['patient_name']=1002;
 require_once 'project_common.php';
 require_once 'base/verify_login.php';
 
-$GLOBALS['js']='';
-$GLOBALS['js_meta']='';
-
 ////////User code below/////////////////////
 //echo '<pre>';print_r($_POST);echo '</pre>';
 	
@@ -79,14 +76,12 @@ $GLOBALS['canvas_width']=400;
 if(isset($_POST['get_data']))
 {
 	//echo 'get_data obtained';
-		//echo '<div class="d-inline-block border rounded p-2">';
+		echo '<div class="d-inline-block border rounded p-2">';
 			//$j_data=show_delta_for_single_sample($link,$one_by_one_sample_id);
 			show_delta_for_single_sample($link,$one_by_one_sample_id);
-		//echo '</div>';
+		echo '</div>';
 
 }
-
-//echo '<div id=gd></div>';
 
 //////////////user code ends////////////////
 tail();
@@ -123,7 +118,6 @@ function show_delta_for_single_sample($link,$sample_id,$ex_requested=array())
 	//echo '<pre>';print_r($exr);echo '</pre>';
 	//echo 'going to execute echo graph';
 	echo '<div class="two_column">';
-	//echo '<pre>';
 	echo_graph($link,$exr);
 	echo '</div>';
 	//$j_data=json_encode($exr);
@@ -144,30 +138,21 @@ function display_one_qc($link,$sample_id,$ex_requested)
 {
 	$sql='select * from result where sample_id=\''.$sample_id.'\'';
 	$result=run_query($link,$GLOBALS['database'],$sql);
-	//$GLOBALS['receipt_date']=1017;
-	//$GLOBALS['receipt_time']=1018;
-	$dt=get_one_ex_result($link,$sample_id,$GLOBALS['receipt_date']);
-	$tm=get_one_ex_result($link,$sample_id,$GLOBALS['receipt_time']);
-	$dt_tm=$dt.' '.$tm;
-	//echo '<h1>xx'.$dt_tm.'</h1>';
-
 	while($ar=get_single_row($result))
 	{
-
-		$ret[$sample_id][$ar['examination_id']]=[$dt_tm,$ar['result']];
+		$ret[$sample_id][$ar['examination_id']]=$ar['result'];
 	}
 	return $ret;
 }
 
 function prepare_examination_wise_cumulative_report($ar)
 {
-	//echo '<pre>';print_r($ar);
 	$exr=array();
 	foreach ($ar as $sid => $data)
 	{
 		foreach ($data as $ex_id => $res)
 		{	
-			if(is_numeric($res[1]))
+			if(is_numeric($res))
 			{
 				//$exr[$ex_id][$sid]=$res;	
 				//$exr[$ex_id][]=[$sid,$res];
@@ -181,24 +166,46 @@ function prepare_examination_wise_cumulative_report($ar)
 function echo_graph($link,$exr)
 {
 	//echo '<pre>';print_r($exr);echo '</pre>';
-	
-	foreach ($exr as $k=>$v)
+	foreach ($exr as $ex_id => $data)
 	{
-		$examination_details=get_one_examination_details($link,$k);
+		//print_r($data);
+		$examination_details=get_one_examination_details($link,$ex_id);
 		$edit_specification=json_decode($examination_details['edit_specification'],true);
 		$interval_l=isset($edit_specification['interval_l'])?$edit_specification['interval_l']:'';
 		$interval_h=isset($edit_specification['interval_h'])?$edit_specification['interval_h']:'';
-		//$exr_meta[$k]=["name"=>$examination_details["name"],"interval_l"=>$interval_l,"interval_h"=>$interval_h];
-		$exr_meta[$k][]=$examination_details["name"];
-		$exr_meta[$k][]=$interval_l;
-		$exr_meta[$k][]=$interval_h;
-	}
-	//echo '<pre>';print_r($exr_meta);
-	$GLOBALS['js_meta']=json_encode($exr_meta);
-	$GLOBALS['js']=json_encode($exr);
-	//echo $GLOBALS['js'];
-	//echo $GLOBALS['js_meta'];
-	//echo '<script>alert(\'';echo $GLOBALS['js'];echo '\')</script>';
+
+		
+		
+		
+		$data_str=implode(',',$data);
+		//echo $data_str;
+		$js=json_encode($data,JSON_NUMERIC_CHECK);
+
+		$js_var=$js;
+		echo 	'<div>';
+		//echo '<span>'.$examination_details['name'].'</span>';
+					//echo 		'<span 
+					//class="inlinesparkline" 
+					//ex_name=\''.$examination_details['name'].'\' 
+					//interval_l=\''.$interval_l.'\' 
+					//interval_h=\''.$interval_h.'\' 
+					//id=\'i_'.$ex_id.'\' 
+					//myar=\''.$data_str.'\'>['.$ex_id.']</span>';
+		
+		echo '<canvas 
+	
+					class="my_canvas border"
+					ex_name=\''.$examination_details['name'].'\'
+					ex_id=\''.$ex_id.'\' 
+					id=\'c_'.$ex_id.'\'  
+					interval_l=\''.$interval_l.'\' 
+					interval_h=\''.$interval_h.'\' 
+					height=\''.$GLOBALS['canvas_height'].'\' 
+					width=\''.$GLOBALS['canvas_width'].'\'
+					myar=\''.$data_str.'\' ></canvas>';
+		
+		echo '</div>';
+	}	
 }
 
 function echo_graph_good($exr)
@@ -225,15 +232,13 @@ function echo_graph_good($exr)
 ?>
 
 <script type="text/javascript">
-var js=<?php echo $GLOBALS['js']; ?>;
-var js_meta=<?php echo $GLOBALS['js_meta']; ?>;
 
 $(document).ready
 	(
 		function()
 		{	
 			
-			draw_graph_with_date();
+			
 				
 			$('.inlinesparkline').each
 			(
@@ -298,20 +303,8 @@ function draw_line(ctx,from,to,color='#000000')
 
 }
 
-function draw_line_dots(ctx,from,to,color='#000000')
-{
-	ctx.beginPath();
-	ctx.setLineDash([1, 2]);/*dashes are 5px and spaces are 3px*/
-	ctx.strokeStyle = color;
-	ctx.moveTo(from[0],from[1]);
-	ctx.lineTo(to[0],to[1]);
-	ctx.stroke();  	
-
-}
-
 function draw_text(ctx,from,text,color='#000000',font="10px Serif")
 {
-	ctx.setLineDash([]);
 	ctx.font = font;
 	ctx.strokeStyle = color;
 	ctx.strokeText(text,from[0],from[1]);
@@ -426,141 +419,6 @@ function draw_one_graph_good(id)
 	draw_text(ctx,[zero_x,zero_y],Math.max(...y_data));
 
 }
-
-
-function draw_graph_with_date_without_rotation()
-{
-	console.log(js);
-	console.log(js[5006][2][1]);
-	
-	for ( each_ex_id in js )
-	{ 
-		//document.getElementById("gd").innerHTML += (each_ex_id + '<br>');
-		var cnvs = document.createElement("canvas");
-		cnvs.setAttribute("height","400");
-		cnvs.setAttribute("width","800");
-		cnvs.setAttribute("class","border border-info");
-		document.body.appendChild(cnvs);
-		var ctx = cnvs.getContext("2d");
-		ctx.font = "Serif";
-		draw_text(ctx,[10,10],each_ex_id,color='#000000',font="10px Serif");
-		
-		var value_array=[];
-		for (each_date_time in js[each_ex_id])
-		{
-			value_array.push(parseFloat(js[each_ex_id][each_date_time][1]));
-		}
-		
-		max_val=Math.max(...value_array);
-		min_val=Math.min(...value_array);
-		if(max_val != min_val)
-		{
-			x_unit=500/(max_val-min_val);
-		}
-		else
-		{
-			x_unit=500/max_val;			
-		}
-		console.log(value_array);
-		console.log(max_val + ',' + min_val);
-		counter=0;
-		
-		for (each_date_time in js[each_ex_id])
-		{
-			//document.getElementById("gd").innerHTML += (js[each_ex_id][each_date_time][0] + '->' + js[each_ex_id][each_date_time][1]) + '<br>';
-			data=(js[each_ex_id][each_date_time][0] + '->' + js[each_ex_id][each_date_time][1]);
-			data_length=js[each_ex_id][each_date_time][1]-min_val;
-			draw_text(ctx,[10,20+counter*20],data,color='#000000',font="10px Serif");
-			//draw_line(ctx,[200,20+counter*20],[200+parseFloat(data_length)*x_unit+50 ,20+counter*20],color='#000000');
-			//draw_text(ctx,[200+parseFloat(data_length)*x_unit+50 ,20+counter*20],data,color='#000000',font="10px Serif");
-			counter++;
-		}
-	}
-}
-
-
-function draw_graph_with_date()
-{
-	//console.log(js);
-	//console.log(js[5006][2][1]);
-
-	var cw=400;
-	var ch=200;
-
-	for ( each_ex_id in js )
-	{ 
-		total_data=each_ex_id.length;
-		console.log(total_data);
-	}
-		
-	for ( each_ex_id in js )
-	{ 
-		total_data=each_ex_id.length;
-		console.log(total_data);
-		//document.getElementById("gd").innerHTML += (each_ex_id + '<br>');
-		var cnvs = document.createElement("canvas");
-		cnvs.setAttribute("height",ch);
-		cnvs.setAttribute("width",cw);
-		cnvs.setAttribute("class","border border-info");
-		document.body.appendChild(cnvs);
-		var ctx = cnvs.getContext("2d");
-		ctx.font = "Serif";
-		draw_text(ctx,[10,12],js_meta[each_ex_id][0]+":"+each_ex_id,color='#000000',font="13px Serif");
-		
-		if(js_meta[each_ex_id][1]!=NaN && js_meta[each_ex_id][1].length!=0)
-		{
-			js[each_ex_id].push(['min',js_meta[each_ex_id][1]]);
-		}
-		if(js_meta[each_ex_id][2]!=NaN && js_meta[each_ex_id][2].length!=0)
-		{
-			js[each_ex_id].push(['max',js_meta[each_ex_id][2]]);
-		}
-		
-		//console.log(js[each_ex_id]);
-		
-		var value_array=[];
-		
-		for (each_date_time in js[each_ex_id])
-		{
-			value_array.push(parseFloat(js[each_ex_id][each_date_time][1]));
-		}
-		
-		max_val=Math.max(...value_array);
-		min_val=Math.min(...value_array);
-		
-		if(max_val != min_val)
-		{
-			x_unit=(cw-250)/(max_val-min_val);
-		}
-		else
-		{
-			x_unit=(cw-250)/max_val;
-		}		
-
-		counter=0;
-		
-		for (each_date_time in js[each_ex_id])
-		{
-			//document.getElementById("gd").innerHTML += (js[each_ex_id][each_date_time][0] + '->' + js[each_ex_id][each_date_time][1]) + '<br>';
-			data=(js[each_ex_id][each_date_time][0]);
-			data_length=js[each_ex_id][each_date_time][1]-min_val;
-			if(data=='min' || data=='max')
-			{
-				draw_line_dots(ctx,[110+parseFloat(data_length)*x_unit+50 ,30+counter*20],[110+parseFloat(data_length)*x_unit+50 ,0],color='#000000');				
-				//draw_text(ctx,[10,30+counter*20],data,color='#000000',font="10px Serif");
-				draw_text(ctx,[110+parseFloat(data_length)*x_unit+50+2 ,30+counter*20],js[each_ex_id][each_date_time][1]+'('+data+')',color='#000000',font="12px Serif");
-			}
-			else
-			{
-				draw_line(ctx,[110,30+counter*20],[110+parseFloat(data_length)*x_unit+50 ,30+counter*20],color='#000000');
-				draw_text(ctx,[10,30+counter*20],data,color='#000000',font="10px Serif");
-				draw_text(ctx,[110+parseFloat(data_length)*x_unit+50+2 ,30+counter*20],js[each_ex_id][each_date_time][1],color='#000000',font="12px Serif");
-			}
-			counter++;
-		}
-	}
-}
-
 
 </script>
 
