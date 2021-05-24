@@ -4284,6 +4284,7 @@ function view_sample_p($link,$sample_id,$profile_wise_ex_list)
 				$edit_specification=json_decode($examination_details['edit_specification'],true);
 				$type=isset($edit_specification['type'])?$edit_specification['type']:'';					
 				$hide=isset($edit_specification['hide'])?$edit_specification['hide']:'';
+				$accredited=isset($edit_specification['accreditation'])?$edit_specification['accreditation']:'';
 
 				if($type!='blob' && $hide!='yes')
 				{
@@ -4586,7 +4587,8 @@ class ACCOUNT1 extends TCPDF {
 		<td colspan="3">
 			<table>
 				<tr>
-					<td border="0.3" rowspan="4" width="10%"><img src="img/nabl1.png" width="50"> ML-0450</td>
+					<!-- <td border="0.3" rowspan="4" width="10%"><img src="img/nabl1.png" width="50"> ML-0450</td> -->
+					<td border="0.3" rowspan="4" width="10%"></td>
 					<td style="text-align:center" width="90%"><h2>'.$header['name'].'</h2></td>
 				</tr>
 				<tr>

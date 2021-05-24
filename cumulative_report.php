@@ -12,6 +12,7 @@ require_once 'base/verify_login.php';
 
 $GLOBALS['js']='';
 $GLOBALS['js_meta']='';
+$GLOBALS['js_mrd']='';
 
 ////////User code below/////////////////////
 //echo '<pre>';print_r($_POST);echo '</pre>';
@@ -103,6 +104,8 @@ function show_delta_for_single_sample($link,$sample_id,$ex_requested=array())
 	//Never use $mrd, it is a global
 	//echo 'going to execute echo show_delta';
 	$this_mrd=get_one_ex_result($link,$sample_id,$GLOBALS['mrd']);
+	$GLOBALS['js_mrd']=$this_mrd;
+	//echo str_replace("/","_",$js_mrd); 
 	 
 	$sql='select sample_id from result 
 			where 
@@ -227,6 +230,8 @@ function echo_graph_good($exr)
 <script type="text/javascript">
 var js=<?php echo $GLOBALS['js']; ?>;
 var js_meta=<?php echo $GLOBALS['js_meta']; ?>;
+var js_mrd=<?php echo "'".$GLOBALS['js_mrd']."'"; ?>;
+console.log(js_mrd);
 
 $(document).ready
 	(
@@ -484,19 +489,21 @@ function draw_graph_with_date()
 	//console.log(js);
 	//console.log(js[5006][2][1]);
 
-	var cw=400;
-	var ch=200;
+	//var cw=400;
+	//var ch=200;
 
+	total_data=0
 	for ( each_ex_id in js )
 	{ 
-		total_data=each_ex_id.length;
+		total_data=Math.max(js[each_ex_id].length,total_data);
 		console.log(total_data);
 	}
-		
+	
+	var cw=400;
+	var ch=(total_data+3)*20;	//total_data + min + max + 20 extra
+			
 	for ( each_ex_id in js )
 	{ 
-		total_data=each_ex_id.length;
-		console.log(total_data);
 		//document.getElementById("gd").innerHTML += (each_ex_id + '<br>');
 		var cnvs = document.createElement("canvas");
 		cnvs.setAttribute("height",ch);
@@ -505,7 +512,8 @@ function draw_graph_with_date()
 		document.body.appendChild(cnvs);
 		var ctx = cnvs.getContext("2d");
 		ctx.font = "Serif";
-		draw_text(ctx,[10,12],js_meta[each_ex_id][0]+":"+each_ex_id,color='#000000',font="13px Serif");
+		//draw_text(ctx,[10,12],js_meta[each_ex_id][0]+"  (id:"+each_ex_id+")"+"  (MRD:"+js_mrd+")",color='#000000',font="13px Serif");
+		draw_text(ctx,[10,12],js_meta[each_ex_id][0]+" ("+js_mrd+")",color='#000000',font="13px Serif");
 		
 		if(js_meta[each_ex_id][1]!=NaN && js_meta[each_ex_id][1].length!=0)
 		{
@@ -547,7 +555,6 @@ function draw_graph_with_date()
 			if(data=='min' || data=='max')
 			{
 				draw_line_dots(ctx,[110+parseFloat(data_length)*x_unit+50 ,30+counter*20],[110+parseFloat(data_length)*x_unit+50 ,0],color='#000000');				
-				//draw_text(ctx,[10,30+counter*20],data,color='#000000',font="10px Serif");
 				draw_text(ctx,[110+parseFloat(data_length)*x_unit+50+2 ,30+counter*20],js[each_ex_id][each_date_time][1]+'('+data+')',color='#000000',font="12px Serif");
 			}
 			else
