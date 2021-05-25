@@ -973,6 +973,19 @@ function sample_id_verify_button($sample_id)
 	</form></div>';
 }
 
+function sample_id_delta_button($sample_id)
+{
+        echo '<div class="d-inline-block"  style="width:100%;">
+		<form method=post action=get_data_for_delta_check.php 
+			class=print_hide 
+			target=_blank>
+        <button class="btn btn-outline-primary btn-sm" name=one_by_one_sample_id value=\''.$sample_id.'\' >Delta</button>
+        <input type=hidden name=session_name value=\''.$_POST['session_name'].'\'>
+        <input type=hidden name=get_data value=one_by_one>
+        </form></div>';
+}
+
+
 function sample_id_verification_done_button($sample_id)
 {
 	echo '<div class="d-inline-block"  style="width:100%;"><form method=post action=edit_general.php class=print_hide>
@@ -1202,6 +1215,7 @@ function edit_sample($link,$sample_id)
 					sample_id_edit_button($sample_id);
 					sample_id_calculate_button($sample_id);
 					sample_id_verify_button($sample_id);
+					sample_id_delta_button($sample_id);
 					sample_id_verification_done_button($sample_id);
 					sample_id_sync_all_button($sample_id);
 				}
