@@ -710,9 +710,27 @@ function view_field_blob($link,$kblob,$sample_id)
 									'examination_id',$examination_blob_details['examination_id'],
 									$sample_id.'-'.$examination_blob_details['examination_id'].'-'.$ar_blob['fname']
 									);
+
+                $edit_specification=json_decode($examination_blob_details['edit_specification'],true);
+                $img=isset($edit_specification['img'])?$edit_specification['img']:'';
+
+
+                if($img=='png')
+                {
+                        echo '<div><b>';
+                        echo $examination_blob_details['name'];
+                        echo ':</b></div>';
+                        echo '<div>';
+                        //no effect of last three parameters, not implemented
+                        display_png($ar_blob['result'],$ar_blob['fname'],500,200);      
+                        echo '</b></div>';
+                }
+
+
+
 				echo '</div>';
 				echo '<div  class="help border border-dark "  >Current File:'.$ar_blob['fname'].'</div>
-				</div>';
+			</div>';
 }
 
 function view_field_blob_hr($link,$kblob,$sample_id)
@@ -735,6 +753,8 @@ function view_field_blob_hr($link,$kblob,$sample_id)
 									);
 				echo ':'.$ar_blob['fname'].'</div>
 				';
+
+
 }
 
 function view_field_blob_vr($link,$kblob,$sample_id)
