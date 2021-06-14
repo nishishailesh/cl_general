@@ -733,6 +733,36 @@ function view_field_blob($link,$kblob,$sample_id)
 			</div>';
 }
 
+
+
+function view_field_blob_p($link,$kblob,$sample_id)
+{
+		$sql_blob='select * from result_blob where sample_id=\''.$sample_id.'\' and examination_id=\''.$kblob.'\'';
+		$result_blob=run_query($link,$GLOBALS['database'],$sql_blob);
+		$ar_blob=get_single_row($result_blob);
+	
+		//print_r($ar);
+		$examination_blob_details=get_one_examination_details($link,$kblob);
+		$edit_specification=json_decode($examination_blob_details['edit_specification'],true);		
+		$img=isset($edit_specification['img'])?$edit_specification['img']:'';
+		$wd=isset($edit_specification['width'])?$edit_specification['width']:'400';
+		$ht=isset($edit_specification['height'])?$edit_specification['height']:'200';
+		echo '<tr><td  colspan="3"><b>';
+		echo $examination_blob_details['name'];
+		echo ':</b></td></tr><tr>';
+
+		echo '<td colspan="3">';
+		//print_r($examination_details);
+		if($img=='png')
+		{
+			//no effect of last three parameters, not implemented
+			//width bigger than nature have no effect
+			display_png_p($ar_blob['result'],$ar_blob['fname'],$wd,$ht);	
+		}
+		echo '</td></tr>';
+}
+
+
 function view_field_blob_hr($link,$kblob,$sample_id)
 {
 		$sql_blob='select * from result_blob where sample_id=\''.$sample_id.'\' and examination_id=\''.$kblob.'\'';
@@ -4376,9 +4406,9 @@ function view_sample_p($link,$sample_id,$profile_wise_ex_list)
 				{
 					view_field_p($link,$ex_id,$ex_list[$ex_id]);	
 				}
-				else
+				else if ($type=='blob'  && $hide!='yes')
 				{
-					
+					view_field_blob_p($link,$ex_id,$sample_id);
 				}
 			}
 		}				
