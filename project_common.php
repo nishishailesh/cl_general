@@ -157,7 +157,7 @@ function main_menu($link)
 						<button class="btn btn-outline-primary m-0 p-0" formaction=sms.php type=submit name=action value=sms>SMS</button>
 						<button class="btn btn-outline-primary m-0 p-0" formaction=statistics_and_info.php type=submit name=action value=statistics>Statistics and Info</button>
 						<button class="btn btn-outline-primary m-0 p-0" formaction=dashboard.php type=submit name=action value=dashboard>Dashboard</button>
-						
+						<button class="btn btn-outline-primary m-0 p-0" formaction=get_id_range_for_cup_barcode.php type=submit name=action value=cup_barcode_range>Cup Barcode</button>
 					</div>
 				</div>
 		</div>
@@ -5303,7 +5303,7 @@ $style=array(
 		$pdf->write1DBarcode($sample_id,   $code, 3, 3  , $w , $h ,  0.4, $style, 'N');
 		$pdf->write1DBarcode($sample_id+1, $code, 27,3   , $w , $h ,  0.4, $style, 'N');		
 		$pdf->write1DBarcode($sample_id+2, $code, 3, 15  , $w , $h ,  0.4, $style, 'N');		
-		$pdf->write1DBarcode($sample_id+2, $code, 27,15  , $w , $h ,  0.4, $style, 'N');		
+		$pdf->write1DBarcode($sample_id+3, $code, 27,15  , $w , $h ,  0.4, $style, 'N');		
 		
 }
 
