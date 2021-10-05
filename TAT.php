@@ -55,6 +55,9 @@ elseif($_POST['action']=='search_detail')
 		$cr=isset($tat['Collection_Request_TAT'])?$tat['Collection_Request_TAT']:'';
 		//print_r($tat);
 		echo '<tr>';
+			echo '<td>';
+				sample_id_view_button_with_tat($tat['sample_id'],$target=' target=_blank ',$label=$tat['sample_id']);
+			echo '</td>';
 			echo '<td>'.$tat['sample_id'].'</td>';
 			echo '<td>'.$location.'</td>';
 			echo '<td title="'.print_r($tat,true).'">'.$tat['receipt_time'].'</td>';
@@ -101,6 +104,17 @@ Array
 tail();
 
 echo '<pre>';print_r($_POST);print_r($_FILES);echo '</pre>';
+
+
+
+function sample_id_view_button_with_tat($sample_id,$target='',$label='View')
+{
+        echo '<div class="d-inline-block" style="width:100%;"><form method=post action=view_single_with_tat.php class=print_hide '.$target.'>
+        <button class="btn btn-outline-success btn-sm text-dark " name=sample_id value=\''.$sample_id.'\' >'.$label.'</button>
+        <input type=hidden name=session_name value=\''.$_POST['session_name'].'\'>
+        <input type=hidden name=action value=view_single>';
+        echo '</form></div>';
+}
 
 //////////////Functions///////////////////////
 ?>

@@ -87,14 +87,14 @@ function main_menu($link)
 
 					<div class="text-center">--Bio--</div>
 					<button class="btn btn-outline-primary m-0 p-0 " formaction=new_specific_biochemistry.php type=submit name=action value=direct>New Direct(Age/Sex)</button>
-					<button class="btn btn-outline-primary m-0 p-0 " formaction=new_covid_biochemistry.php type=submit name=action value=direct>New Covid(MRD)</button>
+					<button class="btn btn-outline-primary m-0 p-0 " formaction=new_covid_biochemistry.php type=submit name=action value=direct>New Direct(Transporter)</button>
 		<!-- <button class="btn btn-outline-primary m-0 p-0 " formaction=new_covid_biochemistry_stem.php type=submit name=action value=direct>New Covid(Stem)</button> -->
-		<button class="btn btn-outline-primary m-0 p-0 " formaction=new_covid_biochemistry_stem_coll.php type=submit name=action value=direct>New Covid(Stem Coll)</button>
-					<button class="btn btn-outline-primary m-0 p-0 " formaction=new_qc_biochemistry.php type=submit name=action value=qc>New QC</button>
+		<button class="btn btn-outline-primary m-0 p-0 " formaction=new_covid_biochemistry_stem_coll.php type=submit name=action value=direct>New Direct(Collection)</button>
+		<button class="btn btn-outline-primary m-0 p-0 " formaction=new_qc_biochemistry.php type=submit name=action value=qc>New QC</button>
 				</div>
 			</div>
 		</div>
-		
+
 		<div class="dropdown m-0 p-0">
 			<button class="btn btn-outline-primary dropdown-toggle m-0 p-0" type="button" data-toggle="dropdown">View</button>
 				<div class="dropdown-menu m-0 p-0">
