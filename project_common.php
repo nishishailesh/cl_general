@@ -569,8 +569,18 @@ function view_sample_compact($link,$sample_id)
 	$result_plus_blob_requested=$ex_list+$rblob;
 	//print_r($result_plus_blob_requested);
 	echo '<div style="width:300px;">';
+		echo '<table><tr>';
+		echo '<td>';
 		sample_id_prev_button($sample_id);
+		echo '</td>';
+		echo '<td>';
 		sample_id_next_button($sample_id);
+		echo '</td>';
+		echo '<td>';
+		sample_id_analysis_started_button($sample_id);
+		echo '</td>';
+		echo '</tr></table>';
+
 		$sr=get_one_ex_result($link,$sample_id,$GLOBALS['sample_requirement']);
 		$opd_ward=get_one_ex_result($link,$sample_id,$GLOBALS['OPD/Ward']);
 		if($opd_ward=='OPD')
@@ -603,7 +613,7 @@ function view_sample_compact($link,$sample_id)
 					$examination_details=get_one_examination_details($link,$ex_id);
 					$edit_specification=json_decode($examination_details['edit_specification'],true);
 					$type=isset($edit_specification['type'])?$edit_specification['type']:'';
-					
+
 					if($type!='blob')
 					{
 						echo '<tr><td>'.$examination_details['name'].'</td><td>'.$ex_list[$ex_id].'</td></tr>';
@@ -1098,6 +1108,15 @@ function sample_id_next_button($sample_id)
 	<input type=hidden name=session_name value=\''.$_POST['session_name'].'\'>
 	<input type=hidden name=action value=view_single>
 	</form></div>';
+}
+
+function sample_id_analysis_started_button($sample_id)
+{
+        echo '<div class="d-inline-block"  style="width:100%;"><form method=post action=view_single.php  class=print_hide>
+        <button class="btn btn-outline-danger btn-sm m-0 p-0" name=sample_id value=\''.$sample_id.'\' >Analysis Started</button>
+        <input type=hidden name=session_name value=\''.$_POST['session_name'].'\'>
+        <input type=hidden name=action value=analysis_started>
+        </form></div>';
 }
 
 
@@ -4809,7 +4828,9 @@ function prepare_result_from_view_data_id($link,$id)
 		//echo $sql.'<br>';
         ////modify sql
         //print_r($_POST);
-        
+
+	$sql=str_replace('__session_name',$_POST['session_name'],$sql);			
+
         if(isset($_POST['__p1'])) 
         {
 			if(strlen($_POST['__p1'])>0)
@@ -5179,7 +5200,7 @@ function prepare_sample_barcode($link,$sample_id,$pdf)
 				$pdf->StartTransform();
 				$pdf->SetFont('helveticaB', '', 8);
 				$pdf->Rotate(90, 43, 18);
-				$pdf->SetXY(40,16);
+				$pdf->SetXY(40,15);
 				$pdf->Cell(15,5,$sample_type,$border=0, $ln=0, $align='', $fill=false, $link='', $stretch=2, $ignore_min_height=false, $calign='T', $valign='M');	
 				$pdf->StopTransform();
 			}
@@ -5192,6 +5213,15 @@ function prepare_sample_barcode($link,$sample_id,$pdf)
 				$pdf->SetFont('helveticaB', '', 7);
 				$pdf->SetXY(21,17);
 				$pdf->Cell(10,3,$patient_name,$border=0, $ln=0, $align='', $fill=false, $link='', $stretch=2, $ignore_min_height=false, $calign='T', $valign='M');	
+
+                                $pdf->StartTransform();
+                                $pdf->SetFont('helveticaB', '', 6);
+                                $pdf->Rotate(90, 43, 18);
+                                $pdf->SetXY(40,17);
+       				$pdf->Cell(15,5,$patient_name,$border=0, $ln=0, $align='', $fill=false, $link='', $stretch=0, $ignore_min_height=false, $calign='T', $valign='M');	
+                                $pdf->StopTransform();
+
+
 			}
 		}
 				

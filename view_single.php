@@ -20,6 +20,13 @@ echo '</div><div class="d-inline-block">';
 get_dbid_small();
 echo '</div>';
 
+if($_POST['action']=='analysis_started')
+{
+	//echo 'analysis_started';
+	update_sample_status($link,$_POST['sample_id'],'analysis_started');
+}
+show_sid_button_release_status($link,$_POST['sample_id'],'');
+
 if($_SESSION['display_style']=='full')
 {
 	view_sample($link,$_POST['sample_id']);
