@@ -4394,10 +4394,12 @@ function view_sample_p($link,$sample_id,$profile_wise_ex_list)
 			{
 				$examination_details=get_one_examination_details($link,$ex_id);
 				$edit_specification=json_decode($examination_details['edit_specification'],true);
+				$hide=isset($edit_specification['hide'])?$edit_specification['hide']:'';
 				$type=isset($edit_specification['type'])?$edit_specification['type']:'';					
 				if($type!='blob')
 				{
-					view_field_vr_p($link,$ex_id,$ex_list[$ex_id]);	
+					if($hide!='yes'){
+					view_field_vr_p($link,$ex_id,$ex_list[$ex_id]);	}
 				}
 				else
 				{

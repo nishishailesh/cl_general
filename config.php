@@ -128,6 +128,9 @@ $GLOBALS['all_records_limit']=100;
 #to ensure that if table donot exist, menu donot get broken
 $GLOBALS['reminders_table']='reminders';
 
+$GLOBALS['TAT_warn_hours']=4;
+$GLOBALS['TAT_remark_id']=5191;
+
 /*
 $GLOBALS['dates_times']=array(
 			$GLOBALS['request_date']=>1,

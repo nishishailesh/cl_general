@@ -20,17 +20,45 @@ echo '</div><div class="d-inline-block">';
 get_dbid_small();
 echo '</div>';
 
+
+if($_POST['action']=='Save_TAT_remark')
+{
+        insert_update_one_examination_with_result(
+                                                        $link,
+                                                        $_POST['sample_id'],
+                                                        $GLOBALS['TAT_remark_id'],
+                                                        $_POST['tat_remark']
+                                                );
+}
+
+
+
 if($_POST['action']=='analysis_started')
 {
 	//echo 'analysis_started';
 	update_sample_status($link,$_POST['sample_id'],'analysis_started');
 }
+
 show_sid_button_release_status($link,$_POST['sample_id'],'');
 
 if($_SESSION['display_style']=='full')
 {
+	$tat=calculate_tat($link,$_POST['sample_id'],$print='no');
+	if(isset($tat['Total_TAT']))
+	{
+        	if($tat['Total_TAT']>$GLOBALS['TAT_warn_hours'])
+        	{
+		$tat_result=get_one_ex_result($link,$_POST['sample_id'],$GLOBALS['TAT_remark_id']);
+                echo '<h3 class="text-danger d-inline">Total TAT exceed 4 hours. Add remark if required.</h3>';
+                echo '<form class="d-inline"  method=post>
+                                <input type=hidden name=session_name value=\''.session_name().'\'>
+                                <input type=hidden name=sample_id value=\''.$_POST['sample_id'].'\'>
+                                <textarea name=tat_remark>'.$tat_result.'</textarea>
+                                <input type=submit name=action value=\'Save_TAT_remark\'>
+                        </form>';
+        	}
+	}
 	view_sample($link,$_POST['sample_id']);
-	//calculate_tat($link,$_POST['sample_id']);
 	//$GLOBALS['library']='';
 	//	require_once 'get_data_for_delta_check.php';
 	//unset($GLOBALS['library']);
@@ -41,6 +69,7 @@ else
 	view_sample_compact($link,$_POST['sample_id']);
 }
 
+echo '<pre>';print_r($tat);echo '</pre>';
 
 //////////////user code ends////////////////
 tail();

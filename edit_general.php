@@ -12,18 +12,22 @@ $link=get_link($GLOBALS['main_user'],$GLOBALS['main_pass']);
 
 main_menu($link);
 echo '<div id=response></div>';
+
 if($_POST['action']=='edit_general')
 {
+	show_sid_button_release_status($link,$_POST['sample_id'],'');
 	edit_sample($link,$_POST['sample_id']);
 }
 if($_POST['action']=='upload')
 {
 	save_result_blob($link,$_POST['sample_id']);
+	show_sid_button_release_status($link,$_POST['sample_id'],'');
 	edit_sample($link,$_POST['sample_id']);
 }
 if($_POST['action']=='delete')
 {
 	delete_examination($link,$_POST['sample_id'],$_POST['examination_id']);
+	show_sid_button_release_status($link,$_POST['sample_id'],'');
 	edit_sample($link,$_POST['sample_id']);
 }
 if($_POST['action']=='insert')
@@ -32,17 +36,21 @@ if($_POST['action']=='insert')
 											$_POST['list_of_selected_examination'],
 											$_POST['list_of_selected_profile'],
 											$_POST['list_of_selected_super_profile']);
+	show_sid_button_release_status($link,$_POST['sample_id'],'');
+
 	edit_sample($link,$_POST['sample_id']);
 }
 if($_POST['action']=='calculate')
 {
 	calculate_and_update($link,$_POST['sample_id']);
+	show_sid_button_release_status($link,$_POST['sample_id'],'');
 	edit_sample($link,$_POST['sample_id']);
 }
 
 if($_POST['action']=='sync_ALL')
 {
 	sync_all($link,$_POST['sample_id']);
+	show_sid_button_release_status($link,$_POST['sample_id'],'');
 	edit_sample($link,$_POST['sample_id']);
 }
 
@@ -56,18 +64,29 @@ if($_POST['action']=='sync_single')
 	{
 		save_single_result_blob($link,$_POST['sample_id'],$_POST['examination_id'],$_POST['uniq']);
 	}
+	show_sid_button_release_status($link,$_POST['sample_id'],'');
 	edit_sample($link,$_POST['sample_id']);
 }
 
 if($_POST['action']=='verify')
 {
 	verify_sample($link,$_POST['sample_id']);
+	show_sid_button_release_status($link,$_POST['sample_id'],'');
 	edit_sample($link,$_POST['sample_id']);
 }
 
 if($_POST['action']=='verification_done')
 {
-	update_sample_status($link,$_POST['sample_id'],'verification_done');
+	$ret=verify_sample($link,$_POST['sample_id']);
+	if($ret==-1)
+	{
+		echo '<h1 class="bg-danger">Sample Not verified successfully. Verification Incomplate. Correct requirement</h1>';
+	}
+	else
+	{
+		update_sample_status($link,$_POST['sample_id'],'verification_done');
+	}
+	show_sid_button_release_status($link,$_POST['sample_id'],'');
 	edit_sample($link,$_POST['sample_id']);
 }
 
@@ -79,7 +98,8 @@ if($_POST['action']=='save_primary_result')
     //[__ex__9001] => 1.2
     //[action] => save_primary_result
     
-    insert_primary_result($link,$_POST['sample_id'],$_POST['examination_id'],$_POST['result'],$_POST['uniq']);
+    	insert_primary_result($link,$_POST['sample_id'],$_POST['examination_id'],$_POST['result'],$_POST['uniq']);
+	show_sid_button_release_status($link,$_POST['sample_id'],'');
 	edit_sample($link,$_POST['sample_id']);
     
 }

@@ -15,22 +15,23 @@ function verify_sample($link,$sample_id)
 	//print_r($ex_result_array);
 	foreach ($ex_result_array as $eid=>$eval)
 	{
-		any_examination_id($link,$sample_id,$eid,$eval);
+		$ret=any_examination_id($link,$sample_id,$eid,$eval);
 		if(function_exists('f_'.$eid))
 		{
 			$fun_name='f_'.$eid;
 			$fun_name($link,$sample_id,$eid);
 		} 
 	}
+	return $ret;
 }
 
 function any_examination_id($link,$sample_id,$eid,$eval)
 {
-	$examination_details=get_one_examination_details($link,$eid);		
+	$examination_details=get_one_examination_details($link,$eid);
 
 	if(strlen($eval)==0)
 	{
-		echo '<span class="text-danger d-block">('.$eid.'-'.$examination_details['name'].') result is empty. [NOT OK]</span>';return;
+		echo '<span class="text-danger d-block">('.$eid.'-'.$examination_details['name'].') result is empty. [NOT OK]</span>';return -1;
 	}
 
 	if($GLOBALS['critical_autoinsert']=='yes')
