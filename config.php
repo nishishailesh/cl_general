@@ -165,7 +165,9 @@ array(
 		['report_released',[$GLOBALS['release_date'],$GLOBALS['release_time']],'lightgreen',['date','time'],'hide'],		
 		['report_released',[$GLOBALS['released_by']],'lightgreen',['username'],'hide']
 	);
-	
+
+$GLOBALS['is_verification_success_important']='yes';
+
 //$GLOBALS['state_colorcode']=array('white','lightgray','yellow','orange','lightpink','lightblue','lightgreen','lightgreen','lightgreen');
 
 $GLOBALS['eq_color_code']=array('C'=>'lightpink','I'=>'red','A'=>'cyan','D'=>'#00F5E0','6'=>'violet','K'=>'#6699ff','E'=>'mediumvioletred');

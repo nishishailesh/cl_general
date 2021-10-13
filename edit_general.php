@@ -78,14 +78,18 @@ if($_POST['action']=='verify')
 if($_POST['action']=='verification_done')
 {
 	$ret=verify_sample($link,$_POST['sample_id']);
-	if($ret==-1)
-	{
-		echo '<h1 class="bg-danger">Sample Not verified successfully. Verification Incomplate. Correct requirement</h1>';
-	}
-	else
-	{
+ 	//echo '<h1>xx'.$ret.'xx</h1>';
+	// in confg.php $GLOBALS['is_verification_success_important']='yes';
+
+	//if($ret==-1 && $GLOBALS['is_verification_success_important']=='yes')
+	//if($ret==-1)
+	//{
+	//	echo '<h1 class="bg-danger">Sample Not verified successfully. Verification Incomplate. Correct requirement</h1>';
+	//}
+	//else
+	//{
 		update_sample_status($link,$_POST['sample_id'],'verification_done');
-	}
+	//}
 	show_sid_button_release_status($link,$_POST['sample_id'],'');
 	edit_sample($link,$_POST['sample_id']);
 }

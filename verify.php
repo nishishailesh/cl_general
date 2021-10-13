@@ -13,9 +13,12 @@ function verify_sample($link,$sample_id)
 	//echo '<pre>';print_r($_POST);echo '</pre>';
 	$ex_result_array=get_result_of_sample_in_array($link,$sample_id);
 	//print_r($ex_result_array);
+	$ret=0;
 	foreach ($ex_result_array as $eid=>$eval)
 	{
-		$ret=any_examination_id($link,$sample_id,$eid,$eval);
+		$temp_ret=any_examination_id($link,$sample_id,$eid,$eval);
+		if($ret==-1){$ret=-1;}else{$ret=$temp_ret;}
+
 		if(function_exists('f_'.$eid))
 		{
 			$fun_name='f_'.$eid;
