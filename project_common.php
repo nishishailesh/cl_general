@@ -384,6 +384,7 @@ function show_all_buttons_for_sample($link,$sample_id)
 		sample_id_print_button($sample_id);			
 		sample_id_email_button($sample_id);
 		sample_id_telegram_button($sample_id);
+		sample_id_xmpp_button($sample_id);
 		sample_id_edit_button($sample_id);
 		sample_id_delete_button($sample_id);
 	}	
@@ -399,6 +400,7 @@ function show_all_buttons_for_sample($link,$sample_id)
 		sample_id_print_button($sample_id);			
 		sample_id_email_button($sample_id);
 		sample_id_telegram_button($sample_id);
+		sample_id_xmpp_button($sample_id);
 	}
 	echo '</div>';
 }
@@ -1097,6 +1099,15 @@ function sample_id_telegram_button($sample_id)
 	<button class="btn btn-outline-success btn-sm" name=sample_id value=\''.$sample_id.'\' >Telegram</button>
 	<input type=hidden name=session_name value=\''.$_POST['session_name'].'\'>
 	<input type=hidden name=action value=telegram>
+	</form></div>';
+}
+
+function sample_id_xmpp_button($sample_id)			
+{
+	echo '<div class="d-inline-block"  style="width:100%;"><form method=post action=im_single.php class=print_hide>
+	<button class="btn btn-outline-success btn-sm" name=sample_id value=\''.$sample_id.'\' >XMPP</button>
+	<input type=hidden name=session_name value=\''.$_POST['session_name'].'\'>
+	<input type=hidden name=action value=xmpp>
 	</form></div>';
 }
 
