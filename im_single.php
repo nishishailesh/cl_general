@@ -34,7 +34,14 @@ if(strlen($email)==0)
 //				recording_time=now(),
 //				recorded_by=\''.$_SESSION['login'].'\'
 
-$send_to='shailesh_patel@nchs.gmcsurat.edu.in';
+$GLOBALS['location_id']=1006;
+
+$location=get_one_ex_result($link,$_POST['sample_id'],$GLOBALS['location_id']);
+
+
+//$send_to='shailesh_patel@nchs.gmcsurat.edu.in';
+$send_to=$location.'@nchs.gmcsurat.edu.in';
+
 $message=fetch_lab_report($link,$_POST['sample_id']);
 $xmpp_sql='insert into im_message (send_to,message,message_status,recording_time,recorded_by) 
 		values
