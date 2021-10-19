@@ -71,23 +71,67 @@ view_sample($link,$_POST['sample_id']);
 tail();
 
 //echo '<pre>';print_r($_POST);echo '</pre>';
+function make_link($link,$sample_id)
+{
+	insert_sample_id_link($link,$sample_id);
+	$sql='select  * from sample_link where sample_id=\''.$sample_id.'\'';
+	$result=run_query($link,$GLOBALS['database'],$sql);
+	$ar=get_single_row($result);
+	//echo '<pre>';
+	//print_r($ar);
+	//print_r($_SERVER);
+	//echo '</pre>';
+	//echo $_SERVER['HTTP_HOST'].'/cl_general/get_linked_report.php?token='.$ar['link'];
+	return 'https://gmcsurat.edu.in:12349/cl_general/get_linked_report.php?token='.$ar['link'];
+}
 
+
+function insert_sample_id_link($link,$sample_id)
+{
+	$sql='insert into sample_link(sample_id,link)
+			values (\''.$sample_id.'\',\''.bin2hex(random_bytes(16)).'\')';
+	if(!run_query($link,$GLOBALS['database'],$sql))
+	{
+		return false;
+	}	
+	else
+	{
+		return true;
+	}
+}
 
 function fetch_lab_report($link,$sample_id)
 {
-	$ret= '
-	Biochemistry Lab Report\n';
+	$ret= '\n\nBiochemistry Lab Report\n=====================\n';
 
-	$sql='select sample_id,examination.examination_id,name,result from result,examination where sample_id=\''.$sample_id.'\' and examination.examination_id=result.examination_id';
+	$sql='select sample_id,examination.examination_id,name,result,sample_requirement from result,examination where sample_id=\''.$sample_id.'\' and examination.examination_id=result.examination_id';
     $result=run_query($link,$GLOBALS['database'],$sql);
 
-    $ret=$ret.'sample_id:'. $sample_id.'\n';
+    $ret=$ret.'sample_id:'. $sample_id.'\n=====================\n';
 
+	$none_ar=array(1000,1001,1002,1003,1004,1005,1006);
+	
 	while($ar=get_single_row($result))
 	{
-		$ret=$ret.str_pad($ar['name'],20).':'.$ar['result'].'\n';
+		if(in_array($ar['examination_id'],$none_ar) && $ar['sample_requirement']=='None')
+		{
+			$ret=$ret.str_pad($ar['name'],20).':'.$ar['result'].'\n';
+			if($ar['examination_id']==1006)
+			{
+				$ret=$ret."=====================\n";
+			}
+		}
+		else if($ar['sample_requirement']!='None')
+		{
+			$ret=$ret.str_pad($ar['name'],20).':'.$ar['result'].'\n';
+		}
 	}
+	$ret=$ret."=====================\n";
+	$ret=$ret."===Detailed Report===\n";
+
+	$ret=$ret.make_link($link,$sample_id);
 	return $ret.'\n
+	
 	';
 
 }
