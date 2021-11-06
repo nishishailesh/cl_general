@@ -108,6 +108,7 @@ function main_menu($link)
 						<button class="btn btn-outline-primary m-0 p-0" formaction=location_report.php type=submit name=action value=get_location_list>LocationWise Report</button>			
 						<button class="btn btn-outline-primary m-0 p-0" formaction=update_status.php type=submit name=action value=update_status>Update Status</button>
 						<button class="btn btn-outline-primary m-0 p-0" formaction=report.php type=submit name=action value=get_report_sample_id>Ex-Report</button>
+						<button class="btn btn-outline-primary m-0 p-0" formaction=start_filtered.php type=submit name=action value=get_report_sample_id>Filtered Monitor</button>
 					</div>
 				</div>
 		</div>
@@ -6106,10 +6107,10 @@ function view_sql_result_as_table($link,$sql,$show_hide='yes')
 	display_sql_result_data($result,$show_hide);
 }
 
-
 function update_sample_status($link,$sample_id,$action)
 {
 	//echo '<h1>'.$_POST['action'].'</h1>';
+	if(!sample_exist($link,$sample_id)){return false;}
 	foreach($GLOBALS['sample_status'] as $index=>$status_array)
 	{
 		if($status_array[0]==$action)

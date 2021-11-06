@@ -14,7 +14,7 @@ foreach($GLOBALS['sample_status'] as $k=>$v)
 	echo '<span  style=" margin:2px; background-color:'.$v[2].'" >'.$v[0].'</span>';
 }
 
-
+//////ID Range///////////
 if(isset($_POST['id_range']) && strlen($_POST['id_range'])>0)
 {
 	$_SESSION['id_range']=$_POST['id_range'];
@@ -28,7 +28,7 @@ else
 	$_SESSION['id_range']="1000000-1999999";
 }
 
-//echo '####'.$_SESSION['id_range'];
+///////sample requirement/////////
 
 if(isset($_POST['sample_requirement']))
 {
@@ -41,6 +41,23 @@ else if(isset($_SESSION['sample_requirement']))
 else
 {
 	$_SESSION['sample_requirement']="";
+}
+
+
+
+///////sample status/////////
+
+if(isset($_POST['sample_status']))
+{
+	$_SESSION['sample_status']=$_POST['sample_status'];
+}
+else if(isset($_SESSION['sample_status']))
+{
+	$_SESSION['sample_status']=$_SESSION['sample_status'];
+}
+else
+{
+	$_SESSION['sample_status']="";
 }
 
 
@@ -100,7 +117,7 @@ function show_sample_requirement_options($link)
 {
 	//echo 'id_range_dropdown:';
 	$sql='select sample_requirement from sample_id_strategy';
-	mk_select_from_sql($link,$sql,'sample_requirement','sample_requirement','sample_requirement',$disabled='',$default='',$blank='yes');
+	mk_select_from_sql($link,$sql,'sample_requirement','sample_requirement','sample_requirement',$disabled='',$default=$_SESSION['sample_requirement'],$blank='yes');
 }
 function show_location_options($link)
 {
@@ -109,15 +126,13 @@ function show_location_options($link)
 
 function show_sample_status_options($link)
 {
-	//echo 'sample_status_type_dropdown:';
-	//print_r($GLOBALS['sample_status']);
 	$sample_status_only=array('');
 	foreach ($GLOBALS['sample_status'] as $k=>$v)
 	{
 		$sample_status_only[]=$v[0];
 	}
 	//print_r($sample_status_only);
-	mk_select_from_array('sample_status',$sample_status_only);
+	mk_select_from_array('sample_status',$sample_status_only,'',$_SESSION['sample_status']);
 }
 
 function show_start_sample_id_input($link)
@@ -132,10 +147,10 @@ function show_monitor_options($link)
 	echo '<input type=hidden name=session_name value=\''.session_name().'\'>';
 
 	show_id_range_options($link);
-	//show_sample_requirement_options($link);
-	//show_sample_status_options($link);
-	//show_location_options($link);
-	//show_start_sample_id_input($link);
+	show_sample_requirement_options($link);
+	show_sample_status_options($link);
+	show_location_options($link);
+	show_start_sample_id_input($link);
 	echo '<button type=submit name=option value=monitor_option>GO</button>';
 	echo '</form>';
 }
@@ -171,7 +186,7 @@ function callServer()
 		}
 	};
 	post='session_name=<?php echo $_POST["session_name"];?>&login=<?php echo $_SESSION["login"];?>&password=<?php echo $_SESSION["password"];?>&show_offset='+show_offset;
-	xhttp.open('POST', 'monitor.php', true);
+	xhttp.open('POST', 'monitor_filtered.php', true);
 	xhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
 	xhttp.send(post);	
 	setTimeout(callServer, 10000);

@@ -59,48 +59,49 @@ echo '
 $lh_id=explode("-",$_SESSION['id_range']);
 
 
-$one='select max(sample_id) as max_id from result where sample_id between \''.$lh_id[0].'\' and \''.$lh_id[1].'\'';
+//$one='select distinct sample_id from result where sample_id between \''.$lh_id[0].'\' and \''.$lh_id[1].'\' order by sample_id desc limit '.$lot_size*2;
+
+$one='select distinct sample_id from result where 
+			sample_id between \''.$lh_id[0].'\' and \''.$lh_id[1].'\' 
+			and
+			examination_id=\''.$GLOBALS['sample_requirement'].'\'
+			and
+			result like \'%'.$_SESSION['sample_requirement'].'%\'
+			
+			order by sample_id desc limit '.$lot_size*2;
+//echo $one;
 
 $result=run_query($link,$GLOBALS['database'],$one);
-if($result)
+
+
+while($ar=get_single_row($result))
 {
-	$ar=get_single_row($result);
+	show_sid_button_release_status($link,$ar['sample_id']);
 }
 
-$div=$ar['max_id']%10;		//1149290 -> 0
-if($div!=0)
+
+/*
+$first=True;
+
+while($ar=get_single_row($result))
 {
-	$offset=10-$div;			//10 - 0 -> 10 
+	if(!isset($prev_sid)){$prev_sid=$ar['sample_id']+1;}
+	if($prev_sid!=$ar['sample_id']+1){show_sid_button_release_status($link,$prev_sid-1);}
+	if($first===True)
+	{
+		$offset=20-$ar['sample_id']%20;
+		for($i=$ar['sample_id']+$offset;$i>$ar['sample_id'];$i--)
+		{
+			show_sid_button_release_status($link,$i);
+		}
+		$first=False;
+	}
+	show_sid_button_release_status($link,$ar['sample_id']);
+	if($ar['sample_id']%20==1){echo '<br>';}
+	$prev_sid=$ar['sample_id'];
 }
-else
-{
-	$offset=0;
-}
 
-$start_id=$ar['max_id']+$offset - 2*$lot_size;	//100566 -> 100566 +4 -200 =100560 - 200 = 100360 
-$rounded_start_id=$start_id+1+$_POST['show_offset'];		//100361
-$end_id=$ar['max_id']+$_POST['show_offset'];
-
-echo '<div class="two_column">';
-	echo '<div class="ten_column">';
-				for ($i=$rounded_start_id;$i<$rounded_start_id+$lot_size;$i++)
-				{
-					echo '<div class="btn-group-vertical m-0 p-0 rounded">';
-					show_sid_button_release_status($link,$i);
-					echo '</div>';
-				}			
-	
-	echo '</div>';
-
-	echo '<div class="ten_column">';
-			for ($i=$rounded_start_id+$lot_size;$i<=$end_id;$i++)
-			{
-				echo '<div class="btn-group-vertical m-0 p-0">';
-				show_sid_button_release_status($link,$i);
-				echo '</div>';
-			}							
-	echo '</div>';
-echo '</div>';
+*/
 echo '<pre>monitor:post';print_r($_POST);echo '</pre>';
 //echo '<pre>monitor:session';print_r($_SESSION);echo '</pre>';
 

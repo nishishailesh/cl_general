@@ -42,7 +42,11 @@ $location=get_one_ex_result($link,$_POST['sample_id'],$GLOBALS['location_id']);
 //$send_to='shailesh_patel@nchs.gmcsurat.edu.in';
 $send_to=$location.'@nchs.gmcsurat.edu.in';
 
-$message=fetch_lab_report($link,$_POST['sample_id']);
+//$message=fetch_lab_report($link,$_POST['sample_id']);
+
+$message=print_sample_for_xmpp($link,$_POST['sample_id']).'\n'.make_link($link,$_POST['sample_id']);
+
+
 $xmpp_sql='insert into im_message (send_to,message,message_status,recording_time,recorded_by) 
 		values
 		(
@@ -123,6 +127,7 @@ function fetch_lab_report($link,$sample_id)
 		}
 		else if($ar['sample_requirement']!='None')
 		{
+			view_field($link,$ex_id,$result);
 			$ret=$ret.str_pad($ar['name'],20).':'.$ar['result'].'\n';
 		}
 	}
@@ -130,12 +135,141 @@ function fetch_lab_report($link,$sample_id)
 	$ret=$ret."===Detailed Report===\n";
 
 	$ret=$ret.make_link($link,$sample_id);
-	return $ret.'\n
-	
-	';
+	return $ret.'\n';
 
 }
 
 
+
+function view_sample_p_for_xmpp($link,$sample_id,$profile_wise_ex_list)
+{
+	$critical_absurd='';
+	$ex_list=get_result_of_sample_in_array($link,$sample_id);
+	echo '\n#####Report Start#####\n';
+
+	foreach($profile_wise_ex_list as $kp=>$vp)
+	{
+		if($kp==$GLOBALS['pid_profile']){continue;}	//pid is displyed on each page//not needed here
+
+		$pinfo=get_profile_info($link,$kp);
+		$profile_edit_specification=json_decode($pinfo['edit_specification'],true);
+		$print_hide=isset($profile_edit_specification['print_hide'])?$profile_edit_specification['print_hide']:'';
+		$print_style=isset($profile_edit_specification['print_style'])?$profile_edit_specification['print_style']:'';
+		
+		if($print_hide=='yes'){continue;}	//not to be printed
+		
+		$display_name=isset($profile_edit_specification['display_name'])?$profile_edit_specification['display_name']:'';
+
+		if($display_name!='no')
+		{		
+			echo str_pad('****'.$pinfo['name'],30,"*").'\n';
+		}
+		
+		//if($pinfo['profile_id']>$GLOBALS['max_non_ex_profile'])
+
+	
+		$header=isset($profile_edit_specification['header'])?$profile_edit_specification['header']:'';
+		if($header!='no')
+		{
+			//echo_result_header_p_for_xmpp();
+		}
+	
+		foreach($vp as $ex_id)
+		{
+
+			$examination_details=get_one_examination_details($link,$ex_id);
+			$edit_specification=json_decode($examination_details['edit_specification'],true);
+			$type=isset($edit_specification['type'])?$edit_specification['type']:'';
+			$hide=isset($edit_specification['hide'])?$edit_specification['hide']:'';				
+			if($type!='blob'  && $hide!='yes')
+			{
+				$alert=view_field_p_for_xmpp($link,$ex_id,$ex_list[$ex_id]);
+				if(
+					$alert==$GLOBALS['absurd_low_message'] ||
+					$alert==$GLOBALS['absurd_high_message'] ||
+					$alert==$GLOBALS['critical_low_message'] ||
+					$alert==$GLOBALS['critical_high_message']
+					)
+					{
+						$critical_absurd=$alert;
+					}
+{
+}
+			}
+			else if ($type=='blob'  && $hide!='yes')
+			{
+				//view_field_blob_p($link,$ex_id,$sample_id);
+			}
+		}
+
+	}
+	
+	echo '\n#####Report End#####\n';
+	return $critical_absurd;
+}
+
+function echo_result_header_p_for_xmpp()
+{
+	echo '\n<Examination><Result><Unit, Ref. Intervals ,(Method)>\n';
+}
+
+
+function view_field_p_for_xmpp($link,$ex_id,$ex_result)
+{
+		$alert='';
+		$examination_details=get_one_examination_details($link,$ex_id);
+		$edit_specification=json_decode($examination_details['edit_specification'],true);
+		$help=isset($edit_specification['help'])?$edit_specification['help']:'';
+		$type=isset($edit_specification['type'])?$edit_specification['type']:'';
+
+		$interval_l=isset($edit_specification['interval_l'])?$edit_specification['interval_l']:'';
+		$cinterval_l=isset($edit_specification['cinterval_l'])?$edit_specification['cinterval_l']:'';
+		$ainterval_l=isset($edit_specification['ainterval_l'])?$edit_specification['ainterval_l']:'';
+		$interval_h=isset($edit_specification['interval_h'])?$edit_specification['interval_h']:'';
+		$cinterval_h=isset($edit_specification['cinterval_h'])?$edit_specification['cinterval_h']:'';
+		$ainterval_h=isset($edit_specification['ainterval_h'])?$edit_specification['ainterval_h']:'';
+		$img=isset($edit_specification['img'])?$edit_specification['img']:'';
+
+		if($img=='dw')
+		{
+			//$GLOBALS['img_list'][$examination_details['name']]=display_dw_png($ex_result,$examination_details['name']);
+		}
+		elseif($type=='subsection')
+		{		
+				echo str_pad('@@@'.$examination_details['name'],20).':\n';
+		}
+		else
+		{		$alert=decide_alert($ex_result,$interval_l,$cinterval_l,$ainterval_l,$interval_h,$cinterval_h,$ainterval_h);
+				if($alert==$GLOBALS['critical_low_message'] || $alert==$GLOBALS['critical_high_message'])
+				{
+					echo str_pad('*'.$examination_details['name'].':*',30).
+					str_pad(' '.$ex_result.'  '.$alert,40).
+					$help;
+				}
+				else
+				{
+					echo str_pad('-'.$examination_details['name'].':',20).
+					str_pad(' '.$ex_result.'  '.$alert,40).
+					$help;
+				}
+				echo '\n';
+		}
+		return $alert;
+
+}		
+
+
+
+function print_sample_for_xmpp($link,$sample_id)
+{
+	$profile_wise_ex_list=get_profile_wise_ex_list($link,$sample_id);
+	if($profile_wise_ex_list===false){return;}
+
+	ob_start();
+		$final_ret=view_sample_p_for_xmpp($link,$sample_id,$profile_wise_ex_list);
+		$myStr = '*Critical/Absurd Alert'.$final_ret.'*'.ob_get_contents();
+	ob_end_clean();
+	return $myStr;
+}
 
 ?>
