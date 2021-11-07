@@ -61,6 +61,53 @@ else
 }
 
 
+///////sample location/////////
+
+if(isset($_POST['sample_location']))
+{
+	$_SESSION['sample_location']=$_POST['sample_location'];
+}
+else if(isset($_SESSION['sample_location']))
+{
+	$_SESSION['sample_location']=$_SESSION['sample_location'];
+}
+else
+{
+	$_SESSION['sample_location']="";
+}
+
+///////sample limit/////////
+
+if(isset($_POST['sample_limit']))
+{
+	$_SESSION['sample_limit']=max($_POST['sample_limit'],0);
+}
+else if(isset($_SESSION['sample_limit']))
+{
+	$_SESSION['sample_limit']=$_SESSION['sample_limit'];
+}
+else
+{
+	$_SESSION['sample_limit']=200;
+}
+
+
+///////sample offset/////////
+
+if(isset($_POST['sample_offset']))
+{
+	$_SESSION['sample_offset']=max($_POST['sample_offset'],0);
+}
+else if(isset($_SESSION['sample_offset']))
+{
+	$_SESSION['sample_offset']=$_SESSION['sample_offset'];
+}
+else
+{
+	$_SESSION['sample_offset']=0;
+}
+
+/*
 echo '<div><button 
 			id=offset_button1 
 			type=button 
@@ -80,6 +127,7 @@ echo '<button
 			onclick=manage_offset(\'zero\')
 		>(0)</button>';
 echo '<span class="bg-warning">Current Offset:</span><span class="bg-warning" id=current_offset>0</span>';
+*/
 show_monitor_options($link);
 echo '</div>';
 monitor($link);
@@ -92,7 +140,7 @@ if (isset($_POST['action']) && isset($_POST['sample_id']))
 
 //////////////user code ends////////////////
 tail();
-echo '<pre>start:post';print_r($_POST);echo '</pre>';
+//echo '<pre>start:post';print_r($_POST);echo '</pre>';
 //echo '<pre>start:session';print_r($_SESSION);echo '</pre>';
 
 ///////////////////Functions////////////////
@@ -121,7 +169,7 @@ function show_sample_requirement_options($link)
 }
 function show_location_options($link)
 {
-	echo 'location_dropdown:';
+	get_one_field_for_insert($link,$GLOBALS['OPD/Ward']);
 }
 
 function show_sample_status_options($link)
@@ -145,15 +193,41 @@ function show_monitor_options($link)
 	//echo 'choose->';
 	echo '<form method=post>';	
 	echo '<input type=hidden name=session_name value=\''.session_name().'\'>';
-
-	show_id_range_options($link);
-	show_sample_requirement_options($link);
-	show_sample_status_options($link);
-	show_location_options($link);
-	show_start_sample_id_input($link);
-	echo '<button type=submit name=option value=monitor_option>GO</button>';
+	echo '<table border=1>';
+		echo '<tr>';
+			echo '<td align=top>';
+				show_id_range_options($link);
+			echo '</td><td>';
+				show_sample_requirement_options($link);			
+			echo '</td><td>';
+				show_sample_status_options($link);			
+			echo '</td><td>';
+				//show_location_options($link);			
+				read_select_field($link,$GLOBALS['OPD/Ward'],$_SESSION['sample_location']);
+			echo '</td><td>';
+				echo 'L:<input type=limit name=sample_limit value=\''.$_SESSION['sample_limit'].'\'';			
+			echo '</td><td>';
+				echo 'O:<input type=limit name=sample_offset value=\''.$_SESSION['sample_offset'].'\'';			
+			echo '</td><td>';
+				echo '<button type=submit name=option value=monitor_option>GO</button>';			
+			echo '</td>';
+		echo '</tr>';
+	echo '</table>';
 	echo '</form>';
 }
+
+
+
+
+function read_select_field($link,$examination_id,$result)
+{
+	$examination_details=get_one_examination_details($link,$examination_id);
+	$edit_specification=json_decode($examination_details['edit_specification'],true);
+	if(!$edit_specification){$edit_specification=array();}
+	$option=isset($edit_specification['option'])?explode(',',$edit_specification['option']):array();
+	mk_select_from_array('sample_location',$option,'',$result);
+}
+
 
 ?>
 

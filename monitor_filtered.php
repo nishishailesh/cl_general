@@ -7,12 +7,6 @@ require_once 'project_common.php';
 require_once $GLOBALS['main_user_location'];
 $link=get_link($GLOBALS['main_user'],$GLOBALS['main_pass']);
 
-
-
-//$lot_size=200;
-$lot_size=100;
-
-
 if(isset($_POST['login']))
 {
 	$_SESSION['login']=$_POST['login'];
@@ -58,52 +52,82 @@ echo '
 
 $lh_id=explode("-",$_SESSION['id_range']);
 
-
-//$one='select distinct sample_id from result where sample_id between \''.$lh_id[0].'\' and \''.$lh_id[1].'\' order by sample_id desc limit '.$lot_size*2;
-
 $one='select distinct sample_id from result where 
 			sample_id between \''.$lh_id[0].'\' and \''.$lh_id[1].'\' 
-			and
-			examination_id=\''.$GLOBALS['sample_requirement'].'\'
-			and
-			result like \'%'.$_SESSION['sample_requirement'].'%\'
+			order by sample_id desc limit '.$_SESSION['sample_limit'].' offset '.$_SESSION['sample_offset'];
 			
-			order by sample_id desc limit '.$lot_size*2;
 //echo $one;
-
 $result=run_query($link,$GLOBALS['database'],$one);
 
 
 while($ar=get_single_row($result))
 {
-	show_sid_button_release_status($link,$ar['sample_id']);
-}
-
-
-/*
-$first=True;
-
-while($ar=get_single_row($result))
-{
-	if(!isset($prev_sid)){$prev_sid=$ar['sample_id']+1;}
-	if($prev_sid!=$ar['sample_id']+1){show_sid_button_release_status($link,$prev_sid-1);}
-	if($first===True)
+	//check sample requirement
+	if(strlen($_SESSION['sample_requirement'])>0)
 	{
-		$offset=20-$ar['sample_id']%20;
-		for($i=$ar['sample_id']+$offset;$i>$ar['sample_id'];$i--)
+		$sr=get_one_ex_result($link,$ar['sample_id'],$GLOBALS['sample_requirement']);
+		if($sr==$_SESSION['sample_requirement'])
 		{
-			show_sid_button_release_status($link,$i);
+			$show_sample_sr=True;
 		}
-		$first=False;
+		else
+		{
+			$show_sample_sr=False;
+		}
 	}
-	show_sid_button_release_status($link,$ar['sample_id']);
-	if($ar['sample_id']%20==1){echo '<br>';}
-	$prev_sid=$ar['sample_id'];
+	else
+	{
+		$show_sample_sr=True;
+	}
+	
+	//check sample status
+	if(strlen($_SESSION['sample_status'])>0)
+	{
+		$ss=get_sample_status($link,$ar['sample_id']);
+		if($GLOBALS['sample_status'][$ss][0]==$_SESSION['sample_status'])
+		{
+			$show_sample_ss=True;
+		}
+		else
+		{
+			$show_sample_ss=False;
+		}
+	}
+	else
+	{
+		$show_sample_ss=True;
+	}
+
+
+	//check sample location
+	if(strlen($_SESSION['sample_location'])>0)
+	{
+		$sl=get_one_ex_result($link,$ar['sample_id'],$GLOBALS['OPD/Ward']);
+		if($_SESSION['sample_location']==$sl)
+		{
+			$show_sample_sl=True;
+			//echo 'True'.$ar['sample_id'];
+		}
+		else
+		{
+			$show_sample_sl=False;
+		}
+	}
+	else
+	{
+		$show_sample_sl=True;
+	}
+	
+		
+	if($show_sample_sr==True && $show_sample_ss==True && $show_sample_sl==True)
+	{
+		show_sid_button_release_status($link,$ar['sample_id']);
+	}
 }
 
-*/
-echo '<pre>monitor:post';print_r($_POST);echo '</pre>';
-//echo '<pre>monitor:session';print_r($_SESSION);echo '</pre>';
+
+//echo '<pre>monitor:post';print_r($_POST);echo '</pre>';
+//echo '<pre>';print_r($GLOBALS['sample_status']);echo '</pre>';
 
 function get_user_info($link,$user)
 {
@@ -112,5 +136,17 @@ function get_user_info($link,$user)
 	return get_single_row($result);
 }
 
-
+function get_sample_status($link,$sample_id)
+{
+	$final_status=0;
+	foreach ($GLOBALS['sample_status'] as $k=>$v)
+	{
+		$ss=get_one_ex_result($link,$sample_id,$v[1][0]);
+		if(strlen($ss)>0)
+		{
+			$final_status=$k;
+		}
+	}
+	return $final_status;
+}
 ?>

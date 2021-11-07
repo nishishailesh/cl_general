@@ -2076,6 +2076,13 @@ function edit_field($link,$examination_id,$result_array,$sample_id,$readonly='',
 
 
 
+function edit_single_field($link,$examination_id,$result,$sample_id,$readonly='',$frill=True)
+{
+	edit_field($link,$examination_id,array($result),$sample_id,$readonly,$frill);
+}
+
+
+
 /*
 function decide_alert($result,$interval)
 {
