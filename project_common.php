@@ -5469,16 +5469,16 @@ function mk_array_for_one_qc_result($link,$sample_id,$ex_requested)
 
 	$sql='select * from primary_result where sample_id=\''.$sample_id.'\' order by uniq';
 	$result=run_query($link,$GLOBALS['database'],$sql);
-
+	$qc_remark=get_one_ex_result($link,$sample_id,$GLOBALS['QC_Remark_id']);
 	$qc_data_array=array();
 	while($ar=get_single_row($result))
 	{
 		$ex_requested=array_filter($ex_requested);
 		if(in_array($ar['examination_id'],$ex_requested) || count($ex_requested)==0)
 		{
-			
+
 			$lab_ref_val=get_lab_reference_value($link,$mrd_num,$ar['examination_id'],$date,$time,$equipment);
-			
+
 			$qc_data['sample_id']=$sample_id;
 			$qc_data['examination_id']=$ar['examination_id'].'-'.get_name_of_ex_id($link,$ar['examination_id']);
 			$qc_data['result']=$ar['result'];
@@ -5492,7 +5492,7 @@ function mk_array_for_one_qc_result($link,$sample_id,$ex_requested)
 			{
 				//echo $ar['result'].' reference value not found<br>';
 			}
-			
+
 			if($lab_ref_val!=false && is_numeric($ar['result']))
 			{
 				$sdi=round((($ar['result']-$lab_ref_val['mean'])/$lab_ref_val['sd']),1);
@@ -5504,6 +5504,7 @@ function mk_array_for_one_qc_result($link,$sample_id,$ex_requested)
 				$qc_data['equipment']=$equipment;
 				$qc_data['mrd_num']=$mrd_num;
 				$qc_data['uniq']=$ar['uniq'];
+				$qc_data['remark']=$qc_remark;
 			}
 			else
 			{
@@ -5515,6 +5516,7 @@ function mk_array_for_one_qc_result($link,$sample_id,$ex_requested)
 				$qc_data['equipment']=$equipment;
 				$qc_data['mrd_num']=$mrd_num;
 				$qc_data['uniq']=$ar['uniq'];
+				$qc_data['remark']=$qc_remark;
 			}
 			$qc_data_array[]=$qc_data;
 		}

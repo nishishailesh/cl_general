@@ -75,7 +75,7 @@ if (isset($_POST['action']) && isset($_POST['sample_id']))
 
 //////////////user code ends////////////////
 tail();
-echo '<pre>start:post';print_r($_POST);echo '</pre>';
+//echo '<pre>start:post';print_r($_POST);echo '</pre>';
 //echo '<pre>start:session';print_r($_SESSION);echo '</pre>';
 
 ///////////////////Functions////////////////

@@ -197,7 +197,7 @@ function show_lj_for_sample($link,$sample_id_array,$ex_requested=array())
 		<td><button type=button class="btn btn-sm btn-info" onclick="my_sort(this,2,\'qc_table\')" data-sorting=1>Examination</button></td>
 		<td>Result</td>
 		<td><pre>4---------3---------2---------1---------0---------1---------2---------3---------4</pre></td>';
-		
+
 		if(!isset($_POST['compact']))
 		{
 			echo '
@@ -208,15 +208,16 @@ function show_lj_for_sample($link,$sample_id_array,$ex_requested=array())
 			<td  class="compact collapse" ><button type=button class="btn btn-sm btn-info" onclick="my_sort(this,9,\'qc_table\')" data-sorting=1>Time</button></td>
 			<td  class="compact collapse" ><button type=button class="btn btn-sm btn-info" onclick="my_sort(this,10,\'qc_table\')" data-sorting=1>Equipment</button></td>
 			<td  class="compact collapse" ><button type=button class="btn btn-sm btn-info" onclick="my_sort(this,11,\'qc_table\')" data-sorting=1>Analysis Time</button></td>
+			<td  class="compact collapse" >Remark</td>
 			';
 		}
-			
+
 	echo '</tr>';
 	foreach($sample_id_array as $sample_id)
 	{
 		display_one_qc($link,$sample_id,$ex_requested);
 	}
-	echo '</table>';	
+	echo '</table>';
 }
 
 function show_lj_for_single_sample($link,$sample_id,$ex_requested=array())
@@ -410,7 +411,8 @@ function display_one_qc($link,$sample_id,$ex_requested)
 						echo '<td  class="compact collapse" >'.$equipment.'</td>';
 						//echo '<td>'.$sample_requirement.'</td>';
 						echo '<td  class="compact collapse" >'.$ar['uniq'].'</td>';			
-					}	
+						echo '<td  class="compact collapse" >'.$comment.'</td>';
+}	
 					
 				}
 				else
@@ -435,6 +437,7 @@ function display_one_qc($link,$sample_id,$ex_requested)
 						echo '<td  class="compact collapse" >'.$equipment.'</td>';
 						//echo '<td>'.$sample_requirement.'</td>';
 						echo '<td  class="compact collapse" >'.$ar['uniq'].'</td>';
+						echo '<td  class="compact collapse" >'.$comment.'</td>';
 					}
 				}
 				

@@ -101,7 +101,7 @@ echo '<div class="two_column">';
 			}							
 	echo '</div>';
 echo '</div>';
-echo '<pre>monitor:post';print_r($_POST);echo '</pre>';
+//echo '<pre>monitor:post';print_r($_POST);echo '</pre>';
 //echo '<pre>monitor:session';print_r($_SESSION);echo '</pre>';
 
 function get_user_info($link,$user)

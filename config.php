@@ -130,6 +130,7 @@ $GLOBALS['reminders_table']='reminders';
 
 $GLOBALS['TAT_warn_hours']=4;
 $GLOBALS['TAT_remark_id']=5191;
+$GLOBALS['QC_Remark_id']=5098;
 
 /*
 $GLOBALS['dates_times']=array(
@@ -170,7 +171,7 @@ $GLOBALS['is_verification_success_important']='yes';
 
 //$GLOBALS['state_colorcode']=array('white','lightgray','yellow','orange','lightpink','lightblue','lightgreen','lightgreen','lightgreen');
 
-$GLOBALS['eq_color_code']=array('C'=>'lightpink','I'=>'red','A'=>'cyan','D'=>'#00F5E0','6'=>'violet','K'=>'#6699ff','E'=>'mediumvioletred');
+$GLOBALS['eq_color_code']=array('C'=>'lightpink','I'=>'red','A'=>'cyan','D'=>'#00F5E0','6'=>'violet','K'=>'#6699ff','E'=>'mediumvioletred','U'=>'#FFA500');
 
 //20200531233109 date format for XL ASTM communication
 //08/01/2020 14:02:40 date format for XL export communication
