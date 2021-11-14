@@ -23,7 +23,8 @@ if($_POST['action']=='get_TAT_search_condition')
 }
 elseif($_POST['action']=='set_search')
 {
-	set_search($link);
+	set_search_single_button($link,'','target=_blank','action','view','view');
+	set_search_single_button($link,'action=export_TAT.php','target=_blank','action','export','export');
 }
 elseif($_POST['action']=='search_summary')
 {
@@ -31,7 +32,7 @@ elseif($_POST['action']=='search_summary')
 	//print_r($search_array);
 }
 
-elseif($_POST['action']=='search_detail')
+elseif($_POST['action']=='view')
 {
 	$search_array=prepare_search_array($link);
 	echo '<span class=bg-warning>Search Condition:</span>';print_r($search_array);
@@ -61,7 +62,7 @@ elseif($_POST['action']=='search_detail')
 			echo '</td>';
 			//echo '<td>'.$tat['sample_id'].'</td>';
 			echo '<td>'.$location.'</td>';
-			echo '<td title="'.print_r($tat,true).'">'.$tat['receipt_time'].'</td>';
+			echo '<td>'.(isset($tat['receipt_time'])?$tat['receipt_time']:'???').'</td>';
 			echo '<td>'.(isset($tat['Collection_Request_TAT'])?$tat['Collection_Request_TAT']:'').'</td>';
 			echo '<td>'.(isset($tat['Receipt_Collection_TAT'])?$tat['Receipt_Collection_TAT']:'').'</td>';
 			echo '<td>'.(isset($tat['Release_SampleReciept_TAT'])?$tat['Release_SampleReciept_TAT']:'').'</td>';
@@ -72,8 +73,9 @@ elseif($_POST['action']=='search_detail')
 	}
 	echo '</table>';
 }
-/*
 
+
+/*
 Array
 (
     [sample_id] => 1001000
@@ -92,7 +94,7 @@ Array
     [Release_SampleReciept_TAT] => 2904.9
     [Total_TAT] => 2911.9
 )
-* 
+
 */
 //TAT
 //Sample wise
@@ -106,7 +108,7 @@ Array
 //////////////user code ends////////////////
 tail();
 
-//echo '<pre>';print_r($_POST);print_r($_FILES);echo '</pre>';
+echo '<pre>';print_r($_POST);print_r($_FILES);echo '</pre>';
 
 
 

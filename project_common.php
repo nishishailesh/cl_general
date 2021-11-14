@@ -4122,6 +4122,37 @@ function set_search($link,$action='',$for_print='no')
 	return true;
 }
 
+function set_search_single_button($link,$action='',$target='', $submit_name='submit',$submit_value='submit', $submit_lable='submit')
+{
+	$ex_requested=array_filter(explode(',',$_POST['list_of_selected_examination']));
+	//print_r($ex_requested);
+
+	if(count($ex_requested)==0)
+	{
+		echo '<h3>No meaningful search conditions provided!!</h3>';
+		return false;
+	}
+	echo '<form method=post '.$action.' '.$target.'>';
+		foreach($ex_requested as $v)
+		{
+			$examination_details=get_one_examination_details($link,$v);
+			echo '<div class="basic_form">';
+			echo '	<label class="my_label" for="'.$examination_details['name'].'">'.$examination_details['name'].'</label>
+					<input 
+						id="'.$examination_details['name'].'" 
+						name="'.$examination_details['examination_id'].'" 
+						data-exid="'.$examination_details['examination_id'].'" 
+						class="form-control" >
+					<p class="help">Enter details for search</p>';
+			echo '</div>';
+		}
+
+		echo '<button type=submit class="btn btn-primary form-control m-1" name=\''.$submit_name.'\' value=\''.$submit_value.'\'>'.$submit_lable.'</button>';
+	echo '<input type=hidden name=session_name value=\''.session_name().'\'>';
+	echo '</form>';
+	return true;
+}
+
 
 function prepare_search_array($link)
 {
