@@ -117,9 +117,27 @@ while($ar=get_single_row($result))
 	{
 		$show_sample_sl=True;
 	}
-	
-		
-	if($show_sample_sr==True && $show_sample_ss==True && $show_sample_sl==True)
+
+        //check sexamination_id
+        if(strlen($_SESSION['examination_id'])>0)
+        {
+                $sx=get_one_ex_result($link,$ar['sample_id'],$_SESSION['examination_id']);
+                if($sx!==False)
+                {
+                        $show_ex=True;
+                }
+                else
+                {
+                        $show_ex=False;
+                }
+        }
+        else
+        {
+                $show_sample_sl=True;
+        }
+
+
+	if($show_sample_sr==True && $show_sample_ss==True && $show_sample_sl==True && $show_ex==True)
 	{
 		show_sid_button_release_status($link,$ar['sample_id']);
 	}

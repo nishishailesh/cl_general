@@ -76,6 +76,23 @@ else
 	$_SESSION['sample_location']="";
 }
 
+///////examination/////////
+
+if(isset($_POST['examination_id']))	//if post available
+{
+    $_SESSION['examination_id']=$_POST['examination_id'];
+}
+else if(isset($_SESSION['examination_id']))	//if session available , may be from previous data
+{
+        $_SESSION['examination_id']=$_SESSION['examination_id'];
+}
+else						//when page loaded first time, both are not available
+{
+        $_SESSION['examination_id']="";
+}
+
+
+
 ///////sample limit/////////
 
 if(isset($_POST['sample_limit']))
@@ -172,6 +189,13 @@ function show_location_options($link)
 	get_one_field_for_insert($link,$GLOBALS['OPD/Ward']);
 }
 
+function show_examination_options($link)
+{
+        //echo 'id_range_dropdown:';
+        $sql='select examination_id from examination';
+        mk_select_from_sql($link,$sql,'examination_id','examination_id','examination_id',$disabled='',$default=$_SESSION['examination_id'],$blank='yes');
+}
+
 function show_sample_status_options($link)
 {
 	$sample_status_only=array('');
@@ -204,6 +228,8 @@ function show_monitor_options($link)
 			echo '</td><td>';
 				//show_location_options($link);			
 				read_select_field($link,$GLOBALS['OPD/Ward'],$_SESSION['sample_location']);
+                        echo '</td><td>';
+                                show_examination_options($link);
 			echo '</td><td>';
 				echo 'L:<input type=limit name=sample_limit value=\''.$_SESSION['sample_limit'].'\'';			
 			echo '</td><td>';
