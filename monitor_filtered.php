@@ -133,11 +133,31 @@ while($ar=get_single_row($result))
         }
         else
         {
-                $show_sample_sl=True;
+                $show_ex=True;
         }
 
-
-	if($show_sample_sr==True && $show_sample_ss==True && $show_sample_sl==True && $show_ex==True)
+	//check sample location
+	if(strlen($_SESSION['receipt_date'])>0)
+	{
+		$rd=get_one_ex_result($link,$ar['sample_id'],$GLOBALS['receipt_date']);
+		//echo $rd,'=>'.$_SESSION['receipt_date'].'<br>';
+		if($_SESSION['receipt_date']==$rd)
+		{
+			$show_sample_rd=True;
+			//echo 'True';
+		}
+		else
+		{
+			$show_sample_rd=False;
+		}
+	}
+	else
+	{
+		$show_sample_rd=True;
+	}
+	
+	
+	if($show_sample_sr==True && $show_sample_ss==True && $show_sample_sl==True && $show_ex==True && $show_sample_rd==True)
 	{
 		show_sid_button_release_status($link,$ar['sample_id']);
 	}

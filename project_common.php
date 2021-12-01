@@ -216,7 +216,7 @@ function mk_select_from_array_kv($name, $select_array,$disabled='',$default='')
 	foreach($select_array as $key=>$value)
 	{
 				//echo $default.'?'.$value;
-		if($value==$default)
+		if($key==$default)
 		{
 			echo '<option  selected value=\''.$key.'\' > '.$value.' </option>';
 		}
@@ -267,10 +267,11 @@ function mk_select_from_sql($link,$sql,$field_name,$select_name,$select_id,$disa
 function mk_select_from_sql_kv($link,$sql,$field_name_k,$field_name_v,$select_name,$select_id,$disabled='',$default='',$blank='no')
 {
 	$ar=mk_array_from_sql_kv($link,$sql,$field_name_k,$field_name_v);
-	if($blank=='yes')
-	{
-		array_unshift($ar,"");
-	}
+	//echo '<pre>';print_r($ar);echo '</pre>';
+	//if($blank=='yes')
+	//{
+	//	array_unshift($ar,"");
+	//}
 	mk_select_from_array_kv($select_name,$ar,$disabled,$default);
 }
 
