@@ -16,6 +16,26 @@ function requestonly_check($link)
 	}
 }
 
+
+function get_user_request_limit($link)
+{
+        $user=get_user_info($link,$_SESSION['login']);
+        $auth=explode(',',$user['authorization']);
+	foreach($auth as $value)
+	{
+		$limit=explode("=",$value);
+	        if(isset($limit[0])&& isset($limit[1]))
+		{
+			if($limit[0]=='limit_request')
+        		{
+		                return $limit[1];
+	        	}
+		}
+	}
+	return 1;	//default limit
+}
+
+
 function get_incomplete_reminder_count($link)
 {
 	if(!isset($GLOBALS['reminders_table'])){return false;}
@@ -2631,8 +2651,8 @@ function get_examination_data($link)
 					<li><button class="btn btn-secondary" onclick="toggle_color(this)" type=button  data-toggle="collapse" data-target=".MI">MI</button></li>
 				</ul>';
 			//internal tab menu end
-				
-	
+
+
 				while($ar=get_single_row($result))
 				{
 					$pinfo=get_profile_info($link,$ar['profile_id']);
@@ -2640,21 +2660,21 @@ function get_examination_data($link)
 					$group=isset($profile_specification['group'])?$profile_specification['group']:'general';
 
 					$div_id='profile_'.$pinfo['profile_id'];
-					
+
 					$div_id_for_group='"'.$div_id.'_'.$group.'"';
 					$div_class_for_group=$group;
-					
+
 					///
 					echo '<div id='.$div_id_for_group.' class="collapse '.$div_class_for_group.'">';
 					echo '<div class="tab-content">';
 					///
 						//echo '<img src="img/show_hide.png" height=32 data-toggle="collapse" class=sh href=\'#'.$div_id.'\' ><div></div><div></div>';
 						echo '<div class="collapse show " id=\''.$div_id.'\'>';
-							
+
 							echo '<span class="border border-dark rounded d-inline">Profile';
 							my_on_off_profile($pinfo['name'],$ar['profile_id']);
 							echo '</span>';
-							
+
 							echo '<div class="ex_profile">';
 								$ex_list=array_merge(explode(',',$ar['examination_id_list']),explode(',',$ar['extra']));
 								//print_r(explode(',',$ar['examination_id_list']));
@@ -2666,28 +2686,32 @@ function get_examination_data($link)
 									$ex_data=get_one_examination_details($link,$v);
 									$sr=$ex_data['sample_requirement']!='None'?$ex_data['sample_requirement']:'';
 									$edit_specification=json_decode($ex_data['edit_specification'],true);
-									$method=isset($edit_specification['method'])?$edit_specification['method']:'';
 
-									my_on_off_ex($ex_data['name'].'<br>'.$sr.'<br>'.$method,$ex_data['examination_id']);
+									$method=isset($edit_specification['method'])?$edit_specification['method']:'';
+							$ex_limit=isset($edit_specification['limit_request'])?$edit_specification['limit_request']:0;
+							$user_limit=get_user_request_limit($link);
+							if($user_limit>=$ex_limit)
+							{
+								my_on_off_ex($ex_data['name'].'<br>'.$sr.'<br>'.$method,$ex_data['examination_id']);
+							}
+
 								}
 							echo '</div>';
-							
+
 						echo '</div>';
-						
+
 					///
 					echo '</div>';
 					echo '</div>';
 					///
 				}
 
-			
-//////////////////////end of content 1///////////			
 
-
+//////////////////////end of content 1///////////
 		echo '</div>';
-		
+
 		//content 2
-		echo '<input class="tab-content" type=text readonly name=list_of_selected_examination id=list_of_selected_examination>';		
+		echo '<input class="tab-content" type=text readonly name=list_of_selected_examination id=list_of_selected_examination>';
 	echo '</div>';
 }
 
@@ -2821,7 +2845,7 @@ function get_examination_blob_data($link)
 
 function my_on_off_ex($label,$id)
 {
-	
+        
 	echo '<button 
 			class="btn btn-sm btn-outline-primary"
 			type=button 
@@ -3938,7 +3962,7 @@ function find_next_sample_id($link,$sample_requirement)
 	$result=run_query($link,$GLOBALS['database'],$sql);
 	$ar=get_single_row($result);
 	$from=$ar['lowest_id'];
-	$to=$ar['highest_id'];	
+	$to=$ar['highest_id'];
 
 	$sqls='select ifnull(max(sample_id)+1,'.$from.') as next_sample_id from result where sample_id between '.$from.' and '.$to;
 	//echo '<h3>'.$sqls.'</h3>';
@@ -3949,6 +3973,7 @@ function find_next_sample_id($link,$sample_requirement)
 
 function insert_one_examination_without_result($link,$sample_id,$examination_id)
 {
+	//This function is used for inserting new examination without result. Target for INSERT_CONTROL
 	$sql='insert into result (sample_id,examination_id)
 			values ("'.$sample_id.'","'.$examination_id.'")';
 	//echo $sql.'(without)<br>';
@@ -4030,6 +4055,7 @@ function update_one_examination_with_result($link,$sample_id,$examination_id,$re
 
 function insert_one_examination_blob_without_result($link,$sample_id,$examination_id)
 {
+	//Target for INSERT_CONTROL
 	$sql='insert into result_blob (sample_id,examination_id)
 			values ("'.$sample_id.'","'.$examination_id.'")';
 	if(!run_query($link,$GLOBALS['database'],$sql))
