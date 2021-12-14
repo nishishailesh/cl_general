@@ -179,6 +179,7 @@ function main_menu($link)
 						<button class="btn btn-outline-primary m-0 p-0" formaction=statistics_and_info.php type=submit name=action value=statistics>Statistics and Info</button>
 						<button class="btn btn-outline-primary m-0 p-0" formaction=dashboard.php type=submit name=action value=dashboard>Dashboard</button>
 						<button class="btn btn-outline-primary m-0 p-0" formaction=get_id_range_for_cup_barcode.php type=submit name=action value=cup_barcode_range>Cup Barcode</button>
+						<button class="btn btn-outline-primary m-0 p-0" formaction=ma_graph.php type=submit name=action value=cup_barcode_range>MA</button>
 					</div>
 				</div>
 		</div>
