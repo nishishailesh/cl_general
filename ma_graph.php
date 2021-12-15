@@ -7,9 +7,10 @@ require_once 'project_common.php';
 
 echo '
 <head>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.5.0/Chart.min.js"></script>
+  <script src="bootstrap/chart.min.js"></script>
 </head>';
 
+//  <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.5.0/Chart.min.js"></script>
 
 require_once $GLOBALS['main_user_location'];
 $link=get_link($GLOBALS['main_user'],$GLOBALS['main_pass']);
@@ -37,15 +38,23 @@ if(!isset($_SESSION['password']) && !isset($_POST['password']))
 		exit(0);
 }
 
-$one='select avg_value from moving_average order by date_time limit 200';
+
+//$one='select avg_value from moving_average order by date_time desc limit 200';
+$one='select * from moving_average order by date_time desc limit '.$_POST['limit'].' offset '.$_POST['offset'];
 $result=run_query($link,$GLOBALS['database'],$one);
 $data=array();
 while($ar=get_single_row($result))
 {
-  $data[]=$ar['avg_value'];
+  $data[]=	'{'.'ex_id:'.'\''.$ar['examination_id'].'\''.
+		','.'date_time:'.'\''.$ar['date_time'].'\''.
+		','.'avg_value:'.'\''.$ar['avg_value'].'\''.
+		','.'sample_id:'.'\''.$ar['sample_id'].'\''.
+		','.'value:'.'\''.$ar['value'].'\''.
+		'}';
 }
 
 //print_r($data);
+//$json='['.implode(",",$data).']';
 $json=implode(",",$data);
 //echo $json;
 function get_user_info($link,$user)
@@ -61,32 +70,63 @@ function get_user_info($link,$user)
     <script >
 jdata=[<?php echo $json; ?>]
 
+function footer(tooltipItem,data)
+{
+  return 'Sum';
+}
+
 new Chart(document.getElementById("bar-chart"), 
     {
     type: 'line',
     data: {
-	    	labels: Array.from(Array(jdata.length).keys()),
-		datasets:[{
-				data:jdata
-          		}]
+		datasets:[
+				{
+			    	label: 'Glucose Moving Average',
+				data:jdata,
+				parsing:{
+						yAxisKey:'avg_value',
+						xAxisKey:'date_time',
+					}
+          			},
+                                {
+                                label: 'Glucose Result',
+                                data:jdata,
+                                parsing:{
+                                                yAxisKey:'value',
+                                                xAxisKey:'date_time',
+                                        },
+
+				plugins:{
+			                        tooltips: 
+                        				{
+			                                callbacks: {
+                        		                        label: function (context){return 'Sum';}
+                                        				}
+	                      				}
+                       			}
+
+                                }
+
+
+
+			]
 	  },
     options: 	{
     			scales:
 			{
-	                    yAxes: [{
-                            display: true,
-                            ticks: {
-                                beginAtZero: true,
-                                steps: 10,
-                                stepValue: 5,
-                                max: 200,
-                                min: 100
-                            }
-        	                }]
-  			}
+				y:{suggestedMin:100, suggestedMax:200}
+  			},
+		plugins:{
+			tooltips: 
+			{
+        			callbacks: {
+						label: function (context){return 'Sum';}
 
-		}
+					}
+			}
+			}
 
+		},
     }
          );
 
