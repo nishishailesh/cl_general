@@ -91,7 +91,7 @@ function main_menu($link)
 		</form>';		
 		return;
 	}
-		
+
 	echo '<span class="bg-warning">'.$GLOBALS['ser'].'</span>
 	<form method=post class="form-group m-0 p-0">
 	<input type=hidden name=session_name value=\''.session_name().'\'>
@@ -110,8 +110,9 @@ function main_menu($link)
 					<button class="btn btn-outline-primary m-0 p-0 " formaction=new_covid_biochemistry.php type=submit name=action value=direct>New Direct(Transporter)</button>
 		<!-- <button class="btn btn-outline-primary m-0 p-0 " formaction=new_covid_biochemistry_stem.php type=submit name=action value=direct>New Covid(Stem)</button> -->
 		<button class="btn btn-outline-primary m-0 p-0 " formaction=new_covid_biochemistry_stem_coll.php type=submit name=action value=direct>New Direct(Collection)</button>
-		<button class="btn btn-outline-primary m-0 p-0 " formaction=new_qc_biochemistry.php type=submit name=action value=qc>New QC</button>
-				</div>
+		<button class="btn btn-outline-primary m-0 p-0 " formaction=new_qc_biochemistry.php type=submit name=action value=qc>New QC</button>';
+	create_new_special($link);
+	echo '</div>
 			</div>
 		</div>
 
@@ -2504,18 +2505,20 @@ echo '</div>';
 //not covered by pane
 function get_basic_specific_no_restriction()
 {
+
 	$YY=strftime("%y");
 
-echo '<div id=basic class="tab-pane active">';
+	echo '<div id=basic class="tab-pane active">';
 
-echo '<div class="basic_form">';
-        echo '  <label class="my_label text-danger" for="mrd">MRD</label>
-			<input size=13 id=mrd name=__ex__'.$GLOBALS['mrd'].' class="form-control text-danger" required="required" 
-				type=text placeholder=""  \>
-                        <p class="help">MRD Example -> SUR/20/00123456</span</p>';
-echo '</div>';
-echo '</div>';
+	echo '<div class="basic_form">';
+			echo '  <label class="my_label text-danger" for="mrd">MRD</label>
+				<input size=13 id=mrd name=__ex__'.$GLOBALS['mrd'].' class="form-control text-danger" required="required" 
+					type=text placeholder=""  \>
+							<p class="help">MRD Example -> SUR/20/00123456</span</p>';
+	echo '</div>';
+	echo '</div>';
 }
+
 
 function get_more_basic()
 {
@@ -5471,7 +5474,7 @@ function prepare_sample_barcode_for_tube($link,$sample_id,$pdf)
 		$sql='select * from result where sample_id=\''.$sample_id.'\'';
 		$result=run_query($link,$GLOBALS['database'],$sql);
 		if(get_row_count($result)==0){return;}
-		
+		//echo 'xxx';
 		$pdf->AddPage();
 		$pdf->write1DBarcode($sample_id, 'C128', 02, 5 , 43, 12, 0.4, $style, 'N');		
 		
@@ -6238,6 +6241,15 @@ function update_all_sample_status($link,$action,$post)
 		}
 }
 
+function create_new_special($link)
+{
+	$result=run_query($link,$GLOBALS['database'],'select * from menu_new');
+	while($ar=get_single_row($result))
+	{
+		echo '<button class="btn btn-outline-primary m-0 p-0 " formaction=create_new_special.php type=submit name=action value=\'ex_list|'.$ar['ex_list'].'\'>'.$ar['caption'].'</button>';
+	}
 
+	
+}
 
 ?>
