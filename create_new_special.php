@@ -45,8 +45,8 @@ function get_data_specific($link,$ex_list)
 	echo '<div class="tab-content">';
 	
 		echo '<div id=basic class="tab-pane active">';
-			get_one_field_for_insert($link,1001);
-
+			//get_one_field_for_insert($link,1001);
+			get_basic_specific();
 			$tok=explode(",",$ex_list);
 			foreach($tok as $value)
 			{

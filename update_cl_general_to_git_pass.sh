@@ -20,4 +20,5 @@ mysqldump  -uroot cl_general $tnames -p$password > "cl_general_data.sql"
 
 git add *
 git commit -a
-git push https://github.com/nishishailesh/cl_general
+git push https://github.com/nishishailesh/cl_general master
+
