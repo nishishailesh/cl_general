@@ -10,7 +10,7 @@ echo '
   <script src="bootstrap/chart.min.js"></script>
 </head>';
 
-//  <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.5.0/Chart.min.js"></script>
+//<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.5.0/Chart.min.js"></script>
 
 require_once $GLOBALS['main_user_location'];
 $link=get_link($GLOBALS['main_user'],$GLOBALS['main_pass']);
@@ -63,6 +63,26 @@ function get_user_info($link,$user)
 	$result=run_query($link,$GLOBALS['database'],$sql);
 	return get_single_row($result);
 }
+
+
+
+
+function echo_png_from_python($png_bytes)
+{
+
+	echo "<img src='data:image/png;base64,".base64_encode($png_bytes)."'/>";
+}
+
+function get_from_python($python_script)
+{
+	$command = escapeshellcmd($python_script);
+	$output = shell_exec($command);
+	return $output;
+}
+
+//////Getting data from python//////
+echo_png_from_python(get_from_python('/usr/share/all_ma.py one two'));
+
 ?>
     <canvas id="bar-chart" width=300" height="150"></canvas>
 

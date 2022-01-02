@@ -174,6 +174,13 @@ $GLOBALS['is_verification_success_important']='yes';
 
 $GLOBALS['eq_color_code']=array('C'=>'lightpink','I'=>'red','A'=>'cyan','D'=>'#00F5E0','6'=>'violet','K'=>'#6699ff','E'=>'mediumvioletred','U'=>'#FFA500');
 
+
+
+////Accreditation symbol
+$GLOBALS['display_accreditation_image']="no";
+$GLOBALS['accreditation_image_src']="img/nabl.png";
+$GLOBALS['accreditation_image_txt']="ML-0450";
+
 //20200531233109 date format for XL ASTM communication
 //08/01/2020 14:02:40 date format for XL export communication
 

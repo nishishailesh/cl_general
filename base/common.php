@@ -87,13 +87,13 @@ function get_remote_link($ip,$u,$p)
 	return $link;
 }
 
-function run_query($link,$db,$sql)
+function run_query($link,$db,$sql,$display_error='yes')
 {
 	$db_success=mysqli_select_db($link,$db);
 	//echo $sql;
 	if(!$db_success)
 	{
-		echo 'error2:'.mysqli_error($link); return false;
+		if($display_error=='yes'){echo 'error2:'.mysqli_error($link);} return false;
 	}
 	else
 	{
@@ -102,7 +102,7 @@ function run_query($link,$db,$sql)
 	
 	if(!$result)
 	{
-		echo 'error3:'.$sql.'<br>'.mysqli_error($link); return false;
+		if($display_error=='yes'){echo 'error3:'.$sql.'<br>'.mysqli_error($link);} return false;
 	}
 	else
 	{

@@ -5,7 +5,7 @@ require_once 'base/verify_login.php';
 
 	////////User code below/////////////////////
 require_once('tcpdf/tcpdf.php');
-
+require_once('tcpdf/tcpdf_barcodes_2d.php');
 
 $GLOBALS['img_list']=array();
 

@@ -158,6 +158,7 @@ function main_menu($link)
 					<div class="btn-group-vertical  d-block">
 						<button class="btn btn-outline-primary m-0 p-0" formaction=get_data_for_lj_chart.php type=submit name=action value=get_data>LJ Chart</button>					
 						<button class="btn btn-outline-primary m-0 p-0" formaction=get_data_for_delta_check.php type=submit name=action value=get_data>Delta Check</button>					
+						<button class="btn btn-outline-primary m-0 p-0" formaction=moving_average.php type=submit name=action value=cup_barcode_range>MovAvg</button>
 					</div>
 				</div>
 		</div>
@@ -180,8 +181,6 @@ function main_menu($link)
 						<button class="btn btn-outline-primary m-0 p-0" formaction=statistics_and_info.php type=submit name=action value=statistics>Statistics and Info</button>
 						<button class="btn btn-outline-primary m-0 p-0" formaction=dashboard.php type=submit name=action value=dashboard>Dashboard</button>
 						<button class="btn btn-outline-primary m-0 p-0" formaction=get_id_range_for_cup_barcode.php type=submit name=action value=cup_barcode_range>Cup Barcode</button>
-						<button class="btn btn-outline-primary m-0 p-0" formaction=ma_graph.php formtarget=_blank  type=submit name=action value=cup_barcode_range>MA</button>
-						<button class="btn btn-outline-primary m-0 p-0" formaction=moving_average.php type=submit name=action value=cup_barcode_range>MovAvg</button>
 					</div>
 				</div>
 		</div>
@@ -4748,15 +4747,53 @@ class ACCOUNT1 extends TCPDF {
 	$sr_array=explode('-',$sr);
 	//error-
 	$header=$GLOBALS[$sr_array[2]];
+	insert_sample_id_link($this->link,$this->sample_id,$display_error='no');
+	$style = array(
+    'border' => 2,
+    'vpadding' => 'auto',
+    'hpadding' => 'auto',
+    'fgcolor' => array(0,0,0),
+    'bgcolor' => false, //array(255,255,255)
+    'module_width' => 1, // width of a single module in points
+    'module_height' => 1 // height of a single module in points
+	);
 
+					// QRCODE,L : QR-CODE Low error correction
+					$qr_link=make_link_return($this->link,$this->sample_id);
+					$barcodeobj = new TCPDF2DBarcode($qr_link, 'QRCODE,H');
+					//$barcodeobj->getBarcodePNG(3, 3, array(0,128,0));
+					$png=$barcodeobj->getBarcodePngData(3, 3, array(0,128,0));
+					//$png='sss';
+					$encoded_image=base64_encode($png);	
+					$img = '<img src="@'.$encoded_image.'" width=30 /> ';
+					//$this->write2DBarcode('www.tcpdf.org', 'QRCODE,L', 20, 30, 50, 50, $style, 'N');						
+					
+					
 	echo '<table  cellpadding="2" >
 	<tr>
 		<td colspan="3">
 			<table>
-				<tr>
-					<!-- <td border="0.3" rowspan="4" width="10%"><img src="img/nabl1.png" width="50"> ML-0450</td> -->
-					<td border="0.3" rowspan="4" width="10%"></td>
-					<td style="text-align:center" width="90%"><h2>'.$header['name'].'</h2></td>
+				<tr>';
+				if($GLOBALS['display_accreditation_image']=='yes')
+				{
+					if(should_display_accreditation_symbol($this->link,$this->sample_id)==true)
+					{
+						echo '<td border="0.3" rowspan="4" width="10%"><img src="'.$GLOBALS['accreditation_image_src'].'" width="50">'.$GLOBALS['accreditation_image_txt'].'</td>';
+					}
+					else
+					{
+						echo '<td border="0" rowspan="4" width="10%"></td>';
+					}
+				}
+				else
+				{
+					echo '<td border="0" rowspan="4" width="10%"></td>';
+				}
+				
+					echo '<td style="text-align:center" width="75%"><h2>'.$header['name'].'</h2></td>
+					<td border="0" rowspan="4" width="15%">';
+						echo $img;
+					echo '</td>
 				</tr>
 				<tr>
 					<td style="text-align:center"><h3>'.$header['section'].'<b> (Sample ID:</b> '.$this->sample_id.')</h3></td>
@@ -4828,6 +4865,32 @@ class ACCOUNT1 extends TCPDF {
 	}	
 }
 
+function should_display_accreditation_symbol($link,$sample_id)
+{
+	$ar=get_result_of_sample_in_array($link,$sample_id);
+	foreach ($ar as $examination_id=>$examination_result)
+	{
+		$examination_details=get_one_examination_details($link,$examination_id);
+		$edit_specification=json_decode($examination_details['edit_specification'],true);
+		$accr_status=isset($edit_specification['accr_status'])?$edit_specification['accr_status']:'';
+		$ret=false;
+		//echo $accr_status.'ooo';
+		if($accr_status=='no')
+		{
+			$ret=false;
+		}
+		elseif($accr_status=='yes')
+		{
+			$ret=true;
+			return $ret;
+		}
+		else
+		{
+			$ret=$ret;	//do nothing
+		}
+	}
+	return $ret;			//if all are 'no'
+}
 ///////////dashbard functions/////
 
 function show_dashboard($link)
@@ -6252,4 +6315,44 @@ function create_new_special($link)
 	
 }
 
+
+
+function insert_sample_id_link($link,$sample_id,$display_error='yes')
+{
+	$sql='insert into sample_link(sample_id,link)
+			values (\''.$sample_id.'\',\''.bin2hex(random_bytes(16)).'\')';
+	if(!run_query($link,$GLOBALS['database'],$sql,$display_error))
+	{
+		return false;
+	}	
+	else
+	{
+		return true;
+	}
+}
+function make_link($link,$sample_id)
+{
+	$sql='select  * from sample_link where sample_id=\''.$sample_id.'\'';
+	$result=run_query($link,$GLOBALS['database'],$sql);
+	$ar=get_single_row($result);
+	//echo '<pre>';
+	//print_r($ar);
+	//print_r($_SERVER);
+	//echo '</pre>';
+	//echo $_SERVER['HTTP_HOST'].'/cl_general/get_linked_report.php?token='.$ar['link'];
+	echo 'http://gmcsurat.edu.in:12346/cl_general/get_linked_report.php?token='.$ar['link'];
+}
+
+function make_link_return($link,$sample_id)
+{
+	$sql='select  * from sample_link where sample_id=\''.$sample_id.'\'';
+	$result=run_query($link,$GLOBALS['database'],$sql);
+	$ar=get_single_row($result);
+	//echo '<pre>';
+	//print_r($ar);
+	//print_r($_SERVER);
+	//echo '</pre>';
+	//echo $_SERVER['HTTP_HOST'].'/cl_general/get_linked_report.php?token='.$ar['link'];
+	return 'http://gmcsurat.edu.in:12346/cl_general/get_linked_report.php?token='.$ar['link'];
+}
 ?>

@@ -242,31 +242,6 @@ function view_field_telegram_horizontal_extra($link,$ex_id,$ex_result)
 
 }				
 
-function insert_sample_id_link($link,$sample_id)
-{
-	$sql='insert into sample_link(sample_id,link)
-			values (\''.$sample_id.'\',\''.bin2hex(random_bytes(16)).'\')';
-	if(!run_query($link,$GLOBALS['database'],$sql))
-	{
-		return false;
-	}	
-	else
-	{
-		return true;
-	}
-}
-function make_link($link,$sample_id)
-{
-	$sql='select  * from sample_link where sample_id=\''.$sample_id.'\'';
-	$result=run_query($link,$GLOBALS['database'],$sql);
-	$ar=get_single_row($result);
-	//echo '<pre>';
-	//print_r($ar);
-	//print_r($_SERVER);
-	//echo '</pre>';
-	//echo $_SERVER['HTTP_HOST'].'/cl_general/get_linked_report.php?token='.$ar['link'];
-	echo 'http://gmcsurat.edu.in:12346/cl_general/get_linked_report.php?token='.$ar['link'];
-}
 /*
 function view_sample_telegram($link,$sample_id)
 {
