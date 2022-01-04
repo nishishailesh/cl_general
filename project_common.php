@@ -2,6 +2,7 @@
 //require_once 'Evaluator.php';
 require_once('tcpdf/tcpdf.php');
 require_once('tcpdf/tcpdf_barcodes_2d.php');
+
 function requestonly_check($link)
 {
 	$user=get_user_info($link,$_SESSION['login']);
@@ -776,13 +777,16 @@ function view_field_blob_p($link,$kblob,$sample_id)
 		$sql_blob='select * from result_blob where sample_id=\''.$sample_id.'\' and examination_id=\''.$kblob.'\'';
 		$result_blob=run_query($link,$GLOBALS['database'],$sql_blob);
 		$ar_blob=get_single_row($result_blob);
-	
+		
 		//print_r($ar);
 		$examination_blob_details=get_one_examination_details($link,$kblob);
 		$edit_specification=json_decode($examination_blob_details['edit_specification'],true);		
 		$img=isset($edit_specification['img'])?$edit_specification['img']:'';
 		$wd=isset($edit_specification['width'])?$edit_specification['width']:'400';
 		$ht=isset($edit_specification['height'])?$edit_specification['height']:'200';
+		
+
+		
 		echo '<tr><td  colspan="3"><b>';
 		echo $examination_blob_details['name'];
 		echo ':</b></td></tr><tr>';
@@ -4414,6 +4418,7 @@ function display_png_p($ex_result,$label='',$width=100,$height=100)
 function view_sample_p($link,$sample_id,$profile_wise_ex_list)
 {
 	$ex_list=get_result_of_sample_in_array($link,$sample_id);
+	$accr=should_display_accreditation_symbol($link,$sample_id);
 	echo '<table border="0"  cellpadding="2">';
 
 	foreach($profile_wise_ex_list as $kp=>$vp)
@@ -4890,6 +4895,15 @@ function should_display_accreditation_symbol($link,$sample_id)
 		}
 	}
 	return $ret;			//if all are 'no'
+}
+
+function get_accreditation_status($link,$sample_id,$examination_id)
+{
+	$examination_details=get_one_examination_details($link,$examination_id);
+	$edit_specification=json_decode($examination_details['edit_specification'],true);
+	$accr_status=isset($edit_specification['accr_status'])?$edit_specification['accr_status']:'';
+	if($accr_status!='no'){return $accr_status;}
+	else{return '';}
 }
 ///////////dashbard functions/////
 
@@ -6340,8 +6354,7 @@ function make_link($link,$sample_id)
 	//print_r($_SERVER);
 	//echo '</pre>';
 	//echo $_SERVER['HTTP_HOST'].'/cl_general/get_linked_report.php?token='.$ar['link'];
-	//echo 'http://gmcsurat.edu.in:12346/cl_general/get_linked_report.php?token='.$ar['link'];
-	echo 'https://gmcsurat.edu.in:12349/cl_general/get_linked_report.php?token='.$ar['link'];
+	echo $GLOBALS['qr_link_prefix'].'get_linked_report.php?token='.$ar['link'];
 }
 
 function make_link_return($link,$sample_id)
@@ -6354,6 +6367,8 @@ function make_link_return($link,$sample_id)
 	//print_r($_SERVER);
 	//echo '</pre>';
 	//echo $_SERVER['HTTP_HOST'].'/cl_general/get_linked_report.php?token='.$ar['link'];
-	return 'https://gmcsurat.edu.in:12349/cl_general/get_linked_report.php?token='.$ar['link'];
+	//return 'http://gmcsurat.edu.in:12346/cl_general/get_linked_report.php?token='.$ar['link'];
+	return $GLOBALS['qr_link_prefix'].'get_linked_report.php?token='.$ar['link'];
+
 }
 ?>

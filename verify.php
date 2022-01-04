@@ -59,7 +59,6 @@ function any_examination_id($link,$sample_id,$eid,$eval)
 			insert_update_one_examination_with_result($link,$sample_id,$GLOBALS['Critical_Alert'],$cr);
 		}
 	}
-	
 
 }
 

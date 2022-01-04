@@ -177,9 +177,11 @@ $GLOBALS['eq_color_code']=array('C'=>'lightpink','I'=>'red','A'=>'cyan','D'=>'#0
 
 
 ////Accreditation symbol
-$GLOBALS['display_accreditation_image']="no";
+$GLOBALS['display_accreditation_image']="yes";
 $GLOBALS['accreditation_image_src']="img/nabl.png";
 $GLOBALS['accreditation_image_txt']="ML-0450";
+$GLOBALS['qr_link_prefix']='https://gmcsurat.edu.in:12349/cl_general/';
+$GLOBALS['unaccredited_string']='(Not in NABL Scope)';
 
 //20200531233109 date format for XL ASTM communication
 //08/01/2020 14:02:40 date format for XL export communication
