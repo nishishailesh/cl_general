@@ -1,7 +1,7 @@
 <?php
 //require_once 'Evaluator.php';
 require_once('tcpdf/tcpdf.php');
-
+require_once('tcpdf/tcpdf_barcodes_2d.php');
 function requestonly_check($link)
 {
 	$user=get_user_info($link,$_SESSION['login']);
@@ -4762,7 +4762,7 @@ class ACCOUNT1 extends TCPDF {
 					$qr_link=make_link_return($this->link,$this->sample_id);
 					$barcodeobj = new TCPDF2DBarcode($qr_link, 'QRCODE,H');
 					//$barcodeobj->getBarcodePNG(3, 3, array(0,128,0));
-					$png=$barcodeobj->getBarcodePngData(3, 3, array(0,128,0));
+					$png=$barcodeobj->getBarcodePngData(3, 3, array(0,0,0));
 					//$png='sss';
 					$encoded_image=base64_encode($png);	
 					$img = '<img src="@'.$encoded_image.'" width=30 /> ';
@@ -6340,7 +6340,8 @@ function make_link($link,$sample_id)
 	//print_r($_SERVER);
 	//echo '</pre>';
 	//echo $_SERVER['HTTP_HOST'].'/cl_general/get_linked_report.php?token='.$ar['link'];
-	echo 'http://gmcsurat.edu.in:12346/cl_general/get_linked_report.php?token='.$ar['link'];
+	//echo 'http://gmcsurat.edu.in:12346/cl_general/get_linked_report.php?token='.$ar['link'];
+	echo 'https://gmcsurat.edu.in:12349/cl_general/get_linked_report.php?token='.$ar['link'];
 }
 
 function make_link_return($link,$sample_id)
@@ -6353,6 +6354,6 @@ function make_link_return($link,$sample_id)
 	//print_r($_SERVER);
 	//echo '</pre>';
 	//echo $_SERVER['HTTP_HOST'].'/cl_general/get_linked_report.php?token='.$ar['link'];
-	return 'http://gmcsurat.edu.in:12346/cl_general/get_linked_report.php?token='.$ar['link'];
+	return 'https://gmcsurat.edu.in:12349/cl_general/get_linked_report.php?token='.$ar['link'];
 }
 ?>
