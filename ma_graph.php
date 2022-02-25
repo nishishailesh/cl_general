@@ -81,7 +81,7 @@ function get_from_python($python_script)
 }
 
 //////Getting data from python//////
-echo get_from_python('/usr/share/smp/cl_general/extra/all_ma.py '.$_POST['limit'].' '.$_POST['offset']);
+echo get_from_python('extra/all_ma.py '.$_POST['limit'].' '.$_POST['offset']);
 
 ?>
     <canvas id="bar-chart" width=300" height="150"></canvas>

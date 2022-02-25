@@ -409,6 +409,7 @@ function show_all_buttons_for_sample($link,$sample_id)
 		sample_id_print_button($sample_id);			
 		sample_id_email_button($sample_id);
 		sample_id_telegram_button($sample_id);
+		sample_id_sms_button($sample_id,$link);
 		sample_id_xmpp_button($sample_id);
 		sample_id_edit_button($sample_id);
 		sample_id_delete_button($sample_id);
@@ -425,6 +426,7 @@ function show_all_buttons_for_sample($link,$sample_id)
 		sample_id_print_button($sample_id);			
 		sample_id_email_button($sample_id);
 		sample_id_telegram_button($sample_id);
+		sample_id_sms_button($sample_id,$link);
 		sample_id_xmpp_button($sample_id);
 	}
 	echo '</div>';
@@ -1112,7 +1114,7 @@ function sample_id_print_button($sample_id)
 	</form></div>';
 }
 
-function sample_id_email_button($sample_id)			
+function sample_id_email_button($sample_id)
 {
 	echo '<div class="d-inline-block"  style="width:100%;"><form method=post action=email_single.php class=print_hide>
 	<button class="btn btn-outline-success btn-sm" name=sample_id value=\''.$sample_id.'\' >Email</button>
@@ -1121,7 +1123,7 @@ function sample_id_email_button($sample_id)
 	</form></div>';
 }
 
-function sample_id_telegram_button($sample_id)			
+function sample_id_telegram_button($sample_id)
 {
 	echo '<div class="d-inline-block"  style="width:100%;"><form method=post action=telegram.php class=print_hide>
 	<button class="btn btn-outline-success btn-sm" name=sample_id value=\''.$sample_id.'\' >Telegram</button>
@@ -1130,7 +1132,21 @@ function sample_id_telegram_button($sample_id)
 	</form></div>';
 }
 
-function sample_id_xmpp_button($sample_id)			
+
+function sample_id_sms_button($sample_id,$link)
+{
+	$sms_status=get_one_ex_result($link,$sample_id,$GLOBALS['sms_date']);
+        if(strlen($sms_status)>0){$tick="&#10003";}else{$tick="";}
+
+        echo '<div class="d-inline-block"  style="width:100%;"><form method=post action=single_sms_for_report.php class=print_hide>
+        <button class="btn btn-outline-success btn-sm" name=sample_id value=\''.$sample_id.'\' >SMS'.$tick.'</button>
+        <input type=hidden name=session_name value=\''.$_POST['session_name'].'\'>
+        <input type=hidden name=action value=sms>
+        </form></div>';
+}
+
+
+function sample_id_xmpp_button($sample_id)
 {
 	echo '<div class="d-inline-block"  style="width:100%;"><form method=post action=im_single.php class=print_hide>
 	<button class="btn btn-outline-success btn-sm" name=sample_id value=\''.$sample_id.'\' >XMPP</button>
@@ -5305,9 +5321,9 @@ function get_pdf_link_for_barcode()
 
 
 
-	$pdf = new MYPDF_BARCODE('', 'mm', array("50","25"), true, 'UTF-8', false);
+	$pdf = new MYPDF_BARCODE('', 'mm', array("50","25"), true, 'UTF-8', true);
 	
-	$pdf->SetMargins(0,0, $right=-1, $keepmargins=true);
+	$pdf->SetMargins(0,0, $right=-1, $keepmargins=false);
 	$pdf->setPrintFooter(false);
 	$pdf->setPrintHeader(false);
 	$pdf->SetAutoPageBreak(TRUE, 0);
@@ -6371,4 +6387,35 @@ function make_link_return($link,$sample_id)
 	return $GLOBALS['qr_link_prefix'].'get_linked_report.php?token='.$ar['link'];
 
 }
+
+
+function send_sms($sms,$num)
+{
+        $str=$GLOBALS['sms_site'].'?';
+        $getdata = http_build_query
+                (
+                array(
+                        'UserID' => $GLOBALS['sms_UserID'],
+                        'UserPass' => $GLOBALS['sms_UserPass'],
+                        'Message'=>$sms,
+                        'MobileNo'=>$num,
+                        'GSMID'=>$GLOBALS['sms_GSMID']
+                        )
+                );
+        $hdr = "Content-Type: application/x-www-form-urlencoded";
+        $opts = array('http' =>
+                                        array(
+                                                'method'  => 'GET',
+                                                'content' => $getdata,
+                                                'header'  => $hdr
+                                                )
+                                );
+
+        $context  = stream_context_create($opts);
+        //echo $str;
+        //echo $context;
+        $ret=file_get_contents($str,false,$context);
+        return $ret;
+}
+
 ?>

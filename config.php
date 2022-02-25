@@ -16,6 +16,8 @@ $GLOBALS['patient_name']=1002;
 $GLOBALS['OPD/Ward']=1006;
 
 $GLOBALS['email']=1024;
+$GLOBALS['sms_date']=1043;
+$GLOBALS['sms_time']=1044;
 // in /var/gmcs_config/staff.conf $GLOBALS['email_db_server']='11.207.1.1';
 
 $GLOBALS['pid_profile']=1;

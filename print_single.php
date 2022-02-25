@@ -13,6 +13,7 @@ $GLOBALS['img_list']=array();
 $link=get_link($GLOBALS['main_user'],$GLOBALS['main_pass']);
 
 $pdf = new ACCOUNT1('P', 'mm', 'A4', true, 'UTF-8', false);
+//$pdf->SetMargins(20, 10, 10, true);
 
 print_sample($link,$_POST['sample_id'],$pdf);
 

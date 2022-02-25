@@ -74,7 +74,7 @@ def mk_histogram_from_tuple(xy,heading,x_axis,y_axis):
   r=pd.DataFrame(xy[1])
   m=r.rolling(20).mean()
   md=r.rolling(20).median()
-  ewma=r.ew
+  #ewma=r.ew
   
   rr=r.rename(columns={0:"result"})
   mm=m.rename(columns={0:"avg(20)"})

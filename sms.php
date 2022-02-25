@@ -28,6 +28,7 @@ tail();
 //echo '<pre>';print_r($_POST);print_r($_FILES);echo '</pre>';
 
 //////////////Functions///////////////////////
+/*
 function send_sms($sms,$num)
 {
         $str=$GLOBALS['sms_site'].'?';
@@ -56,7 +57,7 @@ function send_sms($sms,$num)
         $ret=file_get_contents($str,false,$context);
         return $ret;
 }
-
+*/
 
 function import_csv_send_sms($file_data)
 {
