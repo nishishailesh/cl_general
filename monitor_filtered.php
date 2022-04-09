@@ -16,15 +16,15 @@ if(isset($_POST['password']))
 {
 	$_SESSION['password']=$_POST['password'];
 }
-		
+
 if(!isset($_SESSION['login']) && !isset($_POST['login']))
 {
-		exit(0);
+	exit(0);
 }
 
 if(!isset($_SESSION['password']) && !isset($_POST['password']))
 {
-		exit(0);
+	exit(0);
 }
 
 echo '
@@ -55,7 +55,7 @@ $lh_id=explode("-",$_SESSION['id_range']);
 $one='select distinct sample_id from result where 
 			sample_id between \''.$lh_id[0].'\' and \''.$lh_id[1].'\' 
 			order by sample_id desc limit '.$_SESSION['sample_limit'].' offset '.$_SESSION['sample_offset'];
-			
+
 //echo $one;
 $result=run_query($link,$GLOBALS['database'],$one);
 
@@ -79,7 +79,7 @@ while($ar=get_single_row($result))
 	{
 		$show_sample_sr=True;
 	}
-	
+
 	//check sample status
 	if(strlen($_SESSION['sample_status'])>0)
 	{
@@ -118,11 +118,12 @@ while($ar=get_single_row($result))
 		$show_sample_sl=True;
 	}
 
-        //check sexamination_id
-        if(strlen($_SESSION['examination_id'])>0)
+
+        ////////check sexamination_id
+        if(strlen($_SESSION['examination_id'])>0 ||$_SESSION['examination_id']==0)
         {
                 $sx=get_one_ex_result($link,$ar['sample_id'],$_SESSION['examination_id']);
-                if($sx!==False)
+                if($sx!==False || $_SESSION['examination_id']==0)
                 {
                         $show_ex=True;
                 }
@@ -131,10 +132,8 @@ while($ar=get_single_row($result))
                         $show_ex=False;
                 }
         }
-        else
-        {
-                $show_ex=True;
-        }
+
+	////////////////////////////////
 
 	//check sample location
 	if(strlen($_SESSION['receipt_date'])>0)
@@ -155,8 +154,17 @@ while($ar=get_single_row($result))
 	{
 		$show_sample_rd=True;
 	}
-	
-	
+
+
+	//if($show_ex==True)
+	//{
+	//	echo '<h1>$show_ex=True</h1>';
+	//}
+	//else
+	//{
+	//	echo '<h1>$show_ex=False</h1>';
+	//}
+
 	if($show_sample_sr==True && $show_sample_ss==True && $show_sample_sl==True && $show_ex==True && $show_sample_rd==True)
 	{
 		show_sid_button_release_status($link,$ar['sample_id']);
@@ -164,6 +172,7 @@ while($ar=get_single_row($result))
 }
 
 
+echo '<pre>monitor:session';print_r($_SESSION);echo '</pre>';
 //echo '<pre>monitor:post';print_r($_POST);echo '</pre>';
 //echo '<pre>';print_r($GLOBALS['sample_status']);echo '</pre>';
 

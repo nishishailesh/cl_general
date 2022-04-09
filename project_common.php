@@ -261,10 +261,11 @@ function mk_array_from_sql($link,$sql,$field_name)
 	{
 		$ret[]=$ar[$field_name];
 	}
+
 	return $ret;
 }
 
-function mk_array_from_sql_kv($link,$sql,$field_name_k,$field_name_v)
+function mk_array_from_sql_kv($link,$sql,$field_name_k,$field_name_v,$blank='no')
 {
 	$result=run_query($link,$GLOBALS['database'],$sql);
 	$ret=array();
@@ -272,6 +273,12 @@ function mk_array_from_sql_kv($link,$sql,$field_name_k,$field_name_v)
 	{
 		$ret[$ar[$field_name_k]]=$ar[$field_name_v];
 	}
+
+ 	if($blank=='yes')
+         {
+		$ret[0]='(all)';
+         }
+
 	return $ret;
 }
 
@@ -289,7 +296,7 @@ function mk_select_from_sql($link,$sql,$field_name,$select_name,$select_id,$disa
 
 function mk_select_from_sql_kv($link,$sql,$field_name_k,$field_name_v,$select_name,$select_id,$disabled='',$default='',$blank='no')
 {
-	$ar=mk_array_from_sql_kv($link,$sql,$field_name_k,$field_name_v);
+	$ar=mk_array_from_sql_kv($link,$sql,$field_name_k,$field_name_v,$blank);
 	//echo '<pre>';print_r($ar);echo '</pre>';
 	//if($blank=='yes')
 	//{
@@ -3091,7 +3098,7 @@ function save_insert_specific($link)
 		$ar=get_single_row($result);
 		//echo $psql;print_r($ar);
 		$profile_ex_requested_main=explode(',',$ar['examination_id_list']);
-		
+
 		$profile_ex_requested=$profile_ex_requested_main;
 		$requested=array_merge($requested,$profile_ex_requested);
 	}
@@ -3125,14 +3132,14 @@ function save_insert_specific($link)
 	}
 	$requested=array_merge($requested,$with_result);
 	$requested=array_filter(array_unique($requested));
-//1	
+//1
 	//echo '<pre>following is requested:<br>';print_r($requested);echo '</pre>';
 
 	//determine sample-type required for each and also distinct types////////////////////////////////////
 	$sample_required=array();
 	//echo '<pre>following samples are required:<br>';print_r($sample_required);echo '</pre>';
 	$stype_for_each_requested=array();
-	
+
 	foreach($requested as $ex)
 	{
 		$psql='select sample_requirement from examination where examination_id=\''.$ex.'\'';
@@ -4012,7 +4019,7 @@ function insert_one_examination_without_result($link,$sample_id,$examination_id)
 function insert_one_examination_with_result($link,$sample_id,$examination_id,$result)
 {
 	//recording_time=now(),recorded_by=\''.$_POST['user'].'\'
-				
+
 	$sql='insert into result (sample_id,examination_id,result,recording_time,recorded_by)
 			values ("'.$sample_id.'","'.$examination_id.'","'.my_safe_string($link,$result).'",now(),"'.$_SESSION['login'].'")';
 	//echo $sql.'(without)<br>';

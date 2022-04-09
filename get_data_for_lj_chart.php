@@ -203,6 +203,7 @@ function show_lj_for_sample($link,$sample_id_array,$ex_requested=array())
 			echo '
 			<td  class="compact collapse" ><button type=button class="btn btn-sm btn-info" onclick="my_sort_float(this,5,\'qc_table\')" data-sorting=1>SDI</button></td>
 			<td  class="compact collapse" >Mean</td>
+			<td  class="compact collapse" >MMean</td>
 			<td  class="compact collapse" >SD</td>
 			<td  class="compact collapse" ><button type=button class="btn btn-sm btn-info" onclick="my_sort(this,8,\'qc_table\')" data-sorting=1>Date</button></td>
 			<td  class="compact collapse" ><button type=button class="btn btn-sm btn-info" onclick="my_sort(this,9,\'qc_table\')" data-sorting=1>Time</button></td>
@@ -398,6 +399,7 @@ function display_one_qc($link,$sample_id,$ex_requested)
 					{
 						echo '<td  class="compact collapse" >'.$sdi.'</td>';
 						echo '<td  class="compact collapse" >'.$lab_ref_val['mean'].'</td>';
+						echo '<td  class="compact collapse" >'.$lab_ref_val['manufacturer_data'].'</td>';
 						echo '<td  class="compact collapse" >'.$lab_ref_val['sd'].'</td>';
 						if(strftime("%Y-%m-%d")==$date)
 						{				

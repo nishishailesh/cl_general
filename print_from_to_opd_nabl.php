@@ -80,7 +80,7 @@ if($error===false  && $at_least_one_sample!==false)
 }
 else
 {
-	echo 'nothing to print. Can I Hibernate?';
+	echo 'nothing to print';
 }
 //////////////user code ends////////////////
 //tail();
