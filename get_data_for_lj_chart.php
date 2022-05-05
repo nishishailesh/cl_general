@@ -231,7 +231,7 @@ function show_lj_for_single_sample($link,$sample_id,$ex_requested=array())
 
 function show_lj($link,$parameters)
 {
-	$sample_id_array=get_qc_sample_id_from_parameters($link,$parameters);
+	$sample_id_array=get_qc_sample_id_from_parameters($link,$parameters,' limit 500 ');
 	//echo '<pre>';print_r($sample_id_array);echo '</pre>';
 	$ex_requested=explode(',',$parameters['list_of_selected_examination']);
 	show_lj_for_sample($link,$sample_id_array,$ex_requested);
@@ -248,7 +248,7 @@ function show_lj_today($link)
 
 function show_lj_date_range($link,$from_date,$to_date,$parameters)
 {
-	$sample_id_array=get_date_range_sample_id($link,$from_date,$to_date,$parameters);
+	$sample_id_array=get_date_range_sample_id($link,$from_date,$to_date,$parameters,' limit 500 ');
 	//echo '<pre>';print_r($sample_id_array);echo '</pre>';
 	$ex_requested=explode(',',$parameters['list_of_selected_examination']);
 	show_lj_for_sample($link,$sample_id_array,$ex_requested);
@@ -275,7 +275,7 @@ function display_one_qc($link,$sample_id,$ex_requested)
 		if(in_array($ar['examination_id'],$ex_requested) || count($ex_requested)==0)
 		{
 			$lab_ref_val=get_lab_reference_value($link,$mrd_num,$ar['examination_id'],$date,$time,$equipment);
-			
+
 			if($sample_id%2==0){$sample_class='text-danger';}
 			else{$sample_class='text-info';}
 
@@ -288,7 +288,7 @@ function display_one_qc($link,$sample_id,$ex_requested)
 				$border='border  border-top-0 border-bottom-0';
 				$current_ex_id=$ar['examination_id'];
 			}
-			
+
 			$tr_class_list=array(
 			'text-primary',
 			'text-secondary',
@@ -304,9 +304,9 @@ function display_one_qc($link,$sample_id,$ex_requested)
 
 			$tr_class=$tr_class_list[$ar['examination_id']%10].' '.$border;
 
-			
+
 			echo '<tr class=\''.$tr_class.'\'>';
-			
+
 			if(substr($mrd_num,0,strlen($GLOBALS['normal_qc_str']))==$GLOBALS['normal_qc_str'])
 			{
 				$modified_mrd_num='<span class="bg-light text-danger">'.$mrd_num.'</span>';
@@ -316,9 +316,9 @@ function display_one_qc($link,$sample_id,$ex_requested)
 			{
 				$modified_mrd_num='<span class="bg-light text-dark">'.$mrd_num.'</span>';
 				$tick=$GLOBALS['abnormal_qc_tick'];
-			}					
+			}
 			echo '<td>'.$modified_mrd_num.'</td>';
-			//sample_id button for remark modal popup		
+			//sample_id button for remark modal popup
 				echo '<td  class=\''.$sample_class.'\'>';
 				echo '<button id=\'button_'.$sample_id.'\'
 						class="btn btn-sm '.$sample_class.' "
@@ -328,28 +328,28 @@ function display_one_qc($link,$sample_id,$ex_requested)
 					echo '<div class="modal-dialog">';
 						echo 
 						'<div class="modal-content">
-						
+
 							<div class="modal-header">
 								<h4 class="modal-title">Comment for QC ID:'.$sample_id.'<br>
 								Refresh main page for reflecting changes</h5>
 								<button type="button" class="close" data-dismiss="modal">&times;</button>
 							</div>
-							
+
 							<div class="modal-body">';
 							  $remark_result=get_one_ex_result($link,$sample_id,$GLOBALS['remark']);
 							  edit_field($link,$GLOBALS['remark'],array($GLOBALS['remark']=>$remark_result),$sample_id,$readonly='');						  
 							echo '</div>
-							
+
 							<div class="modal-footer">
 							  <button class="btn btn-danger" data-dismiss="modal">Save</button>
 							</div>';
-												
+
 						echo '</div>';
 					echo '</div>';
 				echo '</div>';
 				echo '</td>';
 			//end of sample_id button for remark modal popup
-			
+
 				echo '<td>'.$ar['examination_id'].'-'.get_name_of_ex_id($link,$ar['examination_id']).'</td>';
 				echo '<td>'.$ar['result'].'</td>';
 
@@ -362,7 +362,7 @@ function display_one_qc($link,$sample_id,$ex_requested)
 				{
 					//echo $ar['result'].' reference value not found<br>';
 				}
-				
+
 				if($lab_ref_val!=false && is_numeric($ar['result']))
 				{
 					$sdi=round((($ar['result']-$lab_ref_val['mean'])/$lab_ref_val['sd']),1);
@@ -394,7 +394,7 @@ function display_one_qc($link,$sample_id,$ex_requested)
 					}
 
 					echo '<td class="p-0 m-0"><pre>'.$lj_str.'</pre></td>';
-					
+
 					if(!isset($_POST['compact']))
 					{
 						echo '<td  class="compact collapse" >'.$sdi.'</td>';
@@ -402,7 +402,7 @@ function display_one_qc($link,$sample_id,$ex_requested)
 						echo '<td  class="compact collapse" >'.$lab_ref_val['manufacturer_data'].'</td>';
 						echo '<td  class="compact collapse" >'.$lab_ref_val['sd'].'</td>';
 						if(strftime("%Y-%m-%d")==$date)
-						{				
+						{
 							echo '<td class="compact collapse border border-dark">'.$date.'</td>';
 						}
 						else
@@ -425,6 +425,7 @@ function display_one_qc($link,$sample_id,$ex_requested)
 					{
 						echo '<td  class="compact collapse" ></td>';
 						echo '<td  class="compact collapse" ></td>';
+						echo '<td  class="compact collapse" ></td>';				
 						echo '<td  class="compact collapse" ></td>';				
 						
 						if(strftime("%Y-%m-%d")==$date)

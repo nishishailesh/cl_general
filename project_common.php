@@ -5739,7 +5739,7 @@ function get_name_of_ex_id($link,$examination_id)
 	return $ar['name'];
 }
 
-function get_date_range_sample_id($link,$from_date,$to_date,$parameters)
+function get_date_range_sample_id($link,$from_date,$to_date,$parameters, $limit='')
 {
 	$sql='select mrd.sample_id 
 			from 
@@ -5772,8 +5772,7 @@ function get_date_range_sample_id($link,$from_date,$to_date,$parameters)
 				and
 				mrd.sample_id=equipment.sample_id
 			
-			order by mrd.sample_id	 desc
-			limit 500';
+			order by mrd.sample_id	 desc '.$limit;
 				
 	//echo $sql;
 	$result=run_query($link,$GLOBALS['database'],$sql);
@@ -5787,7 +5786,7 @@ function get_date_range_sample_id($link,$from_date,$to_date,$parameters)
 }
 
 
-function get_qc_sample_id_from_parameters($link,$parameters)
+function get_qc_sample_id_from_parameters($link,$parameters,$limit='')
 {
 	/*
 		[qc_equipment] => 
@@ -5825,11 +5824,10 @@ function get_qc_sample_id_from_parameters($link,$parameters)
 					and
 					
 				mrd.sample_id=equipment.sample_id
-							
-			order by mrd.sample_id	desc
-			limit 500';
-				
-	//echo $sql;
+
+			order by mrd.sample_id	desc '.$limit;
+
+	echo $sql;
 	$result=run_query($link,$GLOBALS['database'],$sql);
 	$data=array();
 	while($ar=get_single_row($result))
