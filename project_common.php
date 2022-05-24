@@ -4350,7 +4350,7 @@ function print_sample($link,$sample_id,$pdf)
 	//echo $myStr;
 	//exit(0);
 	     //left,top,right
-	     $pdf->SetMargins(10, 40, 10);
+	     $pdf->SetMargins(25, 40, 10);
 	     $pdf->SetAutoPageBreak(TRUE, 30);
 	     
 	     $pdf->SetFont('courier', '', 9);

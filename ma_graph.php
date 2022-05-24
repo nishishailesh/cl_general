@@ -69,7 +69,6 @@ function get_user_info($link,$user)
 
 function echo_png_from_python($png_bytes)
 {
-
 	echo "<img width=1200 src='data:image/png;base64,".base64_encode($png_bytes)."'/>";
 }
 
@@ -81,7 +80,7 @@ function get_from_python($python_script)
 }
 
 //////Getting data from python//////
-echo get_from_python('extra/all_ma.py '.$_POST['limit'].' '.$_POST['offset']);
+//echo get_from_python('extra/all_ma.py '.$_POST['limit'].' '.$_POST['offset']);
 
 ?>
     <canvas id="bar-chart" width=300" height="150"></canvas>
