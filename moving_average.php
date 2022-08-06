@@ -16,8 +16,9 @@ function read_ma_input($link)
 {
 	echo '<form method=post action=ma_graph.php target=_blank>';
         echo '<input type=hidden name=session_name value=\''.session_name().'\'>';
-		echo '<input type=text name=limit>';
-		echo '<input type=text name=offset>';
+		echo '<input placeholder=examination_id type=text name=examination_id>';
+		echo '<input placeholder=limit type=text name=limit>';
+		echo '<input placeholder=offset type=text name=offset>';
 		echo '<input type=submit name=action value=view>';
 	echo '</form>';
 

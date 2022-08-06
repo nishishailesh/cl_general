@@ -40,7 +40,7 @@ if(!isset($_SESSION['password']) && !isset($_POST['password']))
 
 
 //$one='select avg_value from moving_average order by date_time desc limit 200';
-$one='select * from moving_average order by date_time desc limit '.$_POST['limit'].' offset '.$_POST['offset'];
+$one='select * from moving_average where examination_id=\''.$_POST['examination_id'].'\' order by date_time desc limit '.$_POST['limit'].' offset '.$_POST['offset'];
 $result=run_query($link,$GLOBALS['database'],$one);
 $data=array();
 while($ar=get_single_row($result))
@@ -100,7 +100,7 @@ new Chart(document.getElementById("bar-chart"),
     data: {
 		datasets:[
 				{
-			    	label: 'Glucose Moving Average',
+			    	label: 'Moving Average',
 				data:jdata,
 				parsing:{
 						yAxisKey:'avg_value',
@@ -108,7 +108,7 @@ new Chart(document.getElementById("bar-chart"),
 					}
           			},
                                 {
-                                label: 'Glucose Result',
+                                label: 'Result',
                                 data:jdata,
                                 parsing:{
                                                 yAxisKey:'value',
@@ -133,7 +133,7 @@ new Chart(document.getElementById("bar-chart"),
     options: 	{
     			scales:
 			{
-				y:{suggestedMin:100, suggestedMax:200}
+				//y:{suggestedMin:100, suggestedMax:200}
   			},
 		plugins:{
 			tooltips: 
