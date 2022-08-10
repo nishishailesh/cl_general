@@ -136,6 +136,7 @@ function calculate_and_update($link,$sample_id)
 			save_single_result($link,$sample_id,$ar['examination_id'],$ex_result);
 		}
 	}
+	verify_sample($link,$sample_id);
 }
 
 function save_single_result($link,$sample_id,$examination_id,$ex_result)

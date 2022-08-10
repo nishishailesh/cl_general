@@ -9,16 +9,37 @@ $GLOBALS['expirydate_field']='expirydate';
 $GLOBALS['application_name']='New Civil Hospital Surat Laboratory Services';
 
 $GLOBALS['database']='cl_general';
+
+
+
+// in /var/gmcs_config/staff.conf $GLOBALS['email_db_server']='11.207.1.1';
+
+
+////Important examination IDs
 $GLOBALS['mrd']=1001;
 $GLOBALS['sample_requirement']=1000;
-
 $GLOBALS['patient_name']=1002;
 $GLOBALS['OPD/Ward']=1006;
-
 $GLOBALS['email']=1024;
 $GLOBALS['sms_date']=1043;
 $GLOBALS['sms_time']=1044;
-// in /var/gmcs_config/staff.conf $GLOBALS['email_db_server']='11.207.1.1';
+
+
+//for checking function integrity
+$GLOBALS['plasma_glucose']=5031;
+$GLOBALS['serum_TBIL']=5009;
+$GLOBALS['serum_DBIL']=5010;
+$GLOBALS['serum_IBIL']=5024;
+
+$GLOBALS['serum_CHOL']=5015;
+$GLOBALS['serum_TG']=5018;
+$GLOBALS['serum_HDL']=5016;
+$GLOBALS['serum_VLDL']=5017;
+$GLOBALS['serum_LDL']=5028;
+
+$GLOBALS['Remark']=5098;
+$GLOBALS['Critical_Alert']=5097;
+
 
 $GLOBALS['pid_profile']=1;
 
@@ -81,19 +102,6 @@ $GLOBALS['abnormal_high_message']='<--Abnormal High';
 
 #for Sample Status
 
-
-
-
-/* 
- * Requested 			colorless
- * Collected			light gray 1015,1016
- * Received-at-lab		light yellow 1017,1018
- * prepared				orange
- * analysed				light red
- * verified				light blue
- * released				light green 1014,1019
- * */
-
 $GLOBALS['request_date']=1027;
 $GLOBALS['request_time']=1028; 
  
@@ -135,26 +143,6 @@ $GLOBALS['TAT_warn_hours']=4;
 $GLOBALS['TAT_remark_id']=5191;
 $GLOBALS['QC_Remark_id']=5098;
 
-/*
-$GLOBALS['dates_times']=array(
-			$GLOBALS['request_date']=>1,
-			$GLOBALS['request_time']=>1,
-			$GLOBALS['collection_date']=>2,
-			$GLOBALS['collection_time']=>2,
-			$GLOBALS['receipt_date']=>3,
-			$GLOBALS['receipt_time']=>3,
-			$GLOBALS['sample_preparation_date']=>4,
-			$GLOBALS['sample_preparation_time']=>4,
-			$GLOBALS['analysis_date']=>5,
-			$GLOBALS['analysis_time']=>5,
-			$GLOBALS['verification_date']=>6,
-			$GLOBALS['verification_time']=>6,
-			$GLOBALS['release_date']=>7,
-			$GLOBALS['release_time']=>7,
-			$GLOBALS['released_by']=>8,
-			$GLOBALS['interim_released_by']=>8
-			);
-*/
 
 $GLOBALS['sample_status']=
 array(
@@ -185,8 +173,9 @@ $GLOBALS['accreditation_image_txt']="ML-0450";
 $GLOBALS['qr_link_prefix']='https://gmcsurat.edu.in:12349/cl_general/';
 $GLOBALS['unaccredited_string']='(Not in NABL Scope)';
 
-//20200531233109 date format for XL ASTM communication
-//08/01/2020 14:02:40 date format for XL export communication
+
+
+
 
 //example configutation file for passwords  
 //see above: $GLOBALS['main_user_location']='/var/gmcs_config/staff.conf';

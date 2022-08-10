@@ -1,13 +1,5 @@
 <?php
 
-//for checking function integrity
-$GLOBALS['plasma_glucose']=5031;
-$GLOBALS['serum_TBIL']=5009;
-$GLOBALS['serum_DBIL']=5010;
-$GLOBALS['serum_IBIL']=5024;
-$GLOBALS['Remark']=5098;
-$GLOBALS['Critical_Alert']=5097;
-
 function verify_sample($link,$sample_id)
 {
 	//echo '<pre>';print_r($_POST);echo '</pre>';
@@ -27,6 +19,7 @@ function verify_sample($link,$sample_id)
 	}
 	return $ret;
 }
+
 
 function any_examination_id($link,$sample_id,$eid,$eval)
 {
@@ -143,6 +136,66 @@ Otherwise, Result may be considered absurd and repeat sample collection is advis
 			}
 		}
 	}	
+}
+
+function examination_id_verified($which_id,$required_id,$display_name)
+{
+	if($required_id!=$which_id)
+	{
+		echo '<span class="text-danger">'.$display_name.' code provided ('.$which_id.') is not same as required code('.$required_id.').</span>';return false;
+	}
+	else
+	{
+		echo '<span class="text-success d-block">'.$display_name.' id is verified.</span>';return true;
+		return true;
+	}
+}
+
+function examination_result_numeric($result,$display_text)
+{
+	//echo '<span>Checking if result of '.$display_text.' is numeric</span>';
+	if(!is_numeric($result))
+	{
+		echo '<span class="text-danger">'.$display_text.' result is not numeric.</span>';return false;
+	}
+	else
+	{
+		echo '<span class="text-success d-block">'.$display_text.' result is numeric.</span>';return true;
+	}
+	
+	
+}
+//serum Total Cholesterol
+function f_5015($link,$sample_id,$ex_id)
+{
+	echo '......Verification of examination_id=5015 (Cholesterol, serum).....<br>';
+	if(!examination_id_verified($ex_id,$GLOBALS['serum_CHOL'],'serum cholesterol')){return false;}
+	
+	$ex_result_array=get_result_of_sample_in_array($link,$sample_id);
+	if( !examination_result_numeric($ex_result_array[$GLOBALS['serum_CHOL']],'serum cholesterol')){return false;}
+	
+	$cho=$ex_result_array[$GLOBALS['serum_CHOL']];
+	$tg=$ex_result_array[$GLOBALS['serum_TG']];
+	if($cho>240)
+	{
+		echo '<span class="text-success d-block">Cholesterol is more than 240 mg/dL</span>';
+		if($tg<400)
+		{
+			insert_update_one_examination_with_result($link,$sample_id,$GLOBALS['serum_HDL'],$ex_result_array[$GLOBALS['serum_HDL']]);
+			insert_update_one_examination_with_result($link,$sample_id,$GLOBALS['serum_VLDL'],$ex_result_array[$GLOBALS['serum_VLDL']]);
+			insert_update_one_examination_with_result($link,$sample_id,$GLOBALS['serum_LDL'],$ex_result_array[$GLOBALS['serum_LDL']]);
+			echo '<span class="badge badge-danger d-inline">HDL, VLDL, LDL reflexly added</span><br>';
+
+		}
+		else
+		{
+			echo '<span class="text-success d-block">TG >400 mg/dL. LDL not reliable.</span>';
+			insert_update_one_examination_with_result($link,$sample_id,$GLOBALS['serum_HDL'],'see LDL remark');
+			insert_update_one_examination_with_result($link,$sample_id,$GLOBALS['serum_VLDL'],'see LDL remark');
+			insert_update_one_examination_with_result($link,$sample_id,$GLOBALS['serum_LDL'],'TG>400, LDL unreliable, Homogeneous assay advised');
+		}	
+		return true;
+	}
 }
 
 ?>
