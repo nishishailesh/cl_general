@@ -621,27 +621,31 @@ INSERT INTO `reagent_use` VALUES (1,30,1,'2021-07-15',NULL,NULL,'2021-07-15 01:3
 UNLOCK TABLES;
 
 --
--- Table structure for table `menu_new`
+-- Table structure for table `copy_sample`
 --
 
-DROP TABLE IF EXISTS `menu_new`;
+DROP TABLE IF EXISTS `copy_sample`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `menu_new` (
-  `id` int(11) NOT NULL,
-  `caption` varchar(100) NOT NULL,
-  `ex_list` varchar(100) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+CREATE TABLE `copy_sample` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `name` varchar(50) NOT NULL,
+  `keep_ex_list` varchar(500) NOT NULL,
+  `add_ex_list` varchar(500) NOT NULL,
+  `add_ex_with_result` varchar(500) NOT NULL,
+  `remark` varchar(200) NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
--- Dumping data for table `menu_new`
+-- Dumping data for table `copy_sample`
 --
 
-LOCK TABLES `menu_new` WRITE;
-/*!40000 ALTER TABLE `menu_new` DISABLE KEYS */;
-INSERT INTO `menu_new` VALUES (1,'New Thyroid','1002,1008,1004,1005,1006,1007,1041,1023,1017,1018'),(2,'New ABG','1002,1008,1004,1005,1006,1007,1017,1018,5143,5144,5145,5148,5149,5159,5150,5158,5195,5154'),(3,'Niramaya_camp','1002,1025,1008,1004,1006,1007,1017,1018,1023');
-/*!40000 ALTER TABLE `menu_new` ENABLE KEYS */;
+LOCK TABLES `copy_sample` WRITE;
+/*!40000 ALTER TABLE `copy_sample` DISABLE KEYS */;
+INSERT INTO `copy_sample` VALUES (1,'PP2BS','1001,1002,1004,1006','5031,1017,1018','{\"1023\":\"Postprendial-2HR\",\"1027\":\"$current_date\",\"1028\":\"$current_time\"}','For Postprandial Glucose');
+/*!40000 ALTER TABLE `copy_sample` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
 
@@ -653,4 +657,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2022-08-10 12:42:03
+-- Dump completed on 2022-08-27 12:16:58

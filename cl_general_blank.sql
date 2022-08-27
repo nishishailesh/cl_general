@@ -421,6 +421,22 @@ CREATE TABLE `Third Dose` (
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
+-- Table structure for table `available_request`
+--
+
+DROP TABLE IF EXISTS `available_request`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `available_request` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `name` varchar(100) NOT NULL,
+  `examination_ids` varchar(2000) NOT NULL,
+  `price` decimal(10,0) NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
 -- Table structure for table `cal_equipment`
 --
 
@@ -486,6 +502,24 @@ CREATE TABLE `copy_bin_text` (
   `text` varchar(2000) NOT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=19 DEFAULT CHARSET=utf8mb4;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Table structure for table `copy_sample`
+--
+
+DROP TABLE IF EXISTS `copy_sample`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `copy_sample` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `name` varchar(50) NOT NULL,
+  `keep_ex_list` varchar(500) NOT NULL,
+  `add_ex_list` varchar(500) NOT NULL,
+  `add_ex_with_result` varchar(500) NOT NULL,
+  `remark` varchar(200) NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -1003,6 +1037,22 @@ CREATE TABLE `report` (
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
+-- Table structure for table `request`
+--
+
+DROP TABLE IF EXISTS `request`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `request` (
+  `request_id` bigint(20) NOT NULL AUTO_INCREMENT,
+  `requested_ids` varchar(2000) NOT NULL,
+  `requester_id` varchar(200) NOT NULL,
+  `request_data` varchar(2000) NOT NULL,
+  PRIMARY KEY (`request_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
 -- Table structure for table `result`
 --
 
@@ -1271,6 +1321,7 @@ CREATE TABLE `user` (
   `password` varchar(1000) NOT NULL,
   `expirydate` date NOT NULL,
   `authorization` varchar(300) NOT NULL,
+  `group` varchar(300) NOT NULL,
   PRIMARY KEY (`user`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -1300,4 +1351,4 @@ CREATE TABLE `view_info_data` (
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2022-08-10 12:42:03
+-- Dump completed on 2022-08-27 12:16:57

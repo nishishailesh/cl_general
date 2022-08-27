@@ -171,9 +171,11 @@ function main_menu($link)
 						
 						<button class="btn btn-outline-primary m-0 p-0" formaction=single_table_edit.php type=submit name=action value=get_record_list>Tables</button>
 						<button class="btn btn-outline-primary m-0 p-0" formaction=reminders.php type=submit name=action value=reminders>Reminders('.get_incomplete_reminder_count($link).')</button>
+						
 						<!-- <button class="btn btn-outline-primary m-0 p-0" formaction=open_reagent.php type=submit name=action value=get_id>Open Reagent</button> -->
 						<!-- <button class="btn btn-outline-primary m-0 p-0" formaction=get_id_range_for_small_barcode.php type=submit name=action value=get_sample_id_range>Sample Tube Barcode</button> -->
 						<!-- <button class="btn btn-outline-primary m-0 p-0" formaction=get_4_line.php type=submit name=action value=get_4_line>4 Line Label</button> -->
+						
 						<button class="btn btn-outline-primary m-0 p-0" formaction=manage_label.php type=submit name=action value=manage_label>Labels</button>
 						<button class="btn btn-outline-primary m-0 p-0" formaction=manage_reagent.php type=submit name=action value=manage_reagent>Reagent</button>
 						
@@ -182,6 +184,7 @@ function main_menu($link)
 						<button class="btn btn-outline-primary m-0 p-0" formaction=statistics_and_info.php type=submit name=action value=statistics>Statistics and Info</button>
 						<button class="btn btn-outline-primary m-0 p-0" formaction=dashboard.php type=submit name=action value=dashboard>Dashboard</button>
 						<button class="btn btn-outline-primary m-0 p-0" formaction=get_id_range_for_cup_barcode.php type=submit name=action value=cup_barcode_range>Cup Barcode</button>
+						<button class="btn btn-outline-primary m-0 p-0" formaction=request.php type=submit name=action value=request>Request</button>
 					</div>
 				</div>
 		</div>
@@ -379,7 +382,7 @@ function show_all_buttons_for_sample($link,$sample_id)
 	$interim_released_by=get_one_ex_result($link,$sample_id,$GLOBALS['interim_released_by']);
 	
 	echo '<div class="btn-group" role="group">';
-	if(requestonly_check($link))		//no interim, no release, allow edit/delete no print
+	if(requestonly_check($link))		//no interim, no release, no edit , no delete 
 	{
 		sample_id_barcode_button($sample_id);
 		sample_id_prev_button($sample_id);
@@ -394,7 +397,7 @@ function show_all_buttons_for_sample($link,$sample_id)
 	
 
 	
-	if(strlen($released_by)==0 && strlen($interim_released_by)==0)		//no interim, no release, allow edit/delete no print
+	if(strlen($released_by)==0 && strlen($interim_released_by)==0)		//no interim, no release -> no print/xmpp/email/sms
 	{
 		sample_id_barcode_button($sample_id);
 		sample_id_prev_button($sample_id);
@@ -404,24 +407,29 @@ function show_all_buttons_for_sample($link,$sample_id)
 		sample_id_interim_release_button($sample_id);	
 		sample_id_edit_button($sample_id);
 		sample_id_delete_button($sample_id);
+		sample_id_copy_button($sample_id);
 	}
-	else if(strlen($released_by)==0 && strlen($interim_released_by)!=0)	//interim but not released, so allow edit,delete,print
+	else if(strlen($released_by)==0 && strlen($interim_released_by)!=0)	//interim but not released, so allow telegram/print/xmpp/email/sms
 	{
 		sample_id_barcode_button($sample_id);		
 		sample_id_prev_button($sample_id);
 		sample_id_view_button($sample_id);
 		sample_id_next_button($sample_id);
 		sample_id_release_button($sample_id);	
-		sample_id_interim_release_button($sample_id);					//allow new interim release too
+		sample_id_interim_release_button($sample_id);					
+		
 		sample_id_print_button($sample_id);			
 		sample_id_email_button($sample_id);
 		sample_id_telegram_button($sample_id);
 		sample_id_sms_button($sample_id,$link);
 		sample_id_xmpp_button($sample_id);
+		
 		sample_id_edit_button($sample_id);
 		sample_id_delete_button($sample_id);
+		sample_id_copy_button($sample_id);
+
 	}	
-	else 																//released with/without interim (no, edit/delete)
+	else 																//released with/without interim, so do not allow edit/delete
 	{
 		sample_id_barcode_button($sample_id);
 		//sample_id_edit_button($sample_id);
@@ -429,12 +437,15 @@ function show_all_buttons_for_sample($link,$sample_id)
 		sample_id_view_button($sample_id);
 		sample_id_next_button($sample_id);
 		//sample_id_delete_button($sample_id);
+		
 		sample_id_unrelease_button($sample_id);			
+		
 		sample_id_print_button($sample_id);			
 		sample_id_email_button($sample_id);
 		sample_id_telegram_button($sample_id);
 		sample_id_sms_button($sample_id,$link);
 		sample_id_xmpp_button($sample_id);
+		sample_id_copy_button($sample_id);
 	}
 	echo '</div>';
 }
@@ -1084,7 +1095,6 @@ function sample_id_delta_button($sample_id)
         </form></div>';
 }
 
-
 function sample_id_verification_done_button($sample_id)
 {
 	echo '<div class="d-inline-block"  style="width:100%;"><form method=post action=edit_general.php class=print_hide>
@@ -1247,6 +1257,18 @@ function sample_id_unrelease_button($sample_id)
 	<input type=hidden name=action value=unrelease_sample>
 	</form></div>';
 }
+
+
+
+function sample_id_copy_button($sample_id)
+{
+        echo '<div class="d-inline-block"  style="width:100%;"><form method=post action=copy_sample_id.php class=print_hide>
+        <button class="btn btn-outline-success btn-sm" name=sample_id value=\''.$sample_id.'\' >copy</button>
+        <input type=hidden name=session_name value=\''.$_POST['session_name'].'\'>
+        <input type=hidden name=action value=copy_sample_id>
+        </form></div>';
+}
+
 
 function echo_download_button_two_pk($table,$field,$primary_key,$primary_key_value,$primary_key2,$primary_key_value2,$postfix='')
 {
@@ -2674,7 +2696,7 @@ function get_examination_data($link)
 			//internal tab menu start
 			echo '<ul class="nav nav-pills nav-justified">
 					<li><button class="btn btn-secondary" onclick="toggle_color(this)" type=button  data-toggle="collapse" data-target=".general">general</button></li>
-					<li><button class="btn btn-secondary" onclick="toggle_color(this)" type=button  data-toggle="collapse" data-target=".BI">BI</button></li>
+					<li><button class="btn btn-primary" onclick="toggle_color(this)" type=button  data-toggle="collapse" data-target=".BI">BI</button></li>
 					<li><button class="btn btn-secondary" onclick="toggle_color(this)" type=button  data-toggle="collapse" data-target=".HI">HI</button></li>
 					<li><button class="btn btn-secondary" onclick="toggle_color(this)" type=button  data-toggle="collapse" data-target=".CP">CP</button></li>
 					<li><button class="btn btn-secondary" onclick="toggle_color(this)" type=button  data-toggle="collapse" data-target=".HP">HP</button></li>
@@ -2682,7 +2704,6 @@ function get_examination_data($link)
 					<li><button class="btn btn-secondary" onclick="toggle_color(this)" type=button  data-toggle="collapse" data-target=".MI">MI</button></li>
 				</ul>';
 			//internal tab menu end
-
 
 				while($ar=get_single_row($result))
 				{
@@ -2696,7 +2717,15 @@ function get_examination_data($link)
 					$div_class_for_group=$group;
 
 					///
-					echo '<div id='.$div_id_for_group.' class="collapse '.$div_class_for_group.'">';
+					if($group=='BI')
+					{
+						echo '<div id='.$div_id_for_group.' class="show '.$div_class_for_group.'">';
+					}
+					else
+					{
+						echo '<div id='.$div_id_for_group.' class="collapse '.$div_class_for_group.'">';
+					}
+					
 					echo '<div class="tab-content">';
 					///
 						//echo '<img src="img/show_hide.png" height=32 data-toggle="collapse" class=sh href=\'#'.$div_id.'\' ><div></div><div></div>';
@@ -2719,12 +2748,12 @@ function get_examination_data($link)
 									$edit_specification=json_decode($ex_data['edit_specification'],true);
 
 									$method=isset($edit_specification['method'])?$edit_specification['method']:'';
-							$ex_limit=isset($edit_specification['limit_request'])?$edit_specification['limit_request']:0;
-							$user_limit=get_user_request_limit($link);
-							if($user_limit>=$ex_limit)
-							{
-								my_on_off_ex($ex_data['name'].'<br>'.$sr.'<br>'.$method,$ex_data['examination_id']);
-							}
+									$ex_limit=isset($edit_specification['limit_request'])?$edit_specification['limit_request']:0;
+									$user_limit=get_user_request_limit($link);
+									if($user_limit>=$ex_limit)
+									{
+										my_on_off_ex($ex_data['name'].'<br>'.$sr.'<br>'.$method,$ex_data['examination_id']);
+									}
 
 								}
 							echo '</div>';
@@ -2751,11 +2780,10 @@ function get_profile_data($link)
 	$sql='select * from profile';
 	$result=run_query($link,$GLOBALS['database'],$sql);
 	echo '<div id=profile  class="tab-pane">';
-	
 				//internal tab menu start
 			echo '<ul class="nav nav-pills nav-justified">
 					<li><button class="btn btn-secondary" onclick="toggle_color(this)" type=button  data-toggle="collapse" data-target=".m_general">general</button></li>
-					<li><button class="btn btn-secondary" onclick="toggle_color(this)" type=button  data-toggle="collapse" data-target=".m_BI">BI</button></li>
+					<li><button class="btn btn-primary" onclick="toggle_color(this)" type=button  data-toggle="collapse" data-target=".m_BI">BI</button></li>
 					<li><button class="btn btn-secondary" onclick="toggle_color(this)" type=button  data-toggle="collapse" data-target=".m_HI">HI</button></li>
 					<li><button class="btn btn-secondary" onclick="toggle_color(this)" type=button  data-toggle="collapse" data-target=".m_CP">CP</button></li>
 					<li><button class="btn btn-secondary" onclick="toggle_color(this)" type=button  data-toggle="collapse" data-target=".m_HP">HP</button></li>
@@ -2781,7 +2809,14 @@ function get_profile_data($link)
 					$div_class_for_group='m_'.$group;
 					
 					///
-					echo '<div id='.$div_id_for_group.' class="collapse '.$div_class_for_group.'">';
+					if($group=='BI')
+					{
+						echo '<div id='.$div_id_for_group.' class="show '.$div_class_for_group.'">';
+					}
+					else
+					{
+						echo '<div id='.$div_id_for_group.' class="collapse '.$div_class_for_group.'">';
+					}
 					echo '<div class="tab-content">';		
 					///
 		
@@ -2809,7 +2844,7 @@ function get_super_profile_data($link)
 				//internal tab menu start
 			echo '<ul class="nav nav-pills nav-justified">
 					<li><button class="btn btn-secondary" onclick="toggle_color(this)" type=button  data-toggle="collapse" data-target=".s_general">general</button></li>
-					<li><button class="btn btn-secondary" onclick="toggle_color(this)" type=button  data-toggle="collapse" data-target=".s_BI">BI</button></li>
+					<li><button class="btn btn-primary" onclick="toggle_color(this)" type=button  data-toggle="collapse" data-target=".s_BI">BI</button></li>
 					<li><button class="btn btn-secondary" onclick="toggle_color(this)" type=button  data-toggle="collapse" data-target=".s_HI">HI</button></li>
 					<li><button class="btn btn-secondary" onclick="toggle_color(this)" type=button  data-toggle="collapse" data-target=".s_CP">CP</button></li>
 					<li><button class="btn btn-secondary" onclick="toggle_color(this)" type=button  data-toggle="collapse" data-target=".s_HP">HP</button></li>
@@ -2830,7 +2865,17 @@ function get_super_profile_data($link)
 					$div_class_for_group='s_'.$group;
 					
 					///
-					echo '<div id='.$div_id_for_group.' class="collapse '.$div_class_for_group.'">';
+						
+					
+					if($group=='BI')
+					{
+						echo '<div id='.$div_id_for_group.' class="show '.$div_class_for_group.'">';
+					}
+					else
+					{
+						echo '<div id='.$div_id_for_group.' class="collapse '.$div_class_for_group.'">';
+					}
+					
 					echo '<div class="tab-content">';
 					///
 					
@@ -3105,6 +3150,166 @@ function save_insert_specific($link)
 
 //////for EXTRA
 	$super_profile_requested=explode(',',$_POST['list_of_selected_super_profile']);
+	foreach($super_profile_requested as $sp)
+	{
+		$ssql='select * from super_profile where super_profile_id=\''.$sp.'\'';
+		$result=run_query($link,$GLOBALS['database'],$ssql);
+		if(rows_affected($link)>0)
+		{
+			$ar=get_single_row($result);
+			//echo $psql;print_r($ar);
+			$extra_requested_in_super_profile=explode(',',$ar['extra']);
+			$requested=array_merge($requested,$extra_requested_in_super_profile);
+		}
+	}
+//////end of extra
+
+	$with_result=array();
+	foreach($_POST as $k=>$v)
+	{
+		$tok=explode('__',$k);
+		if(isset($tok[1])=='ex')
+		{
+			$with_result_id=$tok[2];
+			//echo $tok[2].'<br>';
+			$with_result[]=$tok[2];
+		}
+	}
+	$requested=array_merge($requested,$with_result);
+	$requested=array_filter(array_unique($requested));
+//1
+	//echo '<pre>following is requested:<br>';print_r($requested);echo '</pre>';
+
+	//determine sample-type required for each and also distinct types////////////////////////////////////
+	$sample_required=array();
+	//echo '<pre>following samples are required:<br>';print_r($sample_required);echo '</pre>';
+	$stype_for_each_requested=array();
+
+	foreach($requested as $ex)
+	{
+		$psql='select sample_requirement from examination where examination_id=\''.$ex.'\'';
+		//echo $psql.'<br>';
+		$result=run_query($link,$GLOBALS['database'],$psql);
+		$ar=get_single_row($result);
+		$sample_required[]=$ar['sample_requirement'];
+		$stype_for_each_requested[$ex]=$ar['sample_requirement'];
+		//echo '<pre>following samples are required:<br>';print_r($sample_required);echo '</pre>';
+	}
+
+//2	
+	//echo '<pre>following are sample_requirements for each:<br>';print_r($stype_for_each_requested);echo '</pre>';
+	//echo '<pre>following samples are required:<br>';print_r($sample_required);echo '</pre>';
+	
+	$sample_required=array_unique($sample_required);
+//3	
+	//echo '<pre>following samples are required:<br>';print_r($sample_required);echo '</pre>';
+	
+	//determine sample_id to be given/////////////////////////////////
+	$sample_id_array=set_sample_id($link,$sample_required);
+//4	
+	//echo '<pre>following samples ids are alloted:<br>';print_r($sample_id_array);echo '</pre>';
+	show_sample_required($sample_id_array);
+//insert examinations////////////////////////////////////////////
+	
+	foreach($sample_id_array as $stype=>$sid)
+	{
+		foreach($stype_for_each_requested as $ex=>$exreq)
+		{
+
+			$examination_details=get_one_examination_details($link,$ex);
+			$edit_specification=json_decode($examination_details['edit_specification'],true);
+			$type=isset($edit_specification['type'])?$edit_specification['type']:'';
+			//echo $ex.'<br>';
+			if($stype==$exreq)
+			{
+				if($type!='blob')
+				{
+					if(array_key_exists('__ex__'.$ex,$_POST))
+					{
+						//echo $_POST['__ex__'.$ex].'<br>';
+						insert_one_examination_with_result($link,$sid,$ex,$_POST['__ex__'.$ex]);
+					}
+					else
+					{					
+						insert_one_examination_without_result($link,$sid,$ex);
+					}
+				}
+				else
+				{
+					insert_one_examination_blob_without_result($link,$sid,$ex);
+				}
+			}
+			if($exreq=='None')
+			{
+				////echo '__ex__'.$ex.'<br>';
+					//if($ex==$GLOBALS['mrd'])
+					//{
+						//insert_one_examination_with_result($link,$sid,$ex,$_POST['mrd']);
+					//}
+
+					if(array_key_exists('__ex__'.$ex,$_POST))
+					{
+						//echo $_POST['__ex__'.$ex].'<br>';
+						insert_one_examination_with_result($link,$sid,$ex,$_POST['__ex__'.$ex]);
+					}
+					elseif($ex==$GLOBALS['sample_requirement'])
+					{
+						//already inserted during set_sample_id()
+					}
+					else
+					{
+						if($type!='blob')
+						{
+							insert_one_examination_without_result($link,$sid,$ex);
+						}
+						else
+						{
+							insert_one_examination_blob_without_result($link,$sid,$ex);
+						}
+					}
+			}
+		}
+	}
+
+	return $sample_id_array	;
+}
+
+
+
+function save_insert_specific_with_parameters($link,$list_of_selected_examination='',$list_of_selected_profile='',$list_of_selected_super_profile='')
+{
+			//find list of super_profiles requested, merge with profiles requested,then..
+			//find list of examinations requested
+			//determine sample-type required
+			//find sample_id to be given
+			//insert all examinations/non-examinations in result table
+			
+	//find list of examinations requested//////////////////////////////
+	$requested=array();
+	$ex_requested=array_filter(explode(',',$list_of_selected_examination));
+	$requested=$requested+$ex_requested;
+	//echo '<pre>following examinations are requested:<br>';print_r($requested);echo '</pre>';
+	
+	$profile_requested=explode(',',$list_of_selected_profile);
+	
+	$profile_requested_in_super_profile=convert_super_profile_to_profile($link,$list_of_selected_super_profile);
+	$profile_requested=array_filter(array_unique(array_merge($profile_requested,$profile_requested_in_super_profile)));
+	//echo '<pre>following profiles are requesteddddddd:<br>';print_r($profile_requested);echo '</pre>';
+
+	foreach($profile_requested as $value)
+	{
+		$psql='select * from profile where profile_id=\''.$value.'\'';
+		$result=run_query($link,$GLOBALS['database'],$psql);
+		$ar=get_single_row($result);
+		//echo $psql;print_r($ar);
+		$profile_ex_requested_main=explode(',',$ar['examination_id_list']);
+
+		$profile_ex_requested=$profile_ex_requested_main;
+		$requested=array_merge($requested,$profile_ex_requested);
+	}
+
+//////for EXTRA
+	$super_profile_requested=explode(',',$list_of_selected_super_profile);
 	foreach($super_profile_requested as $sp)
 	{
 		$ssql='select * from super_profile where super_profile_id=\''.$sp.'\'';
@@ -6346,11 +6551,7 @@ function create_new_special($link)
 	{
 		echo '<button class="btn btn-outline-primary m-0 p-0 " formaction=create_new_special.php type=submit name=action value=\'ex_list|'.$ar['ex_list'].'\'>'.$ar['caption'].'</button>';
 	}
-
-	
 }
-
-
 
 function insert_sample_id_link($link,$sample_id,$display_error='yes')
 {
@@ -6359,7 +6560,7 @@ function insert_sample_id_link($link,$sample_id,$display_error='yes')
 	if(!run_query($link,$GLOBALS['database'],$sql,$display_error))
 	{
 		return false;
-	}	
+	}
 	else
 	{
 		return true;

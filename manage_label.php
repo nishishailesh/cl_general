@@ -22,6 +22,7 @@ echo '
 	<input type=hidden name=session_name value=\''.session_name().'\'>
 	<button class="btn btn-outline-primary m-0 p-0" formaction=get_id_range_for_small_barcode.php type=submit name=action value=get_sample_id_range>Sample Tube Barcode</button>					
 	<button class="btn btn-outline-primary m-0 p-0" formaction=get_4_line.php type=submit name=action value=get_4_line>4 Line Label</button>
+	<button class="btn btn-outline-primary m-0 p-0" formaction=get_4_line_2_columns.php type=submit name=action value=get_4_line_2_columns>4 Line Label(two column)</button>
 </form>';
 
 //////////////user code ends////////////////
