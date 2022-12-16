@@ -1,10 +1,10 @@
 #!/bin/bash
 ####if root password
-echo 'Give mysql password'
-read password
+echo 'Give mysql username'
+read username
 
 ####if root password
-mysqldump  -d -uroot cl_general -p$password > cl_general_blank.sql 
+mysqldump  -d -u$username cl_general -p > cl_general_blank.sql 
 ####if unix plugin , as root 
 ####mysqldump  -d cl_general > cl_general_blank.sql 
 
@@ -14,7 +14,7 @@ tnames='examination profile report sample_id_strategy dashboard super_profile
 	reagent reagent_name unit_name cal_equipment reagent_use menu_new'
 
 #####if root password
-mysqldump  -uroot cl_general $tnames -p$password > "cl_general_data.sql"
+mysqldump  -u$username cl_general $tnames -p > "cl_general_data.sql"
 #####if unix plugin , as root 
 #mysqldump  cl_general $tnames > "cl_general_data.sql"
 

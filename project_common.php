@@ -83,6 +83,7 @@ function main_menu($link)
 			<div class="dropdown m-0 p-0">
 				<button class="btn btn-outline-primary m-0 p-0" formaction=location_report.php type=submit name=action value=get_location_list>LocationWise Report</button>			
 			</div>
+			<button class="btn btn-outline-primary m-0 p-0" formaction=print_multiple_scanned_barcode.php type=submit name=action value=get_scan>Scan Barcode</button>						
 			
 			<button class="btn btn-outline-primary m-0 p-0" formaction=start.php type=submit name=action value=home><img src=img/home.jpeg height=20></button>
 			<button class="btn btn-outline-primary m-0 p-0" formaction=start.php type=submit formtarget=_blank name=action value=home>+</button>
