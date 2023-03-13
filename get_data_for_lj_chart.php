@@ -196,15 +196,22 @@ function show_lj_for_sample($link,$sample_id_array,$ex_requested=array())
 		<td><button type=button class="btn btn-sm btn-info" onclick="my_sort(this,1,\'qc_table\')" data-sorting=1>Sample_ID</button></td>
 		<td><button type=button class="btn btn-sm btn-info" onclick="my_sort(this,2,\'qc_table\')" data-sorting=1>Examination</button></td>
 		<td>Result</td>
+                        <td   >Mean</td>
+                        <td  >MMean</td>
+                        <td   >SD</td>
+			<td   ><button type=button class="btn btn-sm btn-info" onclick="my_sort_float(this,5,\'qc_table\')" data-sorting=1>SDI</button></td>
+
+
 		<td><pre>4---------3---------2---------1---------0---------1---------2---------3---------4</pre></td>';
 
 		if(!isset($_POST['compact']))
 		{
+			//echo '
+			//<td  class="compact collapse" ><button type=button class="btn btn-sm btn-info" onclick="my_sort_float(this,5,\'qc_table\')" data-sorting=1>SDI</button></td>
+			//<td  class="compact collapse" >Mean</td>
+			///<td  class="compact collapse" >MMean</td>
+			//<td  class="compact collapse" >SD</td>
 			echo '
-			<td  class="compact collapse" ><button type=button class="btn btn-sm btn-info" onclick="my_sort_float(this,5,\'qc_table\')" data-sorting=1>SDI</button></td>
-			<td  class="compact collapse" >Mean</td>
-			<td  class="compact collapse" >MMean</td>
-			<td  class="compact collapse" >SD</td>
 			<td  class="compact collapse" ><button type=button class="btn btn-sm btn-info" onclick="my_sort(this,8,\'qc_table\')" data-sorting=1>Date</button></td>
 			<td  class="compact collapse" ><button type=button class="btn btn-sm btn-info" onclick="my_sort(this,9,\'qc_table\')" data-sorting=1>Time</button></td>
 			<td  class="compact collapse" ><button type=button class="btn btn-sm btn-info" onclick="my_sort(this,10,\'qc_table\')" data-sorting=1>Equipment</button></td>
@@ -352,6 +359,18 @@ function display_one_qc($link,$sample_id,$ex_requested)
 
 				echo '<td>'.$ar['examination_id'].'-'.get_name_of_ex_id($link,$ar['examination_id']).'</td>';
 				echo '<td>'.$ar['result'].'</td>';
+                                if($lab_ref_val!=false && is_numeric($ar['result']))
+                                {
+                                        $sdi=round((($ar['result']-$lab_ref_val['mean'])/$lab_ref_val['sd']),1);
+				}
+				else
+				{
+					$sdi='NA';
+				}
+                                                echo '<td  >'.$lab_ref_val['mean'].'</td>';
+                                                echo '<td  >'.$lab_ref_val['manufacturer_data'].'</td>';
+						echo '<td  >'.$lab_ref_val['sd'].'</td>';
+                                               	echo '<td  >'.$sdi.'</td>';
 
 				//if($lab_ref_val!=false && is_numeric($ar['result']))
 				if(!is_numeric($ar['result']))
@@ -397,10 +416,10 @@ function display_one_qc($link,$sample_id,$ex_requested)
 
 					if(!isset($_POST['compact']))
 					{
-						echo '<td  class="compact collapse" >'.$sdi.'</td>';
-						echo '<td  class="compact collapse" >'.$lab_ref_val['mean'].'</td>';
-						echo '<td  class="compact collapse" >'.$lab_ref_val['manufacturer_data'].'</td>';
-						echo '<td  class="compact collapse" >'.$lab_ref_val['sd'].'</td>';
+						//echo '<td  class="compact collapse" >'.$sdi.'</td>';
+						//echo '<td  class="compact collapse" >'.$lab_ref_val['mean'].'</td>';
+						//echo '<td  class="compact collapse" >'.$lab_ref_val['manufacturer_data'].'</td>';
+						//echo '<td  class="compact collapse" >'.$lab_ref_val['sd'].'</td>';
 						if(strftime("%Y-%m-%d")==$date)
 						{
 							echo '<td class="compact collapse border border-dark">'.$date.'</td>';

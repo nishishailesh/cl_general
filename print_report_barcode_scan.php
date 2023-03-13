@@ -25,7 +25,7 @@ $temp=unserialize(base64_decode($_POST['sample_id_array']));
 			else
 			{
 				echo '<div class="d-inline-block">Sample _ID='.$sid.' is [ not released / does not exist ]</div>';
-				sample_id_view_button($sid,'_blank');
+				sample_id_view_button($sid,' target=_blank ');
 				echo '<br>';
 				$error=true;
 			}
